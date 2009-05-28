@@ -341,8 +341,8 @@ namespace Sage.SData.Client.Core
             {
                 int currentPage = _entryIndex/_itemsPerPage;
 
-                if ((_entryIndex % _itemsPerPage) == 0)
-                    currentPage--;
+                //if ((_entryIndex % _itemsPerPage) == 0)
+                //    currentPage--;
                 if(currentPage < 0)
                 {
                     currentPage = 0;
