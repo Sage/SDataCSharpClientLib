@@ -269,8 +269,8 @@ namespace Sage.SData.Client.Core
 #if NET_3_5
             _itemsAvailable = _itemsAvailable - (_itemsPerPage - lastFeed.Entries.Count());
 #else
-            IList<AtomEntry> entries = lastFeed.Entries as List<AtomEntry>;
-            _itemsAvailable = _itemsAvailable - (_itemsPerPage - entries.Count);
+            //IList<AtomEntry> entries = lastFeed.Entries.GetEnumerator() as List<AtomEntry>;
+            List<AtomEntry> entries = new List<AtomEntry>(lastFeed.Entries);
 #endif
             _numberOfPages = _itemsAvailable / _itemsPerPage;
             _lastPageSize = _itemsAvailable % _itemsPerPage;
