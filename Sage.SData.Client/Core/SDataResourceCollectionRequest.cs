@@ -113,7 +113,7 @@ namespace Sage.SData.Client.Core
         {
             if(Reader == null)
             {
-                Reader = new AtomFeedReader(Service, feed, this.Count, this);
+                Reader = new AtomFeedReader(Service, feed, this);
             }
             return Reader.Read();
         }
