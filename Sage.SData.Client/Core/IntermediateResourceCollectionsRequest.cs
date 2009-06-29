@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Sage.SData.Client.Atom;
+﻿using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Core
 {
@@ -17,6 +14,7 @@ namespace Sage.SData.Client.Core
     public class IntermediateResourceCollectionsRequest : IntermediateDataSetsRequest
     {
         private string _dataSet;
+
         /// <summary>
         /// Accessor method for dataSet
         /// </summary>
@@ -31,51 +29,50 @@ namespace Sage.SData.Client.Core
         public string DataSet
         {
             get { return _dataSet; }
-            set { _dataSet = value;}
+            set { _dataSet = value; }
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
-         public IntermediateResourceCollectionsRequest(ISDataService service)
+        public IntermediateResourceCollectionsRequest(ISDataService service)
             : base(service)
         {
-             ContractName = service.ContractName;
+            ContractName = service.ContractName;
         }
 
-         /// <summary>
-         /// Reads the AtomFeed for enumeration of resource collections
-         /// </summary>
-         /// <returns>AtomFeed</returns>
-         /// <example>
-         ///     <code lang="cs" title="The following code example demonstrates the usage of the IntermediateResourceCollectionsRequest class.">
-         ///         <code 
-         ///             source=".\Example.cs" 
-         ///             region="READ Enumeration of Resource Collections" 
-         ///         />
-         ///     </code>
-         /// </example>
-         public new AtomFeed Read()
-         {
-             return Service.ReadFeed(this);
-         }
+        /// <summary>
+        /// Reads the AtomFeed for enumeration of resource collections
+        /// </summary>
+        /// <returns>AtomFeed</returns>
+        /// <example>
+        ///     <code lang="cs" title="The following code example demonstrates the usage of the IntermediateResourceCollectionsRequest class.">
+        ///         <code 
+        ///             source=".\Example.cs" 
+        ///             region="READ Enumeration of Resource Collections" 
+        ///         />
+        ///     </code>
+        /// </example>
+        public new AtomFeed Read()
+        {
+            return Service.ReadFeed(this);
+        }
 
-         /// <summary>
-         /// Converts this request to a string
-         /// </summary>
-         /// <returns>url version of the request</returns>
+        /// <summary>
+        /// Converts this request to a string
+        /// </summary>
+        /// <returns>url version of the request</returns>
         public override string ToString()
         {
             string retval =
-                this.Protocol + "://" +
-                this.ServerName + "/" +
-                this.VirtualDirectory + "/" +
-                this.Application + "/" +
-                this.ContractName + "/" +
-                this.DataSet;
+                Protocol + "://" +
+                ServerName + "/" +
+                VirtualDirectory + "/" +
+                Application + "/" +
+                ContractName + "/" +
+                DataSet;
             return retval;
-
         }
     }
 }

@@ -23,47 +23,48 @@ namespace Sage.SData.Client.Core
         public Queue Requests
         {
             get { return _requests; }
-            set{ _requests = value;}
+            set { _requests = value; }
         }
 
         private AtomFeed _feed;
+
         /// <summary>
         /// Feed for the batch request
         /// </summary>
         public AtomFeed Feed
         {
-            get{ return _feed;}
-            set{ _feed = value;}
+            get { return _feed; }
+            set { _feed = value; }
         }
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
-         public SDataBatchRequest(ISDataService service)
+        public SDataBatchRequest(ISDataService service)
             : base(service)
         {
-             _requests = new Queue();
-             BatchProcess.Instance.CurrentStack.Push(this);
-             
+            _requests = new Queue();
+            BatchProcess.Instance.CurrentStack.Push(this);
         }
 
-         /// <summary>
-         /// Processes the request asynchronously
-         /// </summary>
-         /// <param name="uuid">unique identifier for the asynch transaction</param>
-         /// <returns>AsyncRequest object to manage the transaction</returns>
-         /// <example>
-         ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataBatchRequest class.">
-         ///         <code 
-         ///             source=".\Example.cs" 
-         ///             region="CREATE a BATCH Operation (Asynchronous)" 
-         ///         />
-         ///     </code>
-         /// </example>
-         public new AsyncRequest CreateAsync(string uuid)
-         {
-             throw new NotImplementedException();
-         }
+        /// <summary>
+        /// Processes the request asynchronously
+        /// </summary>
+        /// <param name="uuid">unique identifier for the asynch transaction</param>
+        /// <returns>AsyncRequest object to manage the transaction</returns>
+        /// <example>
+        ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataBatchRequest class.">
+        ///         <code 
+        ///             source=".\Example.cs" 
+        ///             region="CREATE a BATCH Operation (Asynchronous)" 
+        ///         />
+        ///     </code>
+        /// </example>
+        public AsyncRequest CreateAsync(string uuid)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// return the formatted url string
@@ -71,27 +72,27 @@ namespace Sage.SData.Client.Core
         /// <returns></returns>
         public override string ToString()
         {
-            string retval = string.Empty;
-            if (this.ResourceKind != string.Empty && ResourceKind != null)
+            string retval;
+            if (!string.IsNullOrEmpty(ResourceKind))
             {
                 retval =
-                    this.Protocol + "://" +
-                    this.ServerName + "/" +
-                    this.VirtualDirectory + "/" +
-                    this.Application + "/" +
-                    this.ContractName + "/" +
-                    this.DataSet + "/" +
-                    this.ResourceKind + "/" + _batch;
+                    Protocol + "://" +
+                    ServerName + "/" +
+                    VirtualDirectory + "/" +
+                    Application + "/" +
+                    ContractName + "/" +
+                    DataSet + "/" +
+                    ResourceKind + "/" + _batch;
             }
             else
             {
                 retval =
-                    this.Protocol + "://" +
-                    this.ServerName + "/" +
-                    this.VirtualDirectory + "/" +
-                    this.Application + "/" +
-                    this.ContractName + "/" +
-                    this.DataSet + "/" + _batch;
+                    Protocol + "://" +
+                    ServerName + "/" +
+                    VirtualDirectory + "/" +
+                    Application + "/" +
+                    ContractName + "/" +
+                    DataSet + "/" + _batch;
             }
 
             return retval;
@@ -104,7 +105,7 @@ namespace Sage.SData.Client.Core
         {
             AtomFeed feed = new AtomFeed();
             feed.Title = new AtomTextConstruct("Batch");
-            feed.Id = new AtomId(new Uri(this.ToString()));
+            feed.Id = new AtomId(new Uri(ToString()));
             feed.UpdatedOn = DateTime.Now;
 
             XPathNavigator feed_nav = feed.CreateNavigator();
@@ -123,7 +124,7 @@ namespace Sage.SData.Client.Core
 
                 if (verb == "PUT" || verb == "POST")
                 {
-                    entry.Load(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(request[2])));
+                    entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(request[2])));
                 }
 
                 XmlDocument doc = new XmlDocument();

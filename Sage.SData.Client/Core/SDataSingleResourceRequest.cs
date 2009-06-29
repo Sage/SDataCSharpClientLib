@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Sage.SData.Client.Atom;
+﻿using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
 
 namespace Sage.SData.Client.Core
@@ -11,24 +8,10 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataSingleResourceRequest : SDataApplicationRequest
     {
-        //private string _resourceKind;
-
-        /// <summary>
-        /// Accessor method for resourceKind
-        /// </summary>
-        /// <remarks>
-        /// This URL segment identifies the kind of resource that is queried (account, contact, salesOrder, etc.)
-        /// This URL returns the collection of all account resources, as an Atom feed. 
-        /// If the contract exposes a large number of resources kinds, a functional group can be inserted before the 
-        /// resource kind segment (eventually a hierarchy of functional groups), which act as a folder (a hierarchy of folders) to organize the resources.
-        /// Typical functional groups would be financials, commercials, HR, etc.
-        /// </remarks>
-
-
-
         private AtomEntry _entry;
+
         /// <summary>
-        /// accessor method for entry
+        /// Accessor method for entry
         /// </summary>
         /// <remarks>
         /// this atom entry will be filled with the return from a resource template request and should be used for creating 
@@ -36,11 +19,12 @@ namespace Sage.SData.Client.Core
         /// </remarks>
         public AtomEntry Entry
         {
-            get{ return _entry;}
+            get { return _entry; }
             set { _entry = value; }
         }
-        
+
         private string _resourceSelector;
+
         /// <summary>
         /// Accessor method for resourceSelector can be null
         /// </summary>
@@ -58,25 +42,27 @@ namespace Sage.SData.Client.Core
         }
 
 
-
         private string _include;
+
         /// <summary>
         /// 
         /// </summary>
         public string Include
         {
-            get { return _include; }   
-            set { _include = value;}
+            get { return _include; }
+            set { _include = value; }
         }
+
         /// <summary>
         /// constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
-         public SDataSingleResourceRequest(ISDataService service)
+        public SDataSingleResourceRequest(ISDataService service)
             : base(service)
         {
             Include = string.Empty;
         }
+
         /// <summary>
         /// initializes the single resource request and loads the atom entry
         /// </summary>
@@ -84,45 +70,42 @@ namespace Sage.SData.Client.Core
         /// SDataTemplateResourceRequest</remarks>
         /// <param name="service"></param>
         /// <param name="entry"></param>
-        public SDataSingleResourceRequest(ISDataService service, AtomEntry entry)
-        {
-
-        }
+        public SDataSingleResourceRequest(ISDataService service, AtomEntry entry) {}
 
 
         /// <summary>
         /// Reads the AtomEntry for the single resource request
         /// </summary>
         /// <returns>AtomEntry</returns>
-         /// <example>
-         ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataSingleResourceRequest class.">
-         ///         <code 
-         ///             source=".\Example.cs" 
-         ///             region="READ a Single Resource Entry" 
-         ///         />
-         ///     </code>
-         /// </example>
+        /// <example>
+        ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataSingleResourceRequest class.">
+        ///         <code 
+        ///             source=".\Example.cs" 
+        ///             region="READ a Single Resource Entry" 
+        ///         />
+        ///     </code>
+        /// </example>
         public AtomEntry Read()
         {
             return Service.ReadEntry(this);
         }
-        
+
         /// <summary>
         /// Creates the AtomEntry for the single resource request
         /// </summary>
         /// <returns>AtomEntry</returns>
-         /// <example>
-         ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataSingleResourceRequest class.">
-         ///         <code 
-         ///             source=".\Example.cs" 
+        /// <example>
+        ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataSingleResourceRequest class.">
+        ///         <code 
+        ///             source=".\Example.cs" 
         ///             region="CREATE Single Resource Entry" 
-         ///         />
-         ///     </code>
-         /// </example>
+        ///         />
+        ///     </code>
+        /// </example>
         public AtomEntry Create()
         {
             ISyndicationResource result;
-            result = Service.Create(this, this.Entry);
+            result = Service.Create(this, Entry);
             AtomEntry entry = result as AtomEntry;
             return entry;
         }
@@ -142,7 +125,7 @@ namespace Sage.SData.Client.Core
         public AtomEntry Update()
         {
             ISyndicationResource result;
-            result = Service.Update(this, this.Entry);
+            result = Service.Update(this, Entry);
             AtomEntry entry = result as AtomEntry;
             return entry;
         }
@@ -187,22 +170,21 @@ namespace Sage.SData.Client.Core
             }
 
 
-            retval = this.Protocol + "://" +
-                     this.ServerName + "/" +
-                     this.VirtualDirectory + "/" +
-                     this.Application + "/" +
-                     this.ContractName + "/" +
-                     this.DataSet + "/" +
-                     this.ResourceKind +
-                     this.ResourceSelector;
+            retval = Protocol + "://" +
+                     ServerName + "/" +
+                     VirtualDirectory + "/" +
+                     Application + "/" +
+                     ContractName + "/" +
+                     DataSet + "/" +
+                     ResourceKind +
+                     ResourceSelector;
 
-            if(Include != string.Empty)
+            if (Include != string.Empty)
             {
                 retval += "?include=" + Include;
             }
 
             return retval;
         }
-
     }
 }

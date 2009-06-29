@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Sage.SData.Client.Atom;
+﻿using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Core
 {
@@ -14,6 +11,7 @@ namespace Sage.SData.Client.Core
     public class IntermediateContractsRequest : IntermediateApplicationsRequest
     {
         private string _application;
+
         /// <summary>
         /// Accessor method for application
         /// </summary>
@@ -21,17 +19,15 @@ namespace Sage.SData.Client.Core
         public string Application
         {
             get { return _application; }
-            set { _application = value;}
+            set { _application = value; }
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
-        public IntermediateContractsRequest(ISDataService service) : base(service)
-        {
-
-        }
+        public IntermediateContractsRequest(ISDataService service)
+            : base(service) {}
 
         /// <summary>
         /// Reads the AtomFeed for enumeration of contracts
@@ -57,10 +53,10 @@ namespace Sage.SData.Client.Core
         public override string ToString()
         {
             string retval =
-                this.Protocol + "://" +
-                this.ServerName + "/" +
-                this.VirtualDirectory + "/" +
-                this.Application;
+                Protocol + "://" +
+                ServerName + "/" +
+                VirtualDirectory + "/" +
+                Application;
 
             return retval;
         }

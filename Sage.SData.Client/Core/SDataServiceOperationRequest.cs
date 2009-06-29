@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Sage.SData.Client.Atom;
+﻿using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Core
 {
@@ -21,41 +18,39 @@ namespace Sage.SData.Client.Core
         /// The $service component may be placed after the contract segment (after test in the example above), 
         /// if it applies globally to the entire contract or it may be placed after the resource kind segment (as in the example above), if it applies to resources of a specific kind.
         /// </remarks>
-        public string OperationName
-        {
-            get; set;
-        }
+        public string OperationName { get; set; }
 
+        private AtomEntry _entry;
+
+        public AtomEntry Entry
+        {
+            get { return _entry; }
+            set { _entry = value; }
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
-         public SDataServiceOperationRequest(SDataService service)
-            : base(service)
-        {
-
-        }
+        public SDataServiceOperationRequest(ISDataService service)
+            : base(service) {}
 
 
         /// <summary>
         /// Creates POST to the server
         /// </summary>
         /// <returns>AtomFeed returned from the server</returns>
-         /// <example>
-         ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataServiceOperationRequest class.">
-         ///         <code 
-         ///             source=".\Example.cs" 
-         ///             region="CREATE a Service Operation (Synchronous)" 
-         ///         />
-         ///     </code>
-         /// </example>
-        public AtomFeed Create()
+        /// <example>
+        ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataServiceOperationRequest class.">
+        ///         <code 
+        ///             source=".\Example.cs" 
+        ///             region="CREATE a Service Operation (Synchronous)" 
+        ///         />
+        ///     </code>
+        /// </example>
+        public AtomEntry Create()
         {
-            throw new NotImplementedException();
+            return Service.Create(this, Entry) as AtomEntry;
         }
-
-       
-
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Text;
-using Sage.SData.Client.Atom;
+﻿using System.Collections;
 
 namespace Sage.SData.Client.Core
 {
@@ -10,31 +7,34 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public sealed class BatchProcess
     {
-        static readonly BatchProcess instance = new BatchProcess();
+        private static readonly BatchProcess instance = new BatchProcess();
 
-        private Stack _stack;
+        private readonly Stack _stack;
 
         /// <summary>
         /// Current stack
         /// </summary>
         public Stack CurrentStack
         {
-            get{return _stack;}
+            get { return _stack; }
         }
+
         /// <summary>
         /// The only instance of the BatchProcess class
         /// </summary>
         public static BatchProcess Instance
         {
-            get{ return instance;}
+            get { return instance; }
         }
+
         /// <summary>
         /// Default constructor
         /// </summary>
         public BatchProcess()
         {
-            _stack = new Stack();    
+            _stack = new Stack();
         }
+
         /// <summary>
         /// Adds a url to the batch for processing
         /// </summary>
@@ -43,9 +43,6 @@ namespace Sage.SData.Client.Core
         {
             SDataBatchRequest batchRequest = _stack.Peek() as SDataBatchRequest;
             batchRequest.Requests.Enqueue(batchitem);
-
         }
-
-    
     }
 }

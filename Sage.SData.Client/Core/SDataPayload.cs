@@ -17,7 +17,7 @@ namespace Sage.SData.Client.Core
         public XPathNavigator Payload
         {
             get { return _payload; }
-            set { _payload = value;}
+            set { _payload = value; }
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Sage.SData.Client.Core
         public AtomEntry Parent
         {
             get { return _parent; }
-            set{ _parent = value;}
+            set { _parent = value; }
         }
 
         /// <summary>
@@ -39,6 +39,5 @@ namespace Sage.SData.Client.Core
             Payload = payload;
             Parent = parent;
         }
-
     }
 }

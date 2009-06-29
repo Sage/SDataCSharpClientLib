@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
-#if NET3_5
-using System.Linq;
-#endif
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
+
 namespace Sage.SData.Client.Core
 {
     /// <summary>
@@ -23,7 +20,6 @@ namespace Sage.SData.Client.Core
     /// </example>
     public class AsyncRequest
     {
-
         private string _phase;
         private string _phaseDetail;
         private decimal _progress;
@@ -52,7 +48,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         public string Phase
         {
-            get{ return _phase;}
+            get { return _phase; }
             set { _phase = value; }
         }
 
@@ -62,8 +58,9 @@ namespace Sage.SData.Client.Core
         public string PhaseDetail
         {
             get { return _phaseDetail; }
-            set { _phaseDetail = value;}
+            set { _phaseDetail = value; }
         }
+
         /// <summary>
         /// the amount of the process completed
         /// </summary>
@@ -80,7 +77,7 @@ namespace Sage.SData.Client.Core
         public int ElapsedSeconds
         {
             get { return _elapsedSeconds; }
-            set{ _elapsedSeconds = value;}
+            set { _elapsedSeconds = value; }
         }
 
         /// <summary>
@@ -90,7 +87,7 @@ namespace Sage.SData.Client.Core
         public int RemainingSeconds
         {
             get { return _remainingSeconds; }
-            set{ _remainingSeconds = value;}
+            set { _remainingSeconds = value; }
         }
 
         /// <summary>
@@ -110,13 +107,12 @@ namespace Sage.SData.Client.Core
         public string TrackingID
         {
             get { return _trackingID; }
-            set{ _trackingID = value;}
+            set { _trackingID = value; }
         }
 
         /// <summary>
         /// The response from the web request
         /// </summary>
-       
         /*
         public XDocument XmlDoc
         {
@@ -130,7 +126,7 @@ namespace Sage.SData.Client.Core
         public ISyndicationResource Response
         {
             get { return _response; }
-            set{ _response = value;}
+            set { _response = value; }
         }
 
         /// <summary>
@@ -139,7 +135,7 @@ namespace Sage.SData.Client.Core
         public string TrackingUrl
         {
             get { return _trackingUrl; }
-            set{ _trackingUrl = value;}
+            set { _trackingUrl = value; }
         }
 
         /// <summary>
@@ -150,28 +146,28 @@ namespace Sage.SData.Client.Core
         {
             string xml = _service.Read(TrackingUrl);
             XmlDocument doc = new XmlDocument();
-            doc.Load(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xml)));
+            doc.Load(new MemoryStream(Encoding.UTF8.GetBytes(xml)));
 
             XmlNode node = doc.SelectSingleNode("sdata:tracking");
 
 
             // we are still processing the request
-            if(node != null)
+            if (node != null)
             {
-                this.Phase = doc.SelectSingleNode("sdata:phase").InnerXml;
-                this.PhaseDetail = doc.SelectSingleNode("sdata:phaseDetail").InnerXml;
-                this.Progress = Convert.ToDecimal(doc.SelectSingleNode("sdata:progress").InnerXml);
-                this.ElapsedSeconds = Convert.ToInt32(doc.SelectSingleNode("sdata:elapsedSeconds").InnerXml);
-                this.RemainingSeconds = Convert.ToInt32(doc.SelectSingleNode("sdata:remainingSeconds").InnerXml);
+                Phase = doc.SelectSingleNode("sdata:phase").InnerXml;
+                PhaseDetail = doc.SelectSingleNode("sdata:phaseDetail").InnerXml;
+                Progress = Convert.ToDecimal(doc.SelectSingleNode("sdata:progress").InnerXml);
+                ElapsedSeconds = Convert.ToInt32(doc.SelectSingleNode("sdata:elapsedSeconds").InnerXml);
+                RemainingSeconds = Convert.ToInt32(doc.SelectSingleNode("sdata:remainingSeconds").InnerXml);
             }
             else
             {
                 node = doc.SelectSingleNode("feed");
-                if(node != null)
+                if (node != null)
                 {
                     // its a feed
                     AtomFeed feed = new AtomFeed();
-                    feed.Load(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xml)));
+                    feed.Load(new MemoryStream(Encoding.UTF8.GetBytes(xml)));
                     Response = feed;
                 }
                 else
@@ -179,16 +175,14 @@ namespace Sage.SData.Client.Core
                     // its an entry
                     // we should be done
                     AtomEntry entry = new AtomEntry();
-                    entry.Load(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xml)));
+                    entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(xml)));
                     Response = entry;
                 }
 
 
                 // now we have to delete this thing, the clean up from the SData Spec
-                _service.Delete(this.TrackingUrl);
-        
+                _service.Delete(TrackingUrl);
             }
         }
     }
-
 }

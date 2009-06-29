@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Sage.SData.Client.Atom;
+﻿using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Core
 {
@@ -16,10 +13,8 @@ namespace Sage.SData.Client.Core
         /// Constructor 
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
-        public IntermediateApplicationsRequest(ISDataService service) : base(service)
-        {
-            
-        }
+        public IntermediateApplicationsRequest(ISDataService service)
+            : base(service) {}
 
         /// <summary>
         /// Reads the AtomFeed for enumeration of applications
@@ -45,13 +40,12 @@ namespace Sage.SData.Client.Core
         /// <returns>formatted string</returns>
         public override string ToString()
         {
-            string retval = 
-                    this.Protocol + "://" + 
-                    this.ServerName + "/" +
-                this.VirtualDirectory;
+            string retval =
+                Protocol + "://" +
+                ServerName + "/" +
+                VirtualDirectory;
 
             return retval;
-
         }
     }
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Sage.SData.Client.Atom;
 
-namespace Sage.SData.Client.Core    
+namespace Sage.SData.Client.Core
 {
     /// <summary>
     /// SData Resource Property URL
@@ -11,6 +10,7 @@ namespace Sage.SData.Client.Core
     public class SDataResourcePropertyRequest : SDataSingleResourceRequest
     {
         private Dictionary<int, string> _resourceProperties;
+
         /// <summary>
         /// Dictionary containing the resource properties
         /// </summary>
@@ -36,6 +36,7 @@ namespace Sage.SData.Client.Core
         }
 
         private Dictionary<string, string> _queryValues;
+
         /// <summary>
         ///  Dictionary of query name value pairs
         /// </summary>
@@ -53,50 +54,50 @@ namespace Sage.SData.Client.Core
         /// Constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
-         public SDataResourcePropertyRequest(ISDataService service)
+        public SDataResourcePropertyRequest(ISDataService service)
             : base(service)
         {
-             _resourceProperties = new Dictionary<int, string>();
-             QueryValues = new Dictionary<string, string>();
+            _resourceProperties = new Dictionary<int, string>();
+            QueryValues = new Dictionary<string, string>();
         }
 
 
-         /// <summary>
-         /// Reads the AtomFeed for the resource property
-         /// </summary>
-         /// <returns>AtomFeed</returns>
-         /// <example>
-         ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataResourceProperty class.">
-         ///         <code 
-         ///             source=".\Example.cs" 
-         ///             region="READ a Resource Property Request (AtomFeed)" 
-         ///         />
-         ///     </code>
-         /// </example>
-         public AtomFeed ReadFeed()
-         {
-             return Service.ReadFeed(this);
-         }
+        /// <summary>
+        /// Reads the AtomFeed for the resource property
+        /// </summary>
+        /// <returns>AtomFeed</returns>
+        /// <example>
+        ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataResourceProperty class.">
+        ///         <code 
+        ///             source=".\Example.cs" 
+        ///             region="READ a Resource Property Request (AtomFeed)" 
+        ///         />
+        ///     </code>
+        /// </example>
+        public AtomFeed ReadFeed()
+        {
+            return Service.ReadFeed(this);
+        }
 
 
-         /// <summary>
-         /// Reads the AtomEntry for the resource property
-         /// </summary>
-         /// <returns>AtomEntry</returns>
-         /// <example>
-         ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataResourcePropertyRequest class.">
-         ///         <code 
-         ///             source=".\Example.cs" 
-         ///             region="READ a Resource Property (AtomEntry)" 
-         ///         />
-         ///     </code>
-         /// </example>
-         public new AtomEntry Read()
-         {
-             return Service.ReadEntry(this);
-         }
+        /// <summary>
+        /// Reads the AtomEntry for the resource property
+        /// </summary>
+        /// <returns>AtomEntry</returns>
+        /// <example>
+        ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataResourcePropertyRequest class.">
+        ///         <code 
+        ///             source=".\Example.cs" 
+        ///             region="READ a Resource Property (AtomEntry)" 
+        ///         />
+        ///     </code>
+        /// </example>
+        public new AtomEntry Read()
+        {
+            return Service.ReadEntry(this);
+        }
 
-         
+
         /// <summary>
         /// gets the string version of this SData URL
         /// </summary>
@@ -120,21 +121,19 @@ namespace Sage.SData.Client.Core
             }
 
 
-            retval = this.Protocol + "://" +
-                     this.ServerName + "/" +
-                     this.VirtualDirectory + "/" +
-                     this.Application + "/" +
-                     this.ContractName + "/" +
-                     this.DataSet + "/" +
-                     this.ResourceKind +
-                     this.ResourceSelector;
+            retval = Protocol + "://" +
+                     ServerName + "/" +
+                     VirtualDirectory + "/" +
+                     Application + "/" +
+                     ContractName + "/" +
+                     DataSet + "/" +
+                     ResourceKind +
+                     ResourceSelector;
 
 
-            if(ResourceProperties.Count == 0)
+            if (ResourceProperties.Count == 0)
             {
-
                 throw new Exception("No Resource Properties Set");
-               
             }
             else
             {
@@ -155,7 +154,6 @@ namespace Sage.SData.Client.Core
                 {
                     if (x != 0)
                     {
-
                         retval += "&" + values.Key + "=" + values.Value;
                     }
                     else
@@ -166,7 +164,7 @@ namespace Sage.SData.Client.Core
                     x++;
                 }
             }
-            
+
 
             return retval;
         }

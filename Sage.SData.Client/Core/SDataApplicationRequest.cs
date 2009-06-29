@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Sage.SData.Client.Core
 {
@@ -10,17 +8,19 @@ namespace Sage.SData.Client.Core
     public class SDataApplicationRequest : SDataBaseRequest
     {
         private string _application;
+
         /// <summary>
         /// Accessor method for application
         /// </summary>
         /// <remarks>the application name</remarks>
         public string Application
         {
-            get{ return _application;}
+            get { return _application; }
             set { _application = value; }
         }
 
         private string _contractName;
+
         /// <summary>
         /// Accessor method for contractName
         /// </summary>
@@ -32,10 +32,11 @@ namespace Sage.SData.Client.Core
         public string ContractName
         {
             get { return _contractName; }
-            set{ _contractName = value;}
+            set { _contractName = value; }
         }
 
         private string _dataSet;
+
         /// <summary>
         /// Accessor method for dataSet
         /// </summary>
@@ -49,12 +50,13 @@ namespace Sage.SData.Client.Core
         ///</remarks>
         public string DataSet
         {
-            get{ return _dataSet;}
+            get { return _dataSet; }
             set { _dataSet = value; }
         }
 
 
         private string _resourceKind;
+
         /// <summary>
         /// Accessor method for resourceKind
         /// </summary>
@@ -75,20 +77,18 @@ namespace Sage.SData.Client.Core
         /// Constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
-        public SDataApplicationRequest(ISDataService service) : base(service)
+        public SDataApplicationRequest(ISDataService service)
+            : base(service)
         {
-            this.Application = service.ApplicationName;
-            this.ContractName = service.ContractName;
-            this.DataSet = service.DataSet;
+            Application = service.ApplicationName;
+            ContractName = service.ContractName;
+            DataSet = service.DataSet;
         }
 
         /// <summary>
         /// parameterless constructor
         /// </summary>
-        protected SDataApplicationRequest()
-        {
-            
-        }
+        protected SDataApplicationRequest() {}
 
         /// <summary>
         /// gets the string version of this SData URL

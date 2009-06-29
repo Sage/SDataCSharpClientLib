@@ -1,55 +1,55 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
 using NUnit.Framework;
-using Sage.SData.Client.Core;
+using NUnit.Framework.SyntaxHelpers;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
+using Sage.SData.Client.Core;
 using Sage.SData.Client.Extensions;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Sage.SData.Client.Test
 {
     [TestFixture]
-    public class Class1 : NUnit.Framework.AssertionHelper
+    public class Class1 : AssertionHelper
     {
         private bool bUseTestSerivce = true;
+
         [Test]
         public void verify_canconstruct_SDataService()
         {
             var a = new SDataService();
             Expect(a, Is.Not.Null);
         }
+
         [Test]
         public void verify_canconstructwithurl_SDataService()
         {
             var a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/employees", "lee", "");
             Expect(a, Is.Not.Null);
         }
+
         [Test]
         public void verity_caninitialize_SDataService()
         {
             var a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/employees", "lee", "");
-            
+
             Expect(a.UserName, Is.Not.Null);
             Expect(a.UserName == "lee");
-            
+
             Expect(a.Password, Is.Not.Null);
             Expect(a.Password == "");
-            
+
             Expect(a.Protocol, Is.Not.Null);
             Expect(a.Protocol == "http");
-            
+
             Expect(a.ServerName, Is.Not.Null);
             Expect(a.ServerName == "localhost:59213");
-            
+
             Expect(a.VirtualDirectory, Is.Not.Null);
             Expect(a.VirtualDirectory == "sdata");
-            
+
             Expect(a.ApplicationName, Is.Not.Null);
             Expect(a.ApplicationName == "aw");
 
@@ -59,11 +59,12 @@ namespace Sage.SData.Client.Test
             Expect(a.DataSet, Is.Not.Null);
             Expect(a.DataSet == "-");
         }
+
         [Test]
         public void verify_canreadatomfeed_SDataService()
         {
             ISDataService a;
-            if(bUseTestSerivce)
+            if (bUseTestSerivce)
                 a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
             else
                 a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
@@ -75,6 +76,7 @@ namespace Sage.SData.Client.Test
             AtomFeed feed = a.ReadFeed(b);
             Expect(feed, Is.Not.Null);
         }
+
         [Test]
         public void verify_canread_SDataResourceSchemaRequest()
         {
@@ -91,9 +93,8 @@ namespace Sage.SData.Client.Test
             XmlSchema schema = b.Read();
 
             Expect(schema, Is.Not.Null);
-
         }
-        
+
 
         [Test]
         public void verify_cancontruct_IntermediateApplicationsRequest()
@@ -107,7 +108,6 @@ namespace Sage.SData.Client.Test
 
             var b = new IntermediateApplicationsRequest(a);
             Expect(b, Is.Not.Null);
-            
         }
 
         [Test]
@@ -138,8 +138,7 @@ namespace Sage.SData.Client.Test
             a.Initialize();
 
             var b = new IntermediateApplicationsRequest(a);
-            AtomFeed feed = b.Read();
-           
+            b.Read();
         }
 
         [Test]
@@ -155,6 +154,7 @@ namespace Sage.SData.Client.Test
             var b = new IntermediateContractsRequest(a);
             Expect(b, Is.Not.Null);
         }
+
         [Test]
         public void verify_tostring_IntermediateContractsRequest()
         {
@@ -170,6 +170,7 @@ namespace Sage.SData.Client.Test
             string url = b.ToString();
             Expect(url == "http://localhost:59213/sdata/aw");
         }
+
         [Test]
         public void verify_canread_IntermediateContractsRequest()
         {
@@ -183,7 +184,7 @@ namespace Sage.SData.Client.Test
             var b = new IntermediateContractsRequest(a);
             b.Application = "aw";
             AtomFeed feed = b.Read();
-            Expect(feed,  Is.Not.Null);
+            Expect(feed, Is.Not.Null);
         }
 
         [Test]
@@ -196,7 +197,7 @@ namespace Sage.SData.Client.Test
                 a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
             a.Initialize();
 
-            var b = new IntermediateDataSetsRequest(a);
+            new IntermediateDataSetsRequest(a);
         }
 
         [Test]
@@ -215,6 +216,7 @@ namespace Sage.SData.Client.Test
             string url = b.ToString();
             Expect(url == "http://localhost:59213/sdata/aw/dynamic");
         }
+
         [Test]
         public void verify_canread_IntermediateDataSetsRequest()
         {
@@ -243,9 +245,10 @@ namespace Sage.SData.Client.Test
             a.Initialize();
 
             var b = new IntermediateResourceCollectionsRequest(a);
-           
+
             Expect(b, Is.Not.Null);
         }
+
         [Test]
         public void verify_tostring_IntermediateResourceCollectionsRequest()
         {
@@ -263,6 +266,7 @@ namespace Sage.SData.Client.Test
 
             Expect(url == "http://localhost:59213/sdata/aw/dynamic/-");
         }
+
         [Test]
         public void verify_canread_IntermediateResourceCollectionsRequest()
         {
@@ -292,7 +296,7 @@ namespace Sage.SData.Client.Test
             a.Initialize();
 
             var b = new IntermediateServicesRequest(a);
-            
+
             Expect(b, Is.Not.Null);
         }
 
@@ -341,9 +345,10 @@ namespace Sage.SData.Client.Test
             a.Initialize();
 
             var b = new SDataResourceCollectionRequest(a);
-            
+
             Expect(b, Is.Not.Null);
         }
+
         [Test]
         public void verify_tostringwithpageing_SDataResourceCollectionsRequest()
         {
@@ -415,8 +420,8 @@ namespace Sage.SData.Client.Test
             //b.QueryValues.Add("where", "gender eq m");
             //b.QueryValues.Add("orderBy", "HireDate DESC");
 
-            AtomFeed feed = b.Read();
-            
+            b.Read();
+
             Expect(b, Is.Not.Null);
         }
 
@@ -435,13 +440,11 @@ namespace Sage.SData.Client.Test
 
             b.Count = 10;
             b.StartIndex = 1;
-            
-            AtomFeed feed = b.Read();
 
-            
+            b.Read();
+
+
             Expect(b.Reader, Is.Null);
-
-            
         }
 
         [Test]
@@ -514,9 +517,6 @@ namespace Sage.SData.Client.Test
             Expect(result == "http://localhost:59213/sdata/aw/dynamic/-/employees(1)?include=contact");
         }
 
-        
-
-
 
         [Test]
         public void verify_canprocess_SDataBatchRequest()
@@ -531,7 +531,7 @@ namespace Sage.SData.Client.Test
             var b = new SDataSingleResourceRequest(a);
             b.ResourceKind = "employees";
             b.ResourceSelector = "(1)";
-            
+
             var c = new SDataSingleResourceRequest(a);
             c.ResourceKind = "employees";
             c.ResourceSelector = "(2)";
@@ -541,7 +541,6 @@ namespace Sage.SData.Client.Test
             XPathNavigator payload = entry1.GetSDataPayload();
             if (payload != null)
             {
-
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(payload.OuterXml);
                 XPathNavigator employee = doc.DocumentElement.CreateNavigator();
@@ -551,12 +550,11 @@ namespace Sage.SData.Client.Test
                 XPathNavigator title = employee.SelectSingleNode(".//aw:MaritalStatus", manager);
                 title.SetValue("Married");
                 entry1.SetSDataPayload(payload);
-
             }
 
             c.Entry = entry1;
-            
-            
+
+
             var d = new SDataSingleResourceRequest(a);
             d.ResourceKind = "employees";
             d.ResourceSelector = "(3)";
@@ -598,13 +596,11 @@ namespace Sage.SData.Client.Test
             AtomEntry entry = b.Read();
 
             Expect(entry, Is.Not.Null);
-            
         }
 
         [Test]
         public void verify_cancreate_SDataSingleResourceRequest()
         {
-
             ISDataService a;
             if (bUseTestSerivce)
                 a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
@@ -614,7 +610,7 @@ namespace Sage.SData.Client.Test
 
             var b = new SDataTemplateResourceRequest(a);
             b.ResourceKind = "employees";
-            
+
             AtomEntry templateentry = b.Read();
 
             SDataSingleResourceRequest c = new SDataSingleResourceRequest(a);
@@ -628,8 +624,8 @@ namespace Sage.SData.Client.Test
             XmlNamespaceManager manager = new XmlNamespaceManager(payload.NameTable);
             manager.AddNamespace("a", "http://schemas.sage.com/dynamic/2007");
             employee.MoveToFirst();
-            
-            
+
+
             XPathNavigator title = employee.SelectSingleNode(".//a:Title", manager);
             title.SetValue("create 1");
 
@@ -644,10 +640,10 @@ namespace Sage.SData.Client.Test
 
             XPathNavigator birthdate = employee.SelectSingleNode(".//a:BirthDate", manager);
             birthdate.SetValue(SyndicationDateTimeUtility.ToRfc3339DateTime(new DateTime(1970, 8, 2)));
-           
+
 
             XPathNavigator hiredate = employee.SelectSingleNode(".//a:HireDate", manager);
-            
+
             hiredate.SetValue(SyndicationDateTimeUtility.ToRfc3339DateTime(DateTime.Now));
 
             XPathNavigator modifieddate = employee.SelectSingleNode(".//a:ModifiedDate", manager);
@@ -663,12 +659,12 @@ namespace Sage.SData.Client.Test
 
             XPathNavigator currentflag = employee.SelectSingleNode(".//a:CurrentFlag", manager);
             currentflag.SetValue(XmlConvert.ToString(true));
-            
+
             XPathNavigator gender = employee.SelectSingleNode(".//a:Gender", manager);
             gender.SetValue("Male");
 
             XPathNavigator guid = employee.SelectSingleNode(".//a:RowGuid", manager);
-            guid.SetValue(System.Guid.NewGuid().ToString());
+            guid.SetValue(Guid.NewGuid().ToString());
 
             templateentry.SetSDataPayload(employee);
 
@@ -679,7 +675,6 @@ namespace Sage.SData.Client.Test
             AtomEntry newentry = c.Create();
 
             Expect(newentry, Is.Not.Null);
-           
         }
 
         [Test]
@@ -701,7 +696,6 @@ namespace Sage.SData.Client.Test
             XPathNavigator payload = entry.GetSDataPayload();
             if (payload != null)
             {
-
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(payload.OuterXml);
                 XPathNavigator employee = doc.DocumentElement.CreateNavigator();
@@ -711,9 +705,8 @@ namespace Sage.SData.Client.Test
                 XPathNavigator title = employee.SelectSingleNode(".//a:Title", manager);
                 title.SetValue("test update");
                 entry.SetSDataPayload(payload);
-                
             }
-            
+
             b.Entry = entry;
             AtomEntry updateentry = b.Update();
 
@@ -737,7 +730,7 @@ namespace Sage.SData.Client.Test
             AtomEntry entry = b.Read();
             b.Entry = entry;
 
-            bool result  = b.Delete();
+            bool result = b.Delete();
 
             Expect(result);
         }
@@ -753,7 +746,7 @@ namespace Sage.SData.Client.Test
             a.Initialize();
 
             var b = new SDataResourcePropertyRequest(a);
-            
+
 
             Expect(b, Is.Not.Null);
         }
@@ -775,7 +768,7 @@ namespace Sage.SData.Client.Test
             b.ResourceProperties.Add(0, "LoginID");
 
             string result = b.ToString();
-            
+
             Expect(result == "http://localhost:59213/sdata/aw/dynamic/-/employees(1)/LoginID");
         }
 
@@ -800,6 +793,7 @@ namespace Sage.SData.Client.Test
 
             Expect(result == "http://localhost:59213/sdata/aw/dynamic/-/employees(1)/Address/City");
         }
+
         [Test]
         public void verify_canreadfeed_SDataResourcePropertyRequest()
         {
@@ -837,12 +831,13 @@ namespace Sage.SData.Client.Test
             b.ResourceSelector = "(1)";
 
             b.ResourceProperties.Add(0, "LoginID");
-            
+
             AtomEntry entry = b.Read();
 
 
             Expect(entry, Is.Not.Null);
         }
+
         [Test]
         public void verify_canreadcreate_SDataResourcePropertyRequest()
         {
@@ -916,9 +911,10 @@ namespace Sage.SData.Client.Test
 
             var b = new SDataTemplateResourceRequest(a);
 
-            
+
             Expect(b, Is.Not.Null);
         }
+
         [Test]
         public void verify_tostring_SDataTemplateResourceRequest()
         {
@@ -954,7 +950,5 @@ namespace Sage.SData.Client.Test
 
             Expect(b, Is.Not.Null);
         }
-
     }
-
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Sage.SData.Client.Atom;
-using Sage.SData.Client.Common;
+﻿using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Core
 {
@@ -11,18 +7,15 @@ namespace Sage.SData.Client.Core
     /// At this stage, SData only reserves the $system segment name, it does not standardize the URLs below this level.
     /// </summary>
     /// <remarks>http://sdata.acme.com/sdata/$system</remarks>
-    
     public class SDataSystemRequest : SDataBaseRequest
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
-        public SDataSystemRequest(ISDataService service) : base(service)
-        {
+        public SDataSystemRequest(ISDataService service)
+            : base(service) {}
 
-        }
-       
         /// <summary>
         /// Sends a PUT request to the server based on the URL for the request
         /// </summary>
@@ -37,9 +30,7 @@ namespace Sage.SData.Client.Core
         /// </example>
         public AtomFeed Read()
         {
-            throw new NotImplementedException();
-           
+            return Service.ReadFeed(this);
         }
-
     }
 }

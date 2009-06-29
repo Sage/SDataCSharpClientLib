@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Sage.SData.Client.Atom;
-
-namespace Sage.SData.Client.Core
+﻿namespace Sage.SData.Client.Core
 {
     /// <summary>
     /// Intermediate URL to retrieve enumeration of services
@@ -19,6 +14,7 @@ namespace Sage.SData.Client.Core
         private const string _keyword = "$service";
 
         private string _resourceKind;
+
         /// <summary>
         /// Accessor method for resourceKind
         /// </summary>
@@ -33,7 +29,7 @@ namespace Sage.SData.Client.Core
         public string ResourceKind
         {
             get { return _resourceKind; }
-            set{ _resourceKind = value;}
+            set { _resourceKind = value; }
         }
 
         /// <summary>
@@ -60,56 +56,52 @@ namespace Sage.SData.Client.Core
         //        throw e;
         //    }
         //}
-         public IntermediateServicesRequest(ISDataService service)
-            : base(service)
+        public IntermediateServicesRequest(ISDataService service)
+            : base(service) {}
+
+        /// <summary>
+        /// Converts this request to a string
+        /// </summary>
+        /// <returns>url version of the request</returns>
+        public override string ToString()
         {
-
-        }
-
-         /// <summary>
-         /// Converts this request to a string
-         /// </summary>
-         /// <returns>url version of the request</returns>
-         public override string ToString()
-         {
-
-             if(Application == string.Empty || Application == null)
-             {
-                 Application = Service.ApplicationName;
-             }
-             if(ContractName == string.Empty || ContractName == null)
-             {
-                 ContractName = Service.ContractName;
-             }
-             if(DataSet == string.Empty || DataSet == null)
-             {
-                 DataSet = Service.DataSet;
-             }
-             string retval = string.Empty;
-             if(ResourceKind == string.Empty)
-             {
+            if (Application == string.Empty || Application == null)
+            {
+                Application = Service.ApplicationName;
+            }
+            if (ContractName == string.Empty || ContractName == null)
+            {
+                ContractName = Service.ContractName;
+            }
+            if (DataSet == string.Empty || DataSet == null)
+            {
+                DataSet = Service.DataSet;
+            }
+            string retval = string.Empty;
+            if (ResourceKind == string.Empty)
+            {
                 retval =
-                this.Protocol + "://" +
-                this.ServerName + "/" +
-                this.VirtualDirectory + "/" +
-                this.Application + "/" +
-                this.ContractName + "/" +
-                this.DataSet + "/";
-             }
-             else
-             {
-                 retval =
-                     this.Protocol + "://" +
-                     this.ServerName + "/" +
-                     this.VirtualDirectory + "/" +
-                     this.Application + "/" +
-                     this.ContractName + "/" +
-                     this.DataSet + "/" +
-                     this.ResourceKind + "/";
-             }
+                    Protocol + "://" +
+                    ServerName + "/" +
+                    VirtualDirectory + "/" +
+                    Application + "/" +
+                    ContractName + "/" +
+                    DataSet + "/";
+            }
+            else
+            {
+                retval =
+                    Protocol + "://" +
+                    ServerName + "/" +
+                    VirtualDirectory + "/" +
+                    Application + "/" +
+                    ContractName + "/" +
+                    DataSet + "/" +
+                    ResourceKind + "/";
+            }
 
-             retval += _keyword;
-             return retval;
-         }
+            retval += _keyword;
+            return retval;
+        }
     }
 }

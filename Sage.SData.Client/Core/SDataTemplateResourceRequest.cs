@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Sage.SData.Client.Atom;
+﻿using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Core
 {
@@ -19,12 +16,8 @@ namespace Sage.SData.Client.Core
         /// gets the string version of this SData URL
         /// </summary>
         /// <returns>return the string </returns>
-        
-       
-        public SDataTemplateResourceRequest(ISDataService service) : base(service)
-        {
-
-        }
+        public SDataTemplateResourceRequest(ISDataService service)
+            : base(service) {}
 
         /// <summary>
         /// Converts this request to a string
@@ -49,17 +42,16 @@ namespace Sage.SData.Client.Core
             }
 
 
-            retval = this.Protocol + "://" +
-                     this.ServerName + "/" +
-                     this.VirtualDirectory + "/" +
-                     this.Application + "/" +
-                     this.ContractName + "/" +
-                     this.DataSet + "/" +
-                     this.ResourceKind +"/" + _keyWord;
+            retval = Protocol + "://" +
+                     ServerName + "/" +
+                     VirtualDirectory + "/" +
+                     Application + "/" +
+                     ContractName + "/" +
+                     DataSet + "/" +
+                     ResourceKind + "/" + _keyWord;
 
             return retval;
         }
-
 
 
         /// <summary>

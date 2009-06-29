@@ -324,7 +324,7 @@ namespace Sage.SData.Client.Core
                     }
                 }
 
-                List<SDataPayload> list = (List<SDataPayload>)_listPages[currentPage];
+                List<SDataPayload> list = (List<SDataPayload>) _listPages[currentPage];
 
                 int index = (_entryIndex - 1 - (_itemsPerPage*currentPage));
                 if (index < 0)

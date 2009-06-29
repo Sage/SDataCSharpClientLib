@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
-using System.Xml.Linq;
 using System.Xml.Schema;
+using System.Xml.XPath;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Core;
-
+using Sage.SData.Client.Extensions;
 
 namespace SDataAPIPSuedo
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
-
             SDataService service = new SDataService();
 
             // set user name to authenticate with
@@ -30,8 +28,9 @@ namespace SDataAPIPSuedo
 
             AtomFeed feed = null;
             AtomEntry entry = null;
-            
+
             #region CREATE an Entry
+
             // read the template for accounts
             SDataTemplateResourceRequest tru1 = new SDataTemplateResourceRequest(service);
             tru1.ContractName = "test";
@@ -50,13 +49,11 @@ namespace SDataAPIPSuedo
             sru1.ResourceKind = "accounts";
 
             AtomEntry newEntry = service.Create(sru1, entry) as AtomEntry;
+
             #endregion
 
-            
-
-            
-
             #region CREATE a BATCH Operaton (Synchronous)
+
             // create the BatchURL
             SDataBatchRequest sbu = new SDataBatchRequest(service);
             sbu.ContractName = "test";
@@ -64,10 +61,9 @@ namespace SDataAPIPSuedo
             sbu.DataSet = string.Empty;
             sbu.ResourceKind = "products";
             // the configuration above generates http://sdata.acme.com/sageApp/test/-/products/$batch 
-            
-            using(BatchProcess batch = new BatchProcess())
-            {
 
+            {
+                BatchProcess batch = new BatchProcess();
 
                 // read the template for accounts
                 SDataTemplateResourceRequest templateResourceRequest = new SDataTemplateResourceRequest(service);
@@ -79,26 +75,27 @@ namespace SDataAPIPSuedo
 
                 // read the entry from the server
                 AtomEntry templateEntry = service.Read(templateResourceRequest) as AtomEntry;
-                
+
                 SDataSingleResourceRequest insertRequest = new SDataSingleResourceRequest(service);
                 insertRequest.ContractName = "test";
                 // empty Data set defaults to -
                 insertRequest.DataSet = string.Empty;
                 insertRequest.ResourceKind = "accounts";
                 /*
-                 *  Do some stuff with the ntry
+                 *  Do some stuff with the entry
                  */
 
                 service.Create(insertRequest, templateEntry);
-              
+
 
                 // build, submit and get
-                AtomFeed batchffed  = batch.Commit();
+                AtomFeed batchffed = batch.Commit();
             }
 
             #endregion
 
             #region CREATE a BATCH Operation (Asynchronous)
+
             // create the BatchURL
             sbu = new SDataBatchRequest(service);
             sbu.ContractName = "test";
@@ -108,8 +105,9 @@ namespace SDataAPIPSuedo
 
             // the configuration above generates http://sdata.acme.com/sageApp/test/-/products/$batch 
 
-            using (BatchProcess batch = new BatchProcess())
             {
+                BatchProcess batch = new BatchProcess();
+
                 // read the template for accounts
                 SDataTemplateResourceRequest templateResourceRequest = new SDataTemplateResourceRequest(service);
                 templateResourceRequest.ContractName = "test";
@@ -130,8 +128,8 @@ namespace SDataAPIPSuedo
                  *  Do some stuff with the ntry
                  */
 
-                string trackingID = System.Guid.NewGuid().ToString();
-                service.CreateAsync(sbu, trackingID);
+                string trackingID = Guid.NewGuid().ToString();
+                AsyncRequest request = service.CreateAsync(sbu, trackingID);
 
 
                 // build, submit and get
@@ -149,16 +147,17 @@ namespace SDataAPIPSuedo
             #endregion
 
             #region READ a Resource Collection Feed
+
             // Read a Resource Collection Feed
             SDataResourceCollectionRequest rcu = new SDataResourceCollectionRequest(service);
             rcu.ContractName = "test";
             // default for dataset is -
             rcu.DataSet = "prod";
             rcu.ResourceKind = "accounts";
-            
+
             // pageing
             rcu.StartIndex = 21;
-            rcu.ItemsPerPage = 10;
+            rcu.Count = 10;
 
             // query
             rcu.QueryValues.Add("where", "accountid='123456789abc'");
@@ -167,9 +166,11 @@ namespace SDataAPIPSuedo
             // the above configuration generates http://sdata.acme.com/sdata/sageApp/test/prod/accounts?startIndex=21&count=10 
             // Read the feed from the server
             feed = service.Read(rcu) as AtomFeed;
+
             #endregion
 
             #region READ a Single Resource Entry
+
             // Read a Single Resource Entry
             SDataSingleResourceRequest sru = new SDataSingleResourceRequest(service);
             sru.ContractName = "test";
@@ -181,9 +182,11 @@ namespace SDataAPIPSuedo
 
             // read the entry from the server
             entry = service.Read(sru) as AtomEntry;
+
             #endregion
 
             #region READ a Resource Property
+
             SDataResourcePropertyRequest rpu = new SDataResourcePropertyRequest(service);
             rpu.ContractName = "test";
             rpu.ResourceKind = "accounts";
@@ -204,9 +207,11 @@ namespace SDataAPIPSuedo
 
             // read the feed from the server
             feed = service.Read(rpu) as AtomFeed;
+
             #endregion
 
             #region READ a Template Resource
+
             SDataTemplateResourceRequest tru = new SDataTemplateResourceRequest(service);
             tru.ContractName = "test";
             // default dataset = -
@@ -216,9 +221,11 @@ namespace SDataAPIPSuedo
 
             // read the entry from the server
             entry = service.Read(tru) as AtomEntry;
+
             #endregion
 
             #region READ a Resource Schema
+
             SDataResourceSchemaRequest rsu = new SDataResourceSchemaRequest(service);
             rsu.ContractName = "test";
             // default dataset = -
@@ -226,9 +233,9 @@ namespace SDataAPIPSuedo
             rsu.ResourceKind = string.Empty;
             rsu.Version = string.Empty;
             // the above configuration generates http://sdata.acme.com/sdata/sageApp/test/-/$schema
- 
+
             // read the feed from the server
-            XmlSchema xsd  = service.Read(rsu);
+            XmlSchema xsd = service.Read(rsu);
 
             // now reconfigurate and set resource kind and version
             rsu.ResourceKind = "accounts";
@@ -236,56 +243,69 @@ namespace SDataAPIPSuedo
             // the above configuration generates http://sdata.acme.com/sdata/sageApp/test/-/accounts/$schema?version=5
 
             // read the entry from the server
-            xsd = service.Read(rsu);           
+            xsd = service.Read(rsu);
+
             #endregion
 
             #region READ System Resources or Services
+
             SDataSystemRequest su = new SDataSystemRequest(service);
-            
+
             // the above configuration generates http://sdata.acme.com/sdata/$system
             // read the feed from the server
             feed = service.Read(su) as AtomFeed;
+
             #endregion
 
             #region READ Intermediate URLS
+
             #region READ Enumeration of Applications
+
             IntermediateApplicationsRequest iau = new IntermediateApplicationsRequest(service);
-            
+
             // the above configuration generates http://sdata.acme.com/sdata
 
             // read the feed from the server
             feed = service.Read(iau) as AtomFeed;
+
             #endregion
 
             #region READ Enumeration of DataSets
-            IntermediateDataSetsRequest idu= new IntermediateDataSetsRequest(service);
+
+            IntermediateDataSetsRequest idu = new IntermediateDataSetsRequest(service);
             // the above configuration generates http://sdata.acme.com/sdata/sageApp
 
             // read the feed from the server
             feed = service.Read(idu) as AtomFeed;
+
             #endregion
 
             #region READ Enumeration of Contracts
+
             IntermediateContractsRequest icu = new IntermediateContractsRequest(service);
-            
+
             // the above configuration generates http://sdata.acme.com/sdata/sageApp
 
             // read the feed from the server
             feed = service.Read(icu) as AtomFeed;
+
             #endregion
 
             #region READ Enumeration of Resource Collections
+
             IntermediateResourceCollectionsRequest ircu = new IntermediateResourceCollectionsRequest(service);
             ircu.ContractName = "test";
             // the above configuration generates http://sdata.acme.com/sdata/sageApp/test
 
             // read the feed from the server
             feed = service.Read(ircu) as AtomFeed;
+
             #endregion
 
             #region READ Enumeration of Services
+
             IntermediateServicesRequest isu = new IntermediateServicesRequest(service);
-            
+
             isu.ResourceKind = string.Empty;
             isu.ContractName = "test";
             // the above configuration generates http://sdata.acme.com/sdata/sageApp/test/$service
@@ -298,10 +318,13 @@ namespace SDataAPIPSuedo
             // the above configuration generates http://sdata.acme.com/sdata/sageApp/test/accounts/$service
             // read the feed from the server
             feed = service.Read(isu) as AtomFeed;
+
             #endregion
+
             #endregion
 
             #region Update an Entry
+
             // Read a Single Resource Entry
             SDataSingleResourceRequest sru2 = new SDataSingleResourceRequest(service);
             sru2.ContractName = "test";
@@ -310,19 +333,22 @@ namespace SDataAPIPSuedo
             // the above configuration generates  http://sdata.acme.com/sdata/sageApp/test/accounts('A001') 
 
             // TODO: Make changes to the entry payload
-            newEntry.Payload.Elements();
+            XPathNavigator payload = newEntry.GetSDataPayload();
             // update the server
             service.Update(sru2, newEntry);
+
             #endregion
 
             #region DELETE an Entry
-            service.Delete(sru2);
-            #endregion
 
+            service.Delete(sru2);
+
+            #endregion
         }
 
         #region CREATE a Service Operation (Synchronous)
-        AtomFeed CreateServiceRequest(SDataService service)
+
+        private AtomFeed CreateServiceRequest(SDataService service)
         {
             SDataServiceOperationRequest request = new SDataServiceOperationRequest(service);
             request.ContractName = "test";
@@ -339,12 +365,13 @@ namespace SDataAPIPSuedo
             // read the feed from the server
             AtomFeed feed = request.Create();
             return feed;
-
         }
+
         #endregion
 
         #region CREATE a Service Operation (Asynchronous)
-        AtomFeed CreateServiceOperationAsync(SDataService service)
+
+        private AtomFeed CreateServiceOperationAsync(SDataService service)
         {
             SDataServiceOperationRequest request = new SDataServiceOperationRequest(service);
             request.ContractName = "test";
@@ -359,7 +386,7 @@ namespace SDataAPIPSuedo
             // the above configuration generates http://sdata.acme.com/sdata/sageApp/test/-/$service/computePrice
 
             // great a UUID for the transaction
-            string uuid = System.Guid.NewGuid().ToString();
+            string uuid = Guid.NewGuid().ToString();
 
             // read the feed from the server
             AsyncRequest asyncRequest = request.CreateAsync(uuid);
@@ -376,8 +403,4 @@ namespace SDataAPIPSuedo
 
         #endregion
     }
-
-
-   
-
 }

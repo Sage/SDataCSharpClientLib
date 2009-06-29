@@ -1,11 +1,4 @@
-﻿
-
-
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Sage.SData.Client.Core
+﻿namespace Sage.SData.Client.Core
 {
     /// <summary>
     /// Interface which defines the settings common to all
@@ -13,28 +6,18 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public interface ISDataRequestSettings
     {
-        
-    
         /// <summary>
         /// Acessor method for protocol, 
         /// </summary>
         /// <remarks>HTTP is the default but can be HTTPS</remarks>
-        string Protocol
-        {
-            get;
-            set;
-        }
+        string Protocol { get; set; }
 
-        
+
         /// <remarks>IP address is also allowed (192.168.1.1).
         /// Can be followed by port number. For example www.example.com:5493. 
         /// 5493 is the recommended port number for SData services that are not exposed on the Internet.
         /// </remarks>
-        string ServerName
-        {
-            get;
-            set;
-        }
+        string ServerName { get; set; }
 
 
         /// <summary>
@@ -42,11 +25,6 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <remarks>Must be sdata, unless the technical framework imposes something different.
         ///</remarks>
-        string VirtualDirectory
-        {
-            get;
-            set;
-        }
-
+        string VirtualDirectory { get; set; }
     }
 }

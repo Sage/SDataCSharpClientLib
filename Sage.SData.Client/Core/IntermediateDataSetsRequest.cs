@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Sage.SData.Client.Atom;
+﻿using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Core
 {
@@ -14,6 +11,7 @@ namespace Sage.SData.Client.Core
     public class IntermediateDataSetsRequest : IntermediateContractsRequest
     {
         private string _contractName;
+
         /// <summary>
         /// Accessor method for contractName
         /// </summary>
@@ -25,7 +23,7 @@ namespace Sage.SData.Client.Core
         public string ContractName
         {
             get { return _contractName; }
-            set { _contractName = value;}
+            set { _contractName = value; }
         }
 
 
@@ -33,28 +31,28 @@ namespace Sage.SData.Client.Core
         /// Constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
-         public IntermediateDataSetsRequest(ISDataService service)
+        public IntermediateDataSetsRequest(ISDataService service)
             : base(service)
         {
-             Application = service.ApplicationName;
+            Application = service.ApplicationName;
         }
 
-         /// <summary>
-         /// Reads the AtomFeed for enumeration of datasets
-         /// </summary>
-         /// <returns>AtomFeed</returns>
-         /// <example>
-         ///     <code lang="cs" title="The following code example demonstrates the usage of the IntermediateDataSetsRequest class.">
-         ///         <code 
-         ///             source=".\Example.cs" 
-         ///             region="READ Enumeration of DataSets" 
-         ///         />
-         ///     </code>
-         /// </example>
-         public new AtomFeed Read()
-         {
-             return Service.ReadFeed(this);
-         }
+        /// <summary>
+        /// Reads the AtomFeed for enumeration of datasets
+        /// </summary>
+        /// <returns>AtomFeed</returns>
+        /// <example>
+        ///     <code lang="cs" title="The following code example demonstrates the usage of the IntermediateDataSetsRequest class.">
+        ///         <code 
+        ///             source=".\Example.cs" 
+        ///             region="READ Enumeration of DataSets" 
+        ///         />
+        ///     </code>
+        /// </example>
+        public new AtomFeed Read()
+        {
+            return Service.ReadFeed(this);
+        }
 
 
         /// <summary>
@@ -64,11 +62,11 @@ namespace Sage.SData.Client.Core
         public override string ToString()
         {
             string retval =
-                this.Protocol + "://" +
-                this.ServerName + "/" +
-                this.VirtualDirectory + "/" +
-                this.Application + "/" +
-                this.ContractName;
+                Protocol + "://" +
+                ServerName + "/" +
+                VirtualDirectory + "/" +
+                Application + "/" +
+                ContractName;
             return retval;
         }
     }

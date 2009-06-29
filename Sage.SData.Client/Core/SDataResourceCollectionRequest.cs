@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Core
@@ -10,9 +9,8 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataResourceCollectionRequest : SDataApplicationRequest
     {
-        
-
         private string _query;
+
         /// <summary>
         /// Accessor method for query can be null
         /// </summary>
@@ -23,11 +21,12 @@ namespace Sage.SData.Client.Core
         ///</example>
         public string Query
         {
-            get { return _query;}
-            set { _query = value;}
+            get { return _query; }
+            set { _query = value; }
         }
 
         private Dictionary<string, string> _queryValues;
+
         /// <summary>
         ///  Dictionary of query name value pairs
         /// </summary>
@@ -36,21 +35,23 @@ namespace Sage.SData.Client.Core
         /// </example>
         public Dictionary<string, string> QueryValues
         {
-            get{ return _queryValues;}
-            set { _queryValues = value;}
+            get { return _queryValues; }
+            set { _queryValues = value; }
         }
 
         private int _startIndex;
+
         /// <summary>
         /// Indicates the index of the first resource returned by the query. This index is 1-based (not 0-based).
         /// </summary>
         public int StartIndex
         {
             get { return _startIndex; }
-            set { _startIndex = value;}
+            set { _startIndex = value; }
         }
 
         private int _count;
+
         /// <summary>
         /// Indicates the number of resources requested by the service consumer.
         /// The service may choose to return a different number of resources and it
@@ -59,50 +60,51 @@ namespace Sage.SData.Client.Core
         public int Count
         {
             get { return _count; }
-            set{ _count = value;}
+            set { _count = value; }
         }
 
 
         private AtomFeedReader _reader;
+
         /// <summary>
         /// AtomFeed Reader for the request
         /// </summary>
         public AtomFeedReader Reader
         {
-            get{ return _reader;}
-            set{ _reader = value;}
+            get { return _reader; }
+            set { _reader = value; }
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
-         public SDataResourceCollectionRequest(ISDataService service)
+        public SDataResourceCollectionRequest(ISDataService service)
             : base(service)
         {
-             Count = -1;
-             StartIndex = -1;
+            Count = -1;
+            StartIndex = -1;
 
-             QueryValues = new Dictionary<string, string>();
+            QueryValues = new Dictionary<string, string>();
         }
 
-         /// <summary>
-         /// Reads the AtomFeed for a resource collection
-         /// </summary>
-         /// <returns>AtomFeed</returns>
-         /// <example>
-         ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataResourceCollectionRequest class.">
-         ///         <code 
-         ///             source=".\Example.cs" 
-         ///             region="READ a Resource Collection Feed" 
-         ///         />
-         ///     </code>
-         /// </example>
-         public AtomFeed Read()
-         {
-             Service.Url = Service.Url + this.ResourceKind;
-             return this.Service.ReadFeed(this);
-         }
+        /// <summary>
+        /// Reads the AtomFeed for a resource collection
+        /// </summary>
+        /// <returns>AtomFeed</returns>
+        /// <example>
+        ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataResourceCollectionRequest class.">
+        ///         <code 
+        ///             source=".\Example.cs" 
+        ///             region="READ a Resource Collection Feed" 
+        ///         />
+        ///     </code>
+        /// </example>
+        public AtomFeed Read()
+        {
+            Service.Url = Service.Url + ResourceKind;
+            return Service.ReadFeed(this);
+        }
 
         /// <summary>
         /// Performs initial read from AtomFeedReader
@@ -111,7 +113,7 @@ namespace Sage.SData.Client.Core
         /// <returns></returns>
         public bool Read(AtomFeed feed)
         {
-            if(Reader == null)
+            if (Reader == null)
             {
                 Reader = new AtomFeedReader(Service, feed, this);
             }
@@ -127,14 +129,13 @@ namespace Sage.SData.Client.Core
         {
             bool hasParams = false;
             string retval =
-                    this.Protocol + "://" +
-                    this.ServerName + "/" +
-                    this.VirtualDirectory + "/" +
-                    this.Application + "/" +
-                    this.ContractName + "/" +
-                    this.DataSet + "/" +
-                    this.ResourceKind;
-
+                Protocol + "://" +
+                ServerName + "/" +
+                VirtualDirectory + "/" +
+                Application + "/" +
+                ContractName + "/" +
+                DataSet + "/" +
+                ResourceKind;
 
 
             if (QueryValues.Count > 0)

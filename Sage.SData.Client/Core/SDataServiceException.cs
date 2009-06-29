@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Text;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -13,35 +10,36 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataServiceException : WebException
     {
-
         private string _data;
+
         /// <summary>
         /// data from underlying webexception stream
         /// </summary>
         public new string Data
         {
-            get{ return _data;}
-            set{ _data = value;}
+            get { return _data; }
+            set { _data = value; }
         }
 
         /// <summary>
         /// constructor
         /// </summary>
-        public SDataServiceException()
-            :base() {}
+        public SDataServiceException() {}
+
         /// <summary>
         /// constructor
         /// </summary>
         /// <param name="message"></param>
         public SDataServiceException(String message)
-            :base(message) {}
+            : base(message) {}
+
         /// <summary>
         /// constructor
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
         public SDataServiceException(String message, WebException innerException)
-            :base(message, innerException) {}
+            : base(message, innerException) {}
 
         /// <summary>
         /// gets the exception message
@@ -50,7 +48,7 @@ namespace Sage.SData.Client.Core
         {
             get
             {
-               XmlDocument doc = new XmlDocument();
+                XmlDocument doc = new XmlDocument();
                 doc.LoadXml(Data);
 
                 XmlNamespaceManager manager = new XmlNamespaceManager(doc.NameTable);
@@ -60,10 +58,9 @@ namespace Sage.SData.Client.Core
                 string message = message_nav.InnerXml;
 
                 int length = message.IndexOf("Stack");
-                
+
                 string retval = message.Substring(0, length);
                 return retval;
-    
             }
         }
     }
