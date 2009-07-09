@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace Sage.SData.Client.Core
+﻿namespace Sage.SData.Client.Core
 {
     /// <summary>
     /// Base class for urls containing Application and Contract
     /// </summary>
-    public class SDataApplicationRequest : SDataBaseRequest
+    public abstract class SDataApplicationRequest : SDataBaseRequest
     {
         private string _application;
 
@@ -54,7 +52,6 @@ namespace Sage.SData.Client.Core
             set { _dataSet = value; }
         }
 
-
         private string _resourceKind;
 
         /// <summary>
@@ -77,7 +74,7 @@ namespace Sage.SData.Client.Core
         /// Constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
-        public SDataApplicationRequest(ISDataService service)
+        protected SDataApplicationRequest(ISDataService service)
             : base(service)
         {
             Application = service.ApplicationName;
@@ -90,13 +87,31 @@ namespace Sage.SData.Client.Core
         /// </summary>
         protected SDataApplicationRequest() {}
 
-        /// <summary>
-        /// gets the string version of this SData URL
-        /// </summary>
-        /// <returns>return the string </returns>
-        public override string ToString()
+        protected override void BuildUrl(UrlBuilder builder)
         {
-            throw new NotImplementedException();
+            base.BuildUrl(builder);
+
+            if (string.IsNullOrEmpty(Application))
+            {
+                Application = Service.ApplicationName;
+            }
+            if (string.IsNullOrEmpty(ContractName))
+            {
+                ContractName = Service.ContractName;
+            }
+            if (string.IsNullOrEmpty(DataSet))
+            {
+                DataSet = Service.DataSet;
+            }
+
+            builder.PathSegments.Add(Application);
+            builder.PathSegments.Add(ContractName);
+            builder.PathSegments.Add(DataSet);
+
+            if (!string.IsNullOrEmpty(ResourceKind))
+            {
+                builder.PathSegments.Add(ResourceKind);
+            }
         }
     }
 }

@@ -59,20 +59,16 @@ namespace Sage.SData.Client.Core
             return Service.ReadFeed(this);
         }
 
-        /// <summary>
-        /// Converts this request to a string
-        /// </summary>
-        /// <returns>url version of the request</returns>
-        public override string ToString()
+        protected override void BuildUrl(UrlBuilder builder)
         {
-            string retval =
-                Protocol + "://" +
-                ServerName + "/" +
-                VirtualDirectory + "/" +
-                Application + "/" +
-                ContractName + "/" +
-                DataSet;
-            return retval;
+            base.BuildUrl(builder);
+
+            if (string.IsNullOrEmpty(DataSet))
+            {
+                DataSet = Service.DataSet;
+            }
+
+            builder.PathSegments.Add(DataSet);
         }
     }
 }

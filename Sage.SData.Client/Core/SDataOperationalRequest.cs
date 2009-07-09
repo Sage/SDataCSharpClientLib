@@ -9,7 +9,7 @@
         /// Constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
-        public SDataOperationalRequest(ISDataService service)
+        protected SDataOperationalRequest(ISDataService service)
             : base(service) {}
     }
 }

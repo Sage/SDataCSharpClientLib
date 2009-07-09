@@ -10,7 +10,7 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataTemplateResourceRequest : SDataOperationalRequest
     {
-        private static string _keyWord = "$template?format=atomentry";
+        private static string _keyWord = "$template";
 
         /// <summary>
         /// gets the string version of this SData URL
@@ -19,40 +19,12 @@ namespace Sage.SData.Client.Core
         public SDataTemplateResourceRequest(ISDataService service)
             : base(service) {}
 
-        /// <summary>
-        /// Converts this request to a string
-        /// </summary>
-        /// <returns>url version of the request</returns>
-        public override string ToString()
+        protected override void BuildUrl(UrlBuilder builder)
         {
-            string retval = string.Empty;
-
-
-            if (Application == string.Empty || Application == null)
-            {
-                Application = Service.ApplicationName;
-            }
-            if (ContractName == string.Empty || ContractName == null)
-            {
-                ContractName = Service.ContractName;
-            }
-            if (DataSet == string.Empty || DataSet == null)
-            {
-                DataSet = Service.DataSet;
-            }
-
-
-            retval = Protocol + "://" +
-                     ServerName + "/" +
-                     VirtualDirectory + "/" +
-                     Application + "/" +
-                     ContractName + "/" +
-                     DataSet + "/" +
-                     ResourceKind + "/" + _keyWord;
-
-            return retval;
+            base.BuildUrl(builder);
+            builder.PathSegments.Add(_keyWord);
+            builder.QueryParameters["format"] = "atomentry";
         }
-
 
         /// <summary>
         /// Reads the templatte 

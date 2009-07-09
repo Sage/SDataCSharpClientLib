@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Core
@@ -25,7 +24,7 @@ namespace Sage.SData.Client.Core
             set { _query = value; }
         }
 
-        private Dictionary<string, string> _queryValues;
+        private IDictionary<string, string> _queryValues;
 
         /// <summary>
         ///  Dictionary of query name value pairs
@@ -33,7 +32,7 @@ namespace Sage.SData.Client.Core
         /// <example>where, salesorderamount lt 15.00
         /// orderby, salesorderid
         /// </example>
-        public Dictionary<string, string> QueryValues
+        public IDictionary<string, string> QueryValues
         {
             get { return _queryValues; }
             set { _queryValues = value; }
@@ -62,7 +61,6 @@ namespace Sage.SData.Client.Core
             get { return _count; }
             set { _count = value; }
         }
-
 
         private AtomFeedReader _reader;
 
@@ -120,72 +118,24 @@ namespace Sage.SData.Client.Core
             return Reader.Read();
         }
 
-
-        /// <summary>
-        /// Formats URL String
-        /// </summary>
-        /// <returns>formatted string</returns>
-        public override string ToString()
+        protected override void BuildUrl(UrlBuilder builder)
         {
-            bool hasParams = false;
-            string retval =
-                Protocol + "://" +
-                ServerName + "/" +
-                VirtualDirectory + "/" +
-                Application + "/" +
-                ContractName + "/" +
-                DataSet + "/" +
-                ResourceKind;
+            base.BuildUrl(builder);
 
-
-            if (QueryValues.Count > 0)
+            foreach (var pair in QueryValues)
             {
-                foreach (KeyValuePair<string, string> values in QueryValues)
-                {
-                    if (hasParams)
-                    {
-                        retval += "&";
-                    }
-                    else
-                    {
-                        retval += "?";
-                        hasParams = true;
-                    }
-
-                    retval += values.Key + "=" + values.Value;
-                }
+                builder.QueryParameters[pair.Key] = pair.Value;
             }
 
             if (Count > -1)
             {
-                if (hasParams)
-                {
-                    retval += "&";
-                }
-                else
-                {
-                    retval += "?";
-                    hasParams = true;
-                }
-
-                retval += "count=" + Convert.ToString(Count);
+                builder.QueryParameters["count"] = Count.ToString();
             }
 
             if (StartIndex > -1)
             {
-                if (hasParams)
-                {
-                    retval += "&";
-                }
-                else
-                {
-                    retval += "?";
-                }
-
-                retval += "startIndex=" + Convert.ToString(StartIndex);
+                builder.QueryParameters["startIndex"] = StartIndex.ToString();
             }
-
-            return retval;
         }
     }
 }

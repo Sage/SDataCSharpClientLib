@@ -26,7 +26,6 @@ namespace Sage.SData.Client.Core
             set { _contractName = value; }
         }
 
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -54,20 +53,16 @@ namespace Sage.SData.Client.Core
             return Service.ReadFeed(this);
         }
 
-
-        /// <summary>
-        /// gets the string version of this SData URL
-        /// </summary>
-        /// <returns>return the string </returns>
-        public override string ToString()
+        protected override void BuildUrl(UrlBuilder builder)
         {
-            string retval =
-                Protocol + "://" +
-                ServerName + "/" +
-                VirtualDirectory + "/" +
-                Application + "/" +
-                ContractName;
-            return retval;
+            base.BuildUrl(builder);
+
+            if (string.IsNullOrEmpty(ContractName))
+            {
+                ContractName = Service.ContractName;
+            }
+
+            builder.PathSegments.Add(ContractName);
         }
     }
 }

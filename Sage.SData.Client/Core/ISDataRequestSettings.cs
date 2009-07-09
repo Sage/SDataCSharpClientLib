@@ -7,7 +7,7 @@
     public interface ISDataRequestSettings
     {
         /// <summary>
-        /// Acessor method for protocol, 
+        /// Accessor method for protocol, 
         /// </summary>
         /// <remarks>HTTP is the default but can be HTTPS</remarks>
         string Protocol { get; set; }
@@ -23,7 +23,8 @@
         /// <summary>
         /// Accessor method for virtual directory
         /// </summary>
-        /// <remarks>Must be sdata, unless the technical framework imposes something different.
+        /// <remarks>
+        /// Must be sdata, unless the technical framework imposes something different.
         ///</remarks>
         string VirtualDirectory { get; set; }
     }

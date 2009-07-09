@@ -59,49 +59,16 @@
         public IntermediateServicesRequest(ISDataService service)
             : base(service) {}
 
-        /// <summary>
-        /// Converts this request to a string
-        /// </summary>
-        /// <returns>url version of the request</returns>
-        public override string ToString()
+        protected override void BuildUrl(UrlBuilder builder)
         {
-            if (Application == string.Empty || Application == null)
+            base.BuildUrl(builder);
+
+            if (!string.IsNullOrEmpty(ResourceKind))
             {
-                Application = Service.ApplicationName;
-            }
-            if (ContractName == string.Empty || ContractName == null)
-            {
-                ContractName = Service.ContractName;
-            }
-            if (DataSet == string.Empty || DataSet == null)
-            {
-                DataSet = Service.DataSet;
-            }
-            string retval = string.Empty;
-            if (ResourceKind == string.Empty)
-            {
-                retval =
-                    Protocol + "://" +
-                    ServerName + "/" +
-                    VirtualDirectory + "/" +
-                    Application + "/" +
-                    ContractName + "/" +
-                    DataSet + "/";
-            }
-            else
-            {
-                retval =
-                    Protocol + "://" +
-                    ServerName + "/" +
-                    VirtualDirectory + "/" +
-                    Application + "/" +
-                    ContractName + "/" +
-                    DataSet + "/" +
-                    ResourceKind + "/";
+                builder.PathSegments.Add(ResourceKind);
             }
 
-            retval += _keyword;
-            return retval;
+            builder.PathSegments.Add(_keyword);
         }
     }
 }

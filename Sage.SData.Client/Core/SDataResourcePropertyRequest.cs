@@ -9,7 +9,7 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataResourcePropertyRequest : SDataSingleResourceRequest
     {
-        private Dictionary<int, string> _resourceProperties;
+        private IDictionary<int, string> _resourceProperties;
 
         /// <summary>
         /// Dictionary containing the resource properties
@@ -29,13 +29,13 @@ namespace Sage.SData.Client.Core
         /// http://sdata.acme.com/sdata/sageApp/test/accounts('A001')/postalAddress/country
         /// http://sdata.acme.com/sdata/sageApp/test/accounts('A001')/addresses(type eq 'postal')/country
         /// </remarks>
-        public Dictionary<int, string> ResourceProperties
+        public IDictionary<int, string> ResourceProperties
         {
             get { return _resourceProperties; }
             set { _resourceProperties = value; }
         }
 
-        private Dictionary<string, string> _queryValues;
+        private IDictionary<string, string> _queryValues;
 
         /// <summary>
         ///  Dictionary of query name value pairs
@@ -43,12 +43,11 @@ namespace Sage.SData.Client.Core
         /// <example>where, salesorderamount lt 15.00
         /// orderby, salesorderid
         /// </example>
-        public Dictionary<string, string> QueryValues
+        public IDictionary<string, string> QueryValues
         {
             get { return _queryValues; }
             set { _queryValues = value; }
         }
-
 
         /// <summary>
         /// Constructor
@@ -60,7 +59,6 @@ namespace Sage.SData.Client.Core
             _resourceProperties = new Dictionary<int, string>();
             QueryValues = new Dictionary<string, string>();
         }
-
 
         /// <summary>
         /// Reads the AtomFeed for the resource property
@@ -79,7 +77,6 @@ namespace Sage.SData.Client.Core
             return Service.ReadFeed(this);
         }
 
-
         /// <summary>
         /// Reads the AtomEntry for the resource property
         /// </summary>
@@ -97,76 +94,24 @@ namespace Sage.SData.Client.Core
             return Service.ReadEntry(this);
         }
 
-
-        /// <summary>
-        /// gets the string version of this SData URL
-        /// </summary>
-        /// <returns>return the string </returns>
-        public override string ToString()
+        protected override void BuildUrl(UrlBuilder builder)
         {
-            string retval = string.Empty;
-
-
-            if (Application == string.Empty || Application == null)
-            {
-                Application = Service.ApplicationName;
-            }
-            if (ContractName == string.Empty || ContractName == null)
-            {
-                ContractName = Service.ContractName;
-            }
-            if (DataSet == string.Empty || DataSet == null)
-            {
-                DataSet = Service.DataSet;
-            }
-
-
-            retval = Protocol + "://" +
-                     ServerName + "/" +
-                     VirtualDirectory + "/" +
-                     Application + "/" +
-                     ContractName + "/" +
-                     DataSet + "/" +
-                     ResourceKind +
-                     ResourceSelector;
-
+            base.BuildUrl(builder);
 
             if (ResourceProperties.Count == 0)
             {
                 throw new Exception("No Resource Properties Set");
             }
-            else
+
+            foreach (var value in ResourceProperties.Values)
             {
-                foreach (KeyValuePair<int, string> values in ResourceProperties)
-                {
-                    retval += "/" + values.Value;
-                }
+                builder.PathSegments.Add(value);
             }
 
-            bool hasParams = false;
-            if (QueryValues.Count > 0)
+            foreach (var pair in QueryValues)
             {
-                hasParams = true;
-                retval += "?";
-                int x = 0;
-
-                foreach (KeyValuePair<string, string> values in QueryValues)
-                {
-                    if (x != 0)
-                    {
-                        retval += "&" + values.Key + "=" + values.Value;
-                    }
-                    else
-                    {
-                        retval += values.Key + "=" + values.Value;
-                    }
-
-                    x++;
-                }
+                builder.QueryParameters[pair.Key] = pair.Value;
             }
-
-
-            return retval;
         }
     }
 }

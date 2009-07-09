@@ -66,36 +66,10 @@ namespace Sage.SData.Client.Core
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// return the formatted url string
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
+        protected override void BuildUrl(UrlBuilder builder)
         {
-            string retval;
-            if (!string.IsNullOrEmpty(ResourceKind))
-            {
-                retval =
-                    Protocol + "://" +
-                    ServerName + "/" +
-                    VirtualDirectory + "/" +
-                    Application + "/" +
-                    ContractName + "/" +
-                    DataSet + "/" +
-                    ResourceKind + "/" + _batch;
-            }
-            else
-            {
-                retval =
-                    Protocol + "://" +
-                    ServerName + "/" +
-                    VirtualDirectory + "/" +
-                    Application + "/" +
-                    ContractName + "/" +
-                    DataSet + "/" + _batch;
-            }
-
-            return retval;
+            base.BuildUrl(builder);
+            builder.PathSegments.Add(_batch);
         }
 
         /// <summary>
@@ -108,13 +82,13 @@ namespace Sage.SData.Client.Core
             feed.Id = new AtomId(new Uri(ToString()));
             feed.UpdatedOn = DateTime.Now;
 
-            XPathNavigator feed_nav = feed.CreateNavigator();
-            XmlDocument feed_doc = new XmlDocument();
-            feed_doc.LoadXml(feed_nav.OuterXml);
-            XmlAttribute attr = feed_doc.CreateAttribute("xmlns:http");
+            XPathNavigator feedNav = feed.CreateNavigator();
+            XmlDocument feedDoc = new XmlDocument();
+            feedDoc.LoadXml(feedNav.OuterXml);
+            XmlAttribute attr = feedDoc.CreateAttribute("xmlns:http");
             attr.Value = "http://schemas.sage.com/sdata/2008/1";
-            feed_doc.DocumentElement.Attributes.Append(attr);
-            feed_nav = feed_doc.CreateNavigator();
+            feedDoc.DocumentElement.Attributes.Append(attr);
+            feedNav = feedDoc.CreateNavigator();
 
             foreach (string[] request in Requests)
             {
@@ -135,12 +109,12 @@ namespace Sage.SData.Client.Core
                 doc.DocumentElement.AppendChild(method);
                 XPathNavigator navigator = doc.CreateNavigator();
 
-                feed_nav.MoveToRoot();
-                feed_nav.MoveToFirstChild();
-                feed_nav.AppendChild(navigator.OuterXml);
+                feedNav.MoveToRoot();
+                feedNav.MoveToFirstChild();
+                feedNav.AppendChild(navigator.OuterXml);
             }
 
-            _feed = Service.CreateFeed(this, feed_nav) as AtomFeed;
+            _feed = Service.CreateFeed(this, feedNav) as AtomFeed;
         }
     }
 }

@@ -43,11 +43,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dependencies\NUnit\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SDataServiceTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sage.SData.Client\Sage.SData.Client_3_5.csproj">

@@ -29,14 +29,12 @@ namespace Sage.SData.Client.Core
             set { _version = value; }
         }
 
-
         /// <summary>
         /// Construtor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
         public SDataResourceSchemaRequest(ISDataService service)
             : base(service) {}
-
 
         /// <summary>
         /// Reads the Xml Schema for a resource
@@ -55,37 +53,10 @@ namespace Sage.SData.Client.Core
             return Service.Read(this);
         }
 
-
-        /// <summary>
-        /// gets the string version of this SData URL
-        /// </summary>
-        /// <returns>return the string </returns>
-        public override string ToString()
+        protected override void BuildUrl(UrlBuilder builder)
         {
-            string retval = string.Empty;
-            if (ResourceKind != string.Empty && ResourceKind != null)
-            {
-                retval =
-                    Protocol + "://" +
-                    ServerName + "/" +
-                    VirtualDirectory + "/" +
-                    Application + "/" +
-                    ContractName + "/" +
-                    DataSet + "/" +
-                    ResourceKind + "/" + _keyWord;
-            }
-            else
-            {
-                retval =
-                    Protocol + "://" +
-                    ServerName + "/" +
-                    VirtualDirectory + "/" +
-                    Application + "/" +
-                    ContractName + "/" +
-                    DataSet + "/" + _keyWord;
-            }
-
-            return retval;
+            base.BuildUrl(builder);
+            builder.PathSegments.Add(_keyWord);
         }
     }
 }

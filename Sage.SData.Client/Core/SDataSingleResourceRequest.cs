@@ -41,7 +41,6 @@ namespace Sage.SData.Client.Core
             set { _resourceSelector = value; }
         }
 
-
         private string _include;
 
         /// <summary>
@@ -70,8 +69,11 @@ namespace Sage.SData.Client.Core
         /// SDataTemplateResourceRequest</remarks>
         /// <param name="service"></param>
         /// <param name="entry"></param>
-        public SDataSingleResourceRequest(ISDataService service, AtomEntry entry) {}
-
+        public SDataSingleResourceRequest(ISDataService service, AtomEntry entry)
+            : base(service)
+        {
+            _entry = entry;
+        }
 
         /// <summary>
         /// Reads the AtomEntry for the single resource request
@@ -106,8 +108,7 @@ namespace Sage.SData.Client.Core
         {
             ISyndicationResource result;
             result = Service.Create(this, Entry);
-            AtomEntry entry = result as AtomEntry;
-            return entry;
+            return result as AtomEntry;
         }
 
         /// <summary>
@@ -126,8 +127,7 @@ namespace Sage.SData.Client.Core
         {
             ISyndicationResource result;
             result = Service.Update(this, Entry);
-            AtomEntry entry = result as AtomEntry;
-            return entry;
+            return result as AtomEntry;
         }
 
         /// <summary>
@@ -147,44 +147,20 @@ namespace Sage.SData.Client.Core
             return Service.Delete(this, Entry);
         }
 
-        /// <summary>
-        /// gets the string version of this SData URL
-        /// </summary>
-        /// <returns>return the string </returns>
-        public override string ToString()
+        protected override void BuildUrl(UrlBuilder builder)
         {
-            string retval = string.Empty;
+            base.BuildUrl(builder);
 
-
-            if (Application == string.Empty || Application == null)
+            if (!string.IsNullOrEmpty(ResourceSelector))
             {
-                Application = Service.ApplicationName;
-            }
-            if (ContractName == string.Empty || ContractName == null)
-            {
-                ContractName = Service.ContractName;
-            }
-            if (DataSet == string.Empty || DataSet == null)
-            {
-                DataSet = Service.DataSet;
+                var index = builder.PathSegments.Count - 1;
+                builder.PathSegments[index] = builder.PathSegments[index] + ResourceSelector;
             }
 
-
-            retval = Protocol + "://" +
-                     ServerName + "/" +
-                     VirtualDirectory + "/" +
-                     Application + "/" +
-                     ContractName + "/" +
-                     DataSet + "/" +
-                     ResourceKind +
-                     ResourceSelector;
-
-            if (Include != string.Empty)
+            if (!string.IsNullOrEmpty(Include))
             {
-                retval += "?include=" + Include;
+                builder.QueryParameters["include"] = Include;
             }
-
-            return retval;
         }
     }
 }

@@ -842,7 +842,6 @@
             resources.ApplyResources(this.tbResourceProperty, "tbResourceProperty");
             this.tbResourceProperty.Name = "tbResourceProperty";
             this.tbResourceProperty.Text = global::SDataClientApp.Properties.Settings.Default.SingleResourceSelector;
-            this.tbResourceProperty.TextChanged += new System.EventHandler(this.tbResourceProperty_TextChanged);
             // 
             // lableProperties
             // 
@@ -854,7 +853,6 @@
             this.lbProperties.FormattingEnabled = true;
             resources.ApplyResources(this.lbProperties, "lbProperties");
             this.lbProperties.Name = "lbProperties";
-            this.lbProperties.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // label26
             // 

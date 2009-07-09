@@ -88,8 +88,6 @@ namespace Sage.SData.Client.Extensions
                 var httpStatusNavigator = source.SelectSingleNode("http:httpStatus", manager);
                 if (httpStatusNavigator != null && !string.IsNullOrEmpty(httpStatusNavigator.Value))
                 {
-                    //TODO: put this back when the SIF bug is fixed
-                    HttpStatus = Convert.ToInt32(httpStatusNavigator.Value);
                     HttpStatus = (int) (HttpStatusCode) Enum.Parse(typeof (HttpStatusCode), httpStatusNavigator.Value, true);
                     wasLoaded = true;
                 }

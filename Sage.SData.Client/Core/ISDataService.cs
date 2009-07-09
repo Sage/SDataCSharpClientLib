@@ -10,17 +10,10 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public interface ISDataService
     {
-        //============================================================
-        //	PUBLIC PROPERTIES
-        //============================================================
-
-
         /// <summary>
         /// Flag set when service has been initialized
         /// </summary>
         bool Initialized { get; set; }
-
-        #region ApplicationName
 
         /// <summary>
         /// Gets or sets the name of the application.
@@ -34,20 +27,16 @@ namespace Sage.SData.Client.Core
         /// </remarks>
         string ApplicationName { get; set; }
 
-        #endregion
-
         /// <summary>
-        /// Acessor method for protocol, 
+        /// Accessor method for protocol, 
         /// </summary>
         /// <remarks>HTTP is the default but can be HTTPS</remarks>
         string Protocol { get; set; }
-
 
         /// <remarks>
         /// Creates the service with predefined values for the url
         /// </remarks>
         string Url { get; set; }
-
 
         /// <remarks>IP address is also allowed (192.168.1.1).
         /// Can be followed by port number. For example www.example.com:5493. 
@@ -55,14 +44,12 @@ namespace Sage.SData.Client.Core
         /// </remarks>
         string ServerName { get; set; }
 
-
         /// <summary>
         /// Accessor method for virtual directory
         /// </summary>
         /// <remarks>Must be sdata, unless the technical framework imposes something different.
         ///</remarks>
         string VirtualDirectory { get; set; }
-
 
         /// <summary>
         /// Accessor method for dataSet
@@ -77,7 +64,6 @@ namespace Sage.SData.Client.Core
         ///</remarks>
         string DataSet { get; set; }
 
-
         /// <summary>
         /// Accessor method for contractName
         /// </summary>
@@ -87,7 +73,6 @@ namespace Sage.SData.Client.Core
         /// and a native or default contract which exposes all the resources of the ERP in their native format.
         /// </remarks>
         string ContractName { get; set; }
-
 
         /// <summary>
         /// Get set for the user name to authenticate with
@@ -99,20 +84,12 @@ namespace Sage.SData.Client.Core
         /// </summary>
         string Password { get; set; }
 
-
-        //============================================================
-        //	PUBLIC METHODS
-        //============================================================
-
-        #region Create(SDataBaseURL, ISyndicationResource resource)
-
         /// <summary>
         /// Adds a new syndication resource to the data source.
         /// </summary>
         /// <param name="request">The request that identifies the resource within the syndication data source.</param>
         /// <param name="resource">The <see cref="ISyndicationResource"/> to be created within the data source.</param>
         ISyndicationResource Create(SDataBaseRequest request, ISyndicationResource resource);
-
 
         /// <summary>
         /// Adds new sydication resource to the data source returning an AtomFeed
@@ -122,19 +99,11 @@ namespace Sage.SData.Client.Core
         /// <returns></returns>
         ISyndicationResource CreateFeed(SDataBaseRequest request, XPathNavigator resource);
 
-        #endregion
-
-        #region CreateAsync(SDataBaseURL, ISyndicationResource resource, string trackingId)
-
         /// <summary>
         /// Asynchronous PUT to the server
         /// </summary>
         /// <param name="request">The request that identifies the resource within the syndication data source.</param>
         AsyncRequest CreateAsync(SDataBaseRequest request);
-
-        #endregion
-
-        #region Delete(string url)
 
         /// <summary>
         /// Generic delete from server
@@ -142,10 +111,6 @@ namespace Sage.SData.Client.Core
         /// <param name="url">the url for the operation</param>
         /// <returns><b>true</b> returns true if the operation was successful</returns>
         bool Delete(string url);
-
-        #endregion
-
-        #region Delete(SDataBaseURL url)
 
         /// <summary>
         /// Removes a resource from the syndication data source.
@@ -155,20 +120,12 @@ namespace Sage.SData.Client.Core
         /// <returns><b>true</b> if the syndication resource was successfully deleted; otherwise, <b>false</b>.</returns>
         bool Delete(SDataBaseRequest request, ISyndicationResource resource);
 
-        #endregion
-
-        #region Read(string url)
-
         /// <summary>
         /// generic read from the specified url
         /// </summary>
         /// <param name="url">url to read from </param>
         /// <returns>string response from server</returns>
         string Read(string url);
-
-        #endregion
-
-        #region Read(SDataBaseURL)
 
         /// <summary>
         /// Reads resource information from the data source based on the URL.
@@ -184,20 +141,12 @@ namespace Sage.SData.Client.Core
         /// <returns>An AtomEntry <see cref="AtomEntry"/> populated with the specified resources's information from the data source.</returns>
         AtomEntry ReadEntry(SDataBaseRequest request);
 
-        #endregion
-
-        #region Read(SDataBaseURL)
-
         /// <summary>
         /// Reads xsd from a $schema request
         /// </summary>
         /// <param name="request">url for the syndication resource to get information for.</param>
         /// <returns>XmlSchema </returns>
         XmlSchema Read(SDataResourceSchemaRequest request);
-
-        #endregion
-
-        #region Update(SDataBaseURL url, ISyndicationResource resource)
 
         /// <summary>
         /// Updates information about a syndication resource in the data source.
@@ -208,20 +157,10 @@ namespace Sage.SData.Client.Core
         /// </param>
         ISyndicationResource Update(SDataBaseRequest request, ISyndicationResource resource);
 
-        #endregion
-
-        //============================================================
-        //	PRIVATE METHODS
-        //============================================================
-
-        #region Initialize()
-
         /// <summary>
         /// Initializes the <see cref="SDataService"/> 
         /// </summary>
         /// <remarks>sett the User Name and Password to authenticate with and build the url</remarks>
         void Initialize();
-
-        #endregion
     }
 }

@@ -22,13 +22,7 @@ namespace Sage.SData.Client.Core
     ///     </code>
     /// </example>
     public class SDataService : ISDataService, ISDataRequestSettings
-
     {
-        //============================================================
-        //	PUBLIC/PRIVATE/PROTECTED MEMBERS
-        //============================================================
-
-
         private string _applicationName;
         private string _serverName;
         private string _protocol;
@@ -42,9 +36,7 @@ namespace Sage.SData.Client.Core
         private string _userName;
         private string _passWord;
         private bool _initialized;
-        //============================================================
-        //	PUBLIC PROPERTIES
-        //============================================================
+
         /// <summary>
         /// Flag set when Service is initialzed
         /// </summary>
@@ -53,8 +45,6 @@ namespace Sage.SData.Client.Core
             get { return _initialized; }
             set { _initialized = value; }
         }
-
-        #region ApplicationName
 
         /// <summary>
         /// Gets or sets the name of the application.
@@ -72,10 +62,8 @@ namespace Sage.SData.Client.Core
             set { _applicationName = value; }
         }
 
-        #endregion
-
         /// <summary>
-        /// Acessor method for protocol, 
+        /// Accessor method for protocol, 
         /// </summary>
         /// <remarks>HTTP is the default but can be HTTPS</remarks>
         public string Protocol
@@ -83,7 +71,6 @@ namespace Sage.SData.Client.Core
             get { return _protocol; }
             set { _protocol = value; }
         }
-
 
         /// <remarks>
         /// Creates the service with predefined values for the url
@@ -93,7 +80,6 @@ namespace Sage.SData.Client.Core
             get { return _url; }
             set { _url = value; }
         }
-
 
         /// <remarks>IP address is also allowed (192.168.1.1).
         /// Can be followed by port number. For example www.example.com:5493. 
@@ -105,7 +91,6 @@ namespace Sage.SData.Client.Core
             set { _serverName = value; }
         }
 
-
         /// <summary>
         /// Accessor method for virtual directory
         /// </summary>
@@ -116,7 +101,6 @@ namespace Sage.SData.Client.Core
             get { return _virtualDirectory; }
             set { _virtualDirectory = value; }
         }
-
 
         /// <summary>
         /// Accessor method for dataSet
@@ -135,7 +119,6 @@ namespace Sage.SData.Client.Core
             set { _dataSet = value; }
         }
 
-
         /// <summary>
         /// Accessor method for contractName
         /// </summary>
@@ -149,7 +132,6 @@ namespace Sage.SData.Client.Core
             get { return _contractName; }
             set { _contractName = value; }
         }
-
 
         /// <summary>
         /// Get set for the user name to authenticate with
@@ -168,13 +150,6 @@ namespace Sage.SData.Client.Core
             get { return _passWord; }
             set { _passWord = value; }
         }
-
-
-        //============================================================
-        //	PUBLIC METHODS
-        //============================================================
-
-        #region Create(SDataBaseURL, ISyndicationResource resource)
 
         /// <summary>
         /// Adds a new syndication resource to the data source.
@@ -220,10 +195,6 @@ namespace Sage.SData.Client.Core
                 throw new SDataClientException(ex.Message, ex);
             }
         }
-
-        #endregion
-
-        #region Create(SDataBaseURL, ISyndicationResource resource)
 
         /// <summary>
         /// Adds a new syndication resource to the data source.
@@ -278,10 +249,6 @@ namespace Sage.SData.Client.Core
             }
         }
 
-        #endregion
-
-        #region CreateAsync(SDataBaseURL, ISyndicationResource resource, string trackingId)
-
         /// <summary>
         /// Asynchronous PUT to the server
         /// </summary>
@@ -331,10 +298,6 @@ namespace Sage.SData.Client.Core
             }
         }
 
-        #endregion
-
-        #region Delete(string url)
-
         /// <summary>
         /// Generic delete from server
         /// </summary>
@@ -348,14 +311,11 @@ namespace Sage.SData.Client.Core
                 cache.Add(new Uri(_url), "Digest", new NetworkCredential(_userName, _passWord));
                 cache.Add(new Uri(_url), "Basic", new NetworkCredential(_userName, _passWord));
 
-                // set up connection
                 _client = new WebClient();
                 _client.Encoding = Encoding.UTF8;
-                //_client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml");
                 _client.Credentials = cache;
 
-                //_client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
-                string result = _client.UploadString(url, "DELETE");
+                _client.UploadString(url, "DELETE");
 
                 return true;
             }
@@ -372,10 +332,6 @@ namespace Sage.SData.Client.Core
                 throw new SDataClientException(ex.Message, ex);
             }
         }
-
-        #endregion
-
-        #region Delete(SDataBaseURL url)
 
         /// <summary>
         /// Removes a resource from the syndication data source.
@@ -395,22 +351,20 @@ namespace Sage.SData.Client.Core
                     BatchProcess.Instance.AddToBatch(batchrequest);
                     return true;
                 }
-                else
-                {
-                    CredentialCache cache = new CredentialCache();
-                    cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
-                    cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
 
-                    // set up connection
-                    _client = new WebClient();
-                    _client.Encoding = Encoding.UTF8;
-                    _client.Credentials = cache;
+                CredentialCache cache = new CredentialCache();
+                cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
+                cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
 
-                    _client.Headers.Clear();
-                    _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
-                    string result = _client.UploadString(request.ToString(), "DELETE", resource.CreateNavigator().OuterXml);
-                    return true;
-                }
+                // set up connection
+                _client = new WebClient();
+                _client.Encoding = Encoding.UTF8;
+                _client.Credentials = cache;
+
+                _client.Headers.Clear();
+                _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
+                _client.UploadString(request.ToString(), "DELETE", resource.CreateNavigator().OuterXml);
+                return true;
             }
             catch (WebException e)
             {
@@ -425,10 +379,6 @@ namespace Sage.SData.Client.Core
                 throw new SDataClientException(ex.Message, ex);
             }
         }
-
-        #endregion
-
-        #region Read(string url)
 
         /// <summary>
         /// generic read from the specified url
@@ -446,10 +396,6 @@ namespace Sage.SData.Client.Core
             _client.Credentials = cache; // digest authentication supported 
             return _client.DownloadString(url);
         }
-
-        #endregion
-
-        #region Read(SDataBaseURL)
 
         /// <summary>
         /// Reads resource information from the data source based on the URL.
@@ -472,13 +418,11 @@ namespace Sage.SData.Client.Core
         {
             try
             {
-                AtomFeed feed = new AtomFeed();
                 CredentialCache cache = new CredentialCache();
                 cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
                 cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
 
-                feed = AtomFeed.Create(new Uri(request.ToString()), cache, null, settings);
-                return feed;
+                return AtomFeed.Create(new Uri(request.ToString()), cache, null, settings);
             }
             catch (WebException e)
             {
@@ -489,10 +433,8 @@ namespace Sage.SData.Client.Core
                     ex.Data = sr.ReadToEnd();
                     throw ex;
                 }
-                else
-                {
-                    throw e;
-                }
+
+                throw;
             }
             catch (Exception ex)
             {
@@ -517,16 +459,11 @@ namespace Sage.SData.Client.Core
                     BatchProcess.Instance.AddToBatch(batchrequest);
                     return null;
                 }
-                else
-                {
-                    AtomEntry entry = new AtomEntry();
 
-                    CredentialCache cache = new CredentialCache();
-                    cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
-                    cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
-                    entry = AtomEntry.Read(new Uri(request.ToString()), cache, null);
-                    return entry;
-                }
+                CredentialCache cache = new CredentialCache();
+                cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
+                cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
+                return AtomEntry.Read(new Uri(request.ToString()), cache, null);
             }
             catch (WebException e)
             {
@@ -541,10 +478,6 @@ namespace Sage.SData.Client.Core
                 throw new SDataClientException(ex.Message, ex);
             }
         }
-
-        #endregion
-
-        #region Read(SDataBaseURL)
 
         /// <summary>
         /// Reads xsd from a $schema request
@@ -570,8 +503,7 @@ namespace Sage.SData.Client.Core
 
                 XmlTextReader reader = new XmlTextReader(new MemoryStream(Encoding.UTF8.GetBytes(result)));
 
-                XmlSchema schema = XmlSchema.Read(reader, null);
-                return schema;
+                return XmlSchema.Read(reader, null);
             }
             catch (WebException e)
             {
@@ -586,10 +518,6 @@ namespace Sage.SData.Client.Core
                 throw new SDataClientException(ex.Message, ex);
             }
         }
-
-        #endregion
-
-        #region Update(SDataBaseURL url, ISyndicationResource resource)
 
         /// <summary>
         /// Updates information about a syndication resource in the data source.
@@ -611,23 +539,21 @@ namespace Sage.SData.Client.Core
                     BatchProcess.Instance.AddToBatch(batchrequest);
                     return null;
                 }
-                else
-                {
-                    CredentialCache cache = new CredentialCache();
-                    cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
-                    cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
 
-                    // set up connection
-                    _client = new WebClient();
-                    _client.Encoding = Encoding.UTF8;
-                    _client.Credentials = cache;
+                CredentialCache cache = new CredentialCache();
+                cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
+                cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
 
-                    _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
-                    string result = _client.UploadString(request.ToString(), "PUT", resource.CreateNavigator().OuterXml);
-                    AtomEntry entry = new AtomEntry();
-                    entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(result)));
-                    return entry;
-                }
+                // set up connection
+                _client = new WebClient();
+                _client.Encoding = Encoding.UTF8;
+                _client.Credentials = cache;
+
+                _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
+                string result = _client.UploadString(request.ToString(), "PUT", resource.CreateNavigator().OuterXml);
+                AtomEntry entry = new AtomEntry();
+                entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(result)));
+                return entry;
             }
             catch (WebException e)
             {
@@ -642,8 +568,6 @@ namespace Sage.SData.Client.Core
                 throw new SDataClientException(ex.Message, ex);
             }
         }
-
-        #endregion
 
         /// <summary>
         /// Default Constructor
@@ -662,56 +586,29 @@ namespace Sage.SData.Client.Core
             _userName = userName;
             _passWord = password;
 
+            var builder = new UrlBuilder(url);
+            Protocol = builder.Scheme;
+            ServerName = string.Format("{0}:{1}", builder.Host, builder.Port);
 
-            // now lets parse the url
-            string[] urlparts = url.Split(new[] {"://", "/"}, StringSplitOptions.RemoveEmptyEntries);
+            var segmentCount = builder.PathSegments.Count;
 
-            for (int x = 0; x < urlparts.Length; x++)
+            if (segmentCount > 0)
             {
-                switch (x)
-                {
-                    case 0:
-                        {
-                            Protocol = urlparts[x];
-                            break;
-                        }
-                    case 1:
-                        {
-                            ServerName = urlparts[x];
-                            break;
-                        }
-                    case 2:
-                        {
-                            VirtualDirectory = urlparts[x];
-                            break;
-                        }
-                    case 3:
-                        {
-                            ApplicationName = urlparts[x];
-                            break;
-                        }
-                    case 4:
-                        {
-                            ContractName = urlparts[x];
-                            break;
-                        }
-                    case 5:
-                        {
-                            DataSet = urlparts[x];
-                            break;
-                        }
-                    default:
-                        break;
-                }
+                VirtualDirectory = builder.PathSegments[0];
+            }
+            if (segmentCount > 1)
+            {
+                ApplicationName = builder.PathSegments[1];
+            }
+            if (segmentCount > 2)
+            {
+                ContractName = builder.PathSegments[2];
+            }
+            if (segmentCount > 3)
+            {
+                DataSet = builder.PathSegments[3];
             }
         }
-
-
-        //============================================================
-        //	PRIVATE METHODS
-        //============================================================
-
-        #region Initialize()
 
         /// <summary>
         /// Initializes the <see cref="SDataService"/> 
@@ -724,17 +621,30 @@ namespace Sage.SData.Client.Core
 
             if (_url == null)
             {
-                _url = Protocol + "://" +
-                       ServerName + "/" +
-                       VirtualDirectory + "/" +
-                       ApplicationName + "/" +
-                       ContractName + "/" +
-                       DataSet + "/";
+                var server = ServerName;
+                var pos = server.IndexOf(':');
+                UrlBuilder builder;
+
+                if (pos >= 0)
+                {
+                    var port = int.Parse(server.Substring(pos + 1));
+                    server = server.Substring(0, pos);
+                    builder = new UrlBuilder(Protocol, server, port);
+                }
+                else
+                {
+                    builder = new UrlBuilder(Protocol, server);
+                }
+
+                builder.PathSegments.Add(VirtualDirectory);
+                builder.PathSegments.Add(ApplicationName);
+                builder.PathSegments.Add(ContractName);
+                builder.PathSegments.Add(DataSet);
+
+                _url = builder.ToString();
             }
 
             Initialized = true;
         }
-
-        #endregion
     }
 }

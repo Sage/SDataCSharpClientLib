@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{590B03D1-FC26-4AFD-98F8-421E6E8DDBA8}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -109,10 +109,10 @@
     <Compile Include="Core\SDataService.cs" />
     <Compile Include="Core\SDataServiceException.cs" />
     <Compile Include="Core\SDataServiceOperationRequest.cs" />
-    <Compile Include="Core\SDataServiceTest.cs" />
     <Compile Include="Core\SDataSingleResourceRequest.cs" />
     <Compile Include="Core\SDataSystemRequest.cs" />
     <Compile Include="Core\SDataTemplateResourceRequest.cs" />
+    <Compile Include="Core\UrlBuilder.cs" />
     <Compile Include="Extensions\OpenSearch\OpenSearchExtension.cs" />
     <Compile Include="Extensions\OpenSearch\OpenSearchExtensionContext.cs" />
     <Compile Include="Extensions\OpenSearch\OpenSearchExtensionHelper.cs" />

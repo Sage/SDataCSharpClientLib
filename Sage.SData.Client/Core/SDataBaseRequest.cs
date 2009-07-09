@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace Sage.SData.Client.Core
+﻿namespace Sage.SData.Client.Core
 {
     /// <summary>
     /// Base class for all SData Requests
     /// </summary>
-    public class SDataBaseRequest : ISDataRequestSettings
+    public abstract class SDataBaseRequest : ISDataRequestSettings
     {
         /// <summary>
         /// protocol value for http
@@ -18,11 +16,10 @@ namespace Sage.SData.Client.Core
         /// </summary>
         public const string HTTPS = "https";
 
-
         private string _protocol;
 
         /// <summary>
-        /// Acessor method for protocol, 
+        /// Accessor method for protocol, 
         /// </summary>
         /// <remarks>HTTP is the default but can be HTTPS</remarks>
         public string Protocol
@@ -46,7 +43,6 @@ namespace Sage.SData.Client.Core
             set { _serverName = value; }
         }
 
-
         private string _virtualDirectory;
 
         /// <summary>
@@ -60,7 +56,6 @@ namespace Sage.SData.Client.Core
             set { _virtualDirectory = value; }
         }
 
-
         private ISDataService _service;
 
         /// <summary>
@@ -72,21 +67,28 @@ namespace Sage.SData.Client.Core
             set { _service = value; }
         }
 
-
-        /// <summary>
-        /// function to format url string for the request
-        /// </summary>
-        /// <returns>formatted string</returns>
-        public override string ToString()
+        protected virtual void BuildUrl(UrlBuilder builder)
         {
-            throw new NotImplementedException();
+            var server = ServerName;
+            var pos = server.IndexOf(':');
+
+            if (pos >= 0)
+            {
+                var port = int.Parse(server.Substring(pos + 1));
+                server = server.Substring(0, pos);
+                builder.Port = port;
+            }
+
+            builder.Scheme = Protocol;
+            builder.Host = server;
+            builder.PathSegments.Add(VirtualDirectory);
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="service">an ISDataService to use for thie request</param>
-        public SDataBaseRequest(ISDataService service)
+        protected SDataBaseRequest(ISDataService service)
         {
             if (service == null)
             {
@@ -96,16 +98,27 @@ namespace Sage.SData.Client.Core
             {
                 throw new SDataClientException("Service Not Initialized");
             }
-            Service = service;
 
+            Service = service;
             Protocol = service.Protocol;
             ServerName = service.ServerName;
             VirtualDirectory = service.VirtualDirectory;
         }
 
         /// <summary>
-        /// parameterless contstructor
+        /// parameterless constructor
         /// </summary>
         protected SDataBaseRequest() {}
+
+        /// <summary>
+        /// function to format url string for the request
+        /// </summary>
+        /// <returns>formatted string</returns>
+        public override string ToString()
+        {
+            var builder = new UrlBuilder();
+            BuildUrl(builder);
+            return builder.ToString();
+        }
     }
 }

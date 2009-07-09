@@ -32,20 +32,5 @@ namespace Sage.SData.Client.Core
         {
             return Service.ReadFeed(this);
         }
-
-
-        /// <summary>
-        /// function to format url string
-        /// </summary>
-        /// <returns>formatted string</returns>
-        public override string ToString()
-        {
-            string retval =
-                Protocol + "://" +
-                ServerName + "/" +
-                VirtualDirectory;
-
-            return retval;
-        }
     }
 }

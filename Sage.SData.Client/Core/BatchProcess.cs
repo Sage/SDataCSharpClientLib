@@ -41,7 +41,7 @@ namespace Sage.SData.Client.Core
         /// <param name="batchitem">url for batch item</param>
         public void AddToBatch(string[] batchitem)
         {
-            SDataBatchRequest batchRequest = _stack.Peek() as SDataBatchRequest;
+            SDataBatchRequest batchRequest = (SDataBatchRequest) _stack.Peek();
             batchRequest.Requests.Enqueue(batchitem);
         }
     }

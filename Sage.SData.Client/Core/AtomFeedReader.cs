@@ -94,7 +94,7 @@ namespace Sage.SData.Client.Core
             _lastPageSize = 0;
         }
 
-        #region IList
+        #region IList Members
 
         /// <summary>
         /// IList implementation
