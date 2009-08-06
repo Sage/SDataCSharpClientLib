@@ -46,28 +46,32 @@ namespace SDataClientApp
 
         private void FormatURL()
         {
-            var server = tbServer.Text;
-            var pos = server.IndexOf(':');
-            UrlBuilder builder;
-
-            if (pos >= 0)
+            try
             {
-                var port = int.Parse(server.Substring(pos + 1));
-                server = server.Substring(0, pos);
-                builder = new UrlBuilder(cbProtocol.Text, server, port);
-            }
-            else
-            {
-                builder = new UrlBuilder(cbProtocol.Text, server);
-            }
+                var server = tbServer.Text;
+                var pos = server.IndexOf(':');
+                UrlBuilder builder;
+                int port;
 
-            builder.PathSegments.Add(tbVirtualDirectory.Text);
-            builder.PathSegments.Add(tbApplication.Text);
-            builder.PathSegments.Add(tbContract.Text);
-            builder.PathSegments.Add(tbDataSet.Text);
+                if (pos >= 0 && int.TryParse(server.Substring(pos + 1), out port))
+                {
+                    server = server.Substring(0, pos);
+                    builder = new UrlBuilder(cbProtocol.Text, server, port);
+                }
+                else
+                {
+                    builder = new UrlBuilder(cbProtocol.Text, server);
+                }
 
-            _url = builder.ToString();
-            tbURL.Text = _url;
+                builder.PathSegments.Add(tbVirtualDirectory.Text);
+                builder.PathSegments.Add(tbApplication.Text);
+                builder.PathSegments.Add(tbContract.Text);
+                builder.PathSegments.Add(tbDataSet.Text);
+
+                _url = builder.ToString();
+                tbURL.Text = _url;
+            }
+            catch (UriFormatException) {}
         }
 
         private void tbApplication_TextChanged(object sender, EventArgs e)
@@ -245,8 +249,11 @@ namespace SDataClientApp
 
         private void tbSingleResourceSelector_TextChanged(object sender, EventArgs e)
         {
-            _sdataSingleResourceRequest.ResourceSelector = tbSingleResourceSelector.Text;
-            tbSingleURL.Text = _sdataSingleResourceRequest.ToString();
+            if (_sdataSingleResourceRequest != null)
+            {
+                _sdataSingleResourceRequest.ResourceSelector = tbSingleResourceSelector.Text;
+                tbSingleURL.Text = _sdataSingleResourceRequest.ToString();
+            }
         }
 
         private void btnSingleRead_Click(object sender, EventArgs e)
@@ -657,6 +664,11 @@ namespace SDataClientApp
 
         private void tbRPResourceKind_TextChanged(object sender, EventArgs e)
         {
+            if (_sdataService == null)
+            {
+                return;
+            }
+            
             try
             {
                 _sdataResourcePropertyRequest.ResourceKind = tbRPResourceKind.Text;
@@ -670,6 +682,11 @@ namespace SDataClientApp
 
         private void tbRPResourceSelector_TextChanged(object sender, EventArgs e)
         {
+            if (_sdataService == null)
+            {
+                return;
+            }
+            
             try
             {
                 _sdataResourcePropertyRequest.ResourceSelector = tbRPResourceSelector.Text;

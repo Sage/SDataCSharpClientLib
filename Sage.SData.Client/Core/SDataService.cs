@@ -557,10 +557,16 @@ namespace Sage.SData.Client.Core
             }
             catch (WebException e)
             {
-                StreamReader sr = new StreamReader(e.Response.GetResponseStream());
-                string data = sr.ReadToEnd();
-                SDataServiceException ex = new SDataServiceException();
-                ex.Data = data;
+                SDataServiceException ex = new SDataServiceException(e.Message, e);
+
+                if (e.Response != null)
+                {
+                    using (StreamReader sr = new StreamReader(e.Response.GetResponseStream()))
+                    {
+                        ex.Data = sr.ReadToEnd();
+                    }
+                }
+
                 throw ex;
             }
             catch (Exception ex)

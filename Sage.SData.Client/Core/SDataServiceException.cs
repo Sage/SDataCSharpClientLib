@@ -55,11 +55,7 @@ namespace Sage.SData.Client.Core
                 manager.AddNamespace("sdata", "http://schemas.sage.com/sdata/2008/1");
                 XPathNavigator nav = doc.DocumentElement.CreateNavigator();
                 XPathNavigator messageNav = nav.SelectSingleNode(".//sdata:message", manager);
-                string message = messageNav.InnerXml;
-
-                int length = message.IndexOf("Stack");
-
-                return message.Substring(0, length);
+                return messageNav.InnerXml;
             }
         }
     }
