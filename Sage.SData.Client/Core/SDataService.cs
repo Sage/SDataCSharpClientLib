@@ -7,6 +7,7 @@ using System.Xml.Schema;
 using System.Xml.XPath;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
+using Sage.SData.Client.Extensions;
 
 namespace Sage.SData.Client.Core
 {
@@ -226,6 +227,7 @@ namespace Sage.SData.Client.Core
                 _client.Headers.Clear();
 
                 _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml; type=entry");
+                _client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
 
                 _client.Credentials = cache;
 
@@ -363,6 +365,7 @@ namespace Sage.SData.Client.Core
 
                 _client.Headers.Clear();
                 _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
+                _client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
                 _client.UploadString(request.ToString(), "DELETE", resource.CreateNavigator().OuterXml);
                 return true;
             }
@@ -550,6 +553,7 @@ namespace Sage.SData.Client.Core
                 _client.Credentials = cache;
 
                 _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
+                _client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
                 string result = _client.UploadString(request.ToString(), "PUT", resource.CreateNavigator().OuterXml);
                 AtomEntry entry = new AtomEntry();
                 entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(result)));

@@ -326,6 +326,7 @@ namespace SDataClientApp
                 doc.LoadXml(entry.GetSDataPayload().OuterXml);
                 var employee = doc.DocumentElement.CreateNavigator();
                 var manager = new XmlNamespaceManager(doc.NameTable);
+                manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
                 manager.AddNamespace("a", "http://schemas.sage.com/dynamic/2007");
                 var row = ((DataRowView) singlePayloadGrid.SelectedObject).Row;
 
@@ -360,6 +361,25 @@ namespace SDataClientApp
                         }
                         else if (nav.Value != value)
                         {
+                            var nil = nav.SelectSingleNode("@xsi:nil", manager);
+
+                            if (value == null)
+                            {
+                                if (nil == null)
+                                {
+                                    var attributes = nav.CreateAttributes();
+                                    attributes.WriteAttributeString("xsi:nil", "true");
+                                    attributes.Close();
+                                }
+                            }
+                            else
+                            {
+                                if (nil != null)
+                                {
+                                    nil.DeleteSelf();
+                                }
+                            }
+
                             nav.SetValue(value);
                         }
                         else
