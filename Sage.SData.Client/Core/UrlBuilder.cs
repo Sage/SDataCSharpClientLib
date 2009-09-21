@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace Sage.SData.Client.Core
 {
@@ -93,7 +92,7 @@ namespace Sage.SData.Client.Core
         {
             if (_pathSegments != null)
             {
-                _builder.Path = string.Join("/", _pathSegments.Select(segment => HttpUtility.UrlEncode(segment)).ToArray());
+                _builder.Path = string.Join("/", _pathSegments.Select(segment => Uri.EscapeUriString(segment).Replace("+", "%20")).ToArray());
             }
         }
 
@@ -110,7 +109,7 @@ namespace Sage.SData.Client.Core
 
                 _pathSegments = new List<string>(
                     !string.IsNullOrEmpty(path)
-                        ? path.Split('/').Select(part => HttpUtility.UrlDecode(part))
+                        ? path.Split('/').Select(part => Uri.UnescapeDataString(part))
                         : new string[0]);
             }
         }
@@ -150,9 +149,9 @@ namespace Sage.SData.Client.Core
 
         private static string BuildQueryParameter(KeyValuePair<string, string> param)
         {
-            var key = HttpUtility.UrlEncode(param.Key);
+            var key = Uri.EscapeUriString(param.Key).Replace("+", "%20");
             return param.Value != null
-                       ? string.Format("{0}={1}", key, HttpUtility.UrlEncode(param.Value))
+                       ? string.Format("{0}={1}", key, Uri.EscapeUriString(param.Value).Replace("+", "%20"))
                        : key;
         }
 
@@ -191,7 +190,7 @@ namespace Sage.SData.Client.Core
                 value = string.Empty;
             }
 
-            return new KeyValuePair<string, string>(HttpUtility.UrlDecode(key), HttpUtility.UrlDecode(value));
+            return new KeyValuePair<string, string>(Uri.UnescapeDataString(key), Uri.UnescapeDataString(value));
         }
 
         public string Fragment

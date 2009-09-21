@@ -98,11 +98,6 @@ namespace Sage.SData.Client.Core
         {
             base.BuildUrl(builder);
 
-            if (ResourceProperties.Count == 0)
-            {
-                throw new Exception("No Resource Properties Set");
-            }
-
             foreach (var value in ResourceProperties.Values)
             {
                 builder.PathSegments.Add(value);

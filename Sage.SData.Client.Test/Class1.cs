@@ -383,7 +383,7 @@ namespace Sage.SData.Client.Test
             b.QueryValues.Add("where", "gender eq m");
 
             string url = b.ToString();
-            Expect(url == "http://localhost:59213/sdata/aw/dynamic/-/employees?where=gender+eq+m");
+            Expect(url == "http://localhost:59213/sdata/aw/dynamic/-/employees?where=gender eq m");
         }
 
         [Test]
@@ -402,7 +402,7 @@ namespace Sage.SData.Client.Test
             b.QueryValues.Add("orderBy", "orderDate DESC");
 
             string url = b.ToString();
-            Expect(url == "http://localhost:59213/sdata/aw/dynamic/-/employees?where=gender+eq+m&orderBy=orderDate+DESC");
+            Expect(url == "http://localhost:59213/sdata/aw/dynamic/-/employees?where=gender eq m&orderBy=orderDate DESC");
         }
 
         [Test]
@@ -494,7 +494,7 @@ namespace Sage.SData.Client.Test
 
             string result = b.ToString();
 
-            Expect(result == "http://localhost:59213/sdata/aw/dynamic/-/employees(id+=+'1234')");
+            Expect(result == "http://localhost:59213/sdata/aw/dynamic/-/employees(id = '1234')");
         }
 
         [Test]

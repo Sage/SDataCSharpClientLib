@@ -1,14 +1,5 @@
-#if NET3_5
 using System.Linq;
-#endif
 using Sage.SData.Client.Atom;
-
-#if !NET3_5
-namespace System.Runtime.CompilerServices
-{
-    public class ExtensionAttribute : Attribute { }
-}
-#endif
 
 namespace Sage.SData.Client.Extensions
 {
@@ -85,21 +76,8 @@ namespace Sage.SData.Client.Extensions
 
         private static OpenSearchExtensionContext GetContext(IExtensibleSyndicationObject entry, bool createIfMissing)
         {
-            OpenSearchExtension extension = null;
-#if NET3_5
-            extension = entry.Extensions.OfType<OpenSearchExtension>().FirstOrDefault();
-#else
+            var extension = entry.Extensions.OfType<OpenSearchExtension>().FirstOrDefault();
 
-            foreach (ISyndicationExtension item in entry.Extensions)
-            {
-                extension = item as OpenSearchExtension;
-
-                if (extension != null)
-                {
-                    break;
-                }
-            }
-#endif
             if (extension == null)
             {
                 if (!createIfMissing)

@@ -585,7 +585,7 @@ namespace Sage.SData.Client.Common
             //	Decode the escaped value
             //------------------------------------------------------------
             decodedResult   = System.Web.HttpUtility.HtmlDecode(escapedValue);
-            decodedResult   = System.Web.HttpUtility.UrlDecode(decodedResult);
+            decodedResult   = System.Uri.UnescapeDataString(decodedResult);
 
             return decodedResult;
         }

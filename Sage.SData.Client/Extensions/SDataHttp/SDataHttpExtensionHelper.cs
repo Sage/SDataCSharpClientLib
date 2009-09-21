@@ -1,7 +1,5 @@
 ﻿using System;
-#if NET3_5
 using System.Linq;
-#endif
 using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Extensions
@@ -139,19 +137,7 @@ namespace Sage.SData.Client.Extensions
 
         private static SDataHttpExtensionContext GetContext(IExtensibleSyndicationObject entry, bool createIfMissing)
         {
-            SDataHttpExtension extension = null;
-#if NET3_5
-            extension = entry.Extensions.OfType<SDataHttpExtension>().FirstOrDefault();
-#else
-            foreach (ISyndicationExtension item in entry.Extensions)
-            {
-                if(item is SDataHttpExtension)
-                {
-                    extension = item as SDataHttpExtension;
-                    break;
-                }
-            }
-#endif
+            var extension = entry.Extensions.OfType<SDataHttpExtension>().FirstOrDefault();
 
             if (extension == null)
             {

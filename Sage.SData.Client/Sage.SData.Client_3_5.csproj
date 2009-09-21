@@ -106,7 +106,8 @@
     <Compile Include="Core\SDataResourceCollectionRequest.cs" />
     <Compile Include="Core\SDataResourcePropertyRequest.cs" />
     <Compile Include="Core\SDataResourceSchemaRequest.cs" />
-    <Compile Include="Core\SDataService.cs" />
+    <Compile Include="Core\SDataService.cs">
+    </Compile>
     <Compile Include="Core\SDataServiceException.cs" />
     <Compile Include="Core\SDataServiceOperationRequest.cs" />
     <Compile Include="Core\SDataSingleResourceRequest.cs" />

@@ -1,7 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-#if NET3_5
 using System.Linq;
-#endif
 using System.Xml.XPath;
 using Sage.SData.Client.Atom;
 
@@ -58,19 +56,8 @@ namespace Sage.SData.Client.Extensions
 
         private static SDataExtensionContext GetContext(IExtensibleSyndicationObject entry, bool createIfMissing)
         {
-            SDataExtension extension = null;
-#if NET3_5
-            extension = entry.Extensions.OfType<SDataExtension>().FirstOrDefault();
-#else
-            foreach (ISyndicationExtension item in entry.Extensions)
-            {
-                if(item is SDataExtension)
-                {
-                    extension = item as SDataExtension;
-                    break;
-                }
-            }
-#endif
+            var extension = entry.Extensions.OfType<SDataExtension>().FirstOrDefault();
+
             if (extension == null)
             {
                 if (!createIfMissing)

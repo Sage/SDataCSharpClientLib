@@ -33,6 +33,7 @@ namespace Sage.SData.Client.Core
         private string _url;
 
         private WebClient _client;
+        private readonly CookieContainer _cookies = new CookieContainer();
 
         private string _userName;
         private string _passWord;
@@ -82,7 +83,8 @@ namespace Sage.SData.Client.Core
             set { _url = value; }
         }
 
-        /// <remarks>IP address is also allowed (192.168.1.1).
+        /// <remarks>
+        /// IP address is also allowed (192.168.1.1).
         /// Can be followed by port number. For example www.example.com:5493. 
         /// 5493 is the recommended port number for SData services that are not exposed on the Internet.
         /// </remarks>
@@ -161,23 +163,14 @@ namespace Sage.SData.Client.Core
         {
             try
             {
+                var requestUrl = request.ToString();
                 string strxml = resource.OuterXml;
 
-                CredentialCache cache = new CredentialCache();
-                cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
-                cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
+                _client = CreateWebClient(requestUrl);
 
-                // set up connection
-                _client = new WebClient();
-                _client.Encoding = Encoding.UTF8;
-                _client.Headers.Clear();
+                _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=feed");
 
-
-                _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml; type=feed");
-
-                _client.Credentials = cache;
-
-                string result = _client.UploadString(request.ToString(), "POST", strxml);
+                string result = _client.UploadString(requestUrl, "POST", strxml);
                 AtomFeed feed = new AtomFeed();
                 feed.Load(new MemoryStream(Encoding.UTF8.GetBytes(result)));
 
@@ -206,32 +199,24 @@ namespace Sage.SData.Client.Core
         {
             try
             {
+                var requestUrl = request.ToString();
                 string strxml = resource.CreateNavigator().OuterXml;
                 if (BatchProcess.Instance.CurrentStack.Count > 0)
                 {
                     string[] batchrequest = new string[3];
-                    batchrequest[0] = request.ToString();
+                    batchrequest[0] = requestUrl;
                     batchrequest[1] = "POST";
                     batchrequest[2] = resource.CreateNavigator().OuterXml;
                     BatchProcess.Instance.AddToBatch(batchrequest);
                     return null;
                 }
 
-                CredentialCache cache = new CredentialCache();
-                cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
-                cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
+                _client = CreateWebClient(requestUrl);
 
-                // set up connection
-                _client = new WebClient();
-                _client.Encoding = Encoding.UTF8;
-                _client.Headers.Clear();
-
-                _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml; type=entry");
+                _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
                 _client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
 
-                _client.Credentials = cache;
-
-                string result = _client.UploadString(request.ToString(), "POST", strxml);
+                string result = _client.UploadString(requestUrl, "POST", strxml);
                 AtomEntry entry = new AtomEntry();
                 entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(result)));
 
@@ -259,17 +244,12 @@ namespace Sage.SData.Client.Core
         {
             try
             {
-                CredentialCache cache = new CredentialCache();
-                cache.Add(new Uri(_url), "Digest", new NetworkCredential(_userName, _passWord));
-                cache.Add(new Uri(_url), "Basic", new NetworkCredential(_userName, _passWord));
+                var requestUrl = request.ToString();
+                _client = CreateWebClient(requestUrl);
 
-                // set up connection
-                _client = new WebClient();
-                _client.Encoding = Encoding.UTF8;
                 _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml");
-                _client.Credentials = cache;
 
-                string result = _client.UploadString(request.ToString(), "POST", request.ToString());
+                string result = _client.UploadString(requestUrl, "POST", requestUrl);
                 XmlDocument document = new XmlDocument();
 
                 document.Load(new MemoryStream(Encoding.UTF8.GetBytes(result)));
@@ -309,13 +289,7 @@ namespace Sage.SData.Client.Core
         {
             try
             {
-                CredentialCache cache = new CredentialCache();
-                cache.Add(new Uri(_url), "Digest", new NetworkCredential(_userName, _passWord));
-                cache.Add(new Uri(_url), "Basic", new NetworkCredential(_userName, _passWord));
-
-                _client = new WebClient();
-                _client.Encoding = Encoding.UTF8;
-                _client.Credentials = cache;
+                _client = CreateWebClient(_url);
 
                 _client.UploadString(url, "DELETE");
 
@@ -345,28 +319,22 @@ namespace Sage.SData.Client.Core
         {
             try
             {
+                var requestUrl = request.ToString();
+
                 if (BatchProcess.Instance.CurrentStack.Count > 0)
                 {
                     string[] batchrequest = new string[3];
-                    batchrequest[0] = request.ToString();
+                    batchrequest[0] = requestUrl;
                     batchrequest[1] = "DELETE";
                     BatchProcess.Instance.AddToBatch(batchrequest);
                     return true;
                 }
 
-                CredentialCache cache = new CredentialCache();
-                cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
-                cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
+                _client = CreateWebClient(requestUrl);
 
-                // set up connection
-                _client = new WebClient();
-                _client.Encoding = Encoding.UTF8;
-                _client.Credentials = cache;
-
-                _client.Headers.Clear();
                 _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
                 _client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
-                _client.UploadString(request.ToString(), "DELETE", resource.CreateNavigator().OuterXml);
+                _client.UploadString(requestUrl, "DELETE", resource.CreateNavigator().OuterXml);
                 return true;
             }
             catch (WebException e)
@@ -491,18 +459,12 @@ namespace Sage.SData.Client.Core
         {
             try
             {
-                CredentialCache cache = new CredentialCache();
-                cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
-                cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
-
-                // set up connection
-                _client = new WebClient();
-                _client.Encoding = Encoding.UTF8;
-                _client.Credentials = cache;
+                var requestUrl = request.ToString();
+                _client = CreateWebClient(requestUrl);
 
                 _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
 
-                string result = _client.DownloadString(request.ToString());
+                string result = _client.DownloadString(requestUrl);
 
                 XmlTextReader reader = new XmlTextReader(new MemoryStream(Encoding.UTF8.GetBytes(result)));
 
@@ -533,28 +495,23 @@ namespace Sage.SData.Client.Core
         {
             try
             {
+                var requestUrl = request.ToString();
+
                 if (BatchProcess.Instance.CurrentStack.Count > 0)
                 {
                     string[] batchrequest = new string[3];
-                    batchrequest[0] = request.ToString();
+                    batchrequest[0] = requestUrl;
                     batchrequest[1] = "PUT";
                     batchrequest[2] = resource.CreateNavigator().OuterXml;
                     BatchProcess.Instance.AddToBatch(batchrequest);
                     return null;
                 }
 
-                CredentialCache cache = new CredentialCache();
-                cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
-                cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
-
-                // set up connection
-                _client = new WebClient();
-                _client.Encoding = Encoding.UTF8;
-                _client.Credentials = cache;
+                _client = CreateWebClient(requestUrl);
 
                 _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
                 _client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
-                string result = _client.UploadString(request.ToString(), "PUT", resource.CreateNavigator().OuterXml);
+                string result = _client.UploadString(requestUrl, "PUT", resource.CreateNavigator().OuterXml);
                 AtomEntry entry = new AtomEntry();
                 entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(result)));
                 return entry;
@@ -626,9 +583,6 @@ namespace Sage.SData.Client.Core
         /// <remarks>sett the User Name and Password to authenticate with and build the url</remarks>
         public void Initialize()
         {
-            _client = new WebClient();
-            _client.Credentials = new NetworkCredential(UserName, Password);
-
             if (_url == null)
             {
                 var server = ServerName;
@@ -654,7 +608,57 @@ namespace Sage.SData.Client.Core
                 _url = builder.ToString();
             }
 
+            _client = CreateWebClient(_url);
             Initialized = true;
+        }
+
+        protected virtual WebClient CreateWebClient(string url)
+        {
+            var uri = new Uri(url);
+            var cred = new NetworkCredential(_userName, _passWord);
+            var cache = new CredentialCache
+                            {
+                                {uri, "Digest", cred},
+                                {uri, "Basic", cred}
+                            };
+            return new CookieAwareWebClient(_cookies)
+                       {
+                           Encoding = Encoding.UTF8,
+                           Credentials = cache
+                       };
+        }
+
+        protected void AppendCookie(Cookie cookie)
+        {
+            _cookies.Add(cookie);
+        }
+
+        protected void AppendCookies(CookieCollection cookies)
+        {
+            _cookies.Add(cookies);
+        }
+
+        private class CookieAwareWebClient : WebClient
+        {
+            private readonly CookieContainer _container;
+
+            public CookieAwareWebClient(CookieContainer container)
+            {
+                _container = container;
+            }
+
+            protected override WebRequest GetWebRequest(Uri address)
+            {
+                var request = base.GetWebRequest(address);
+                var httpWebRequest = request as HttpWebRequest;
+
+                if (httpWebRequest != null)
+                {
+                    httpWebRequest.CookieContainer = _container;
+                }
+
+                return request;
+            }
         }
     }
 }

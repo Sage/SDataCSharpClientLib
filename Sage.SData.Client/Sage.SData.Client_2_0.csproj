@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{590B03D1-FC26-4AFD-98F8-421E6E8DDBA8}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -40,6 +40,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LinqBridge, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c2b14eb747628076, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\dependencies\LinqBridge\LinqBridge.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -106,10 +110,10 @@
     <Compile Include="Core\SDataService.cs" />
     <Compile Include="Core\SDataServiceException.cs" />
     <Compile Include="Core\SDataServiceOperationRequest.cs" />
-    <Compile Include="Core\SDataServiceTest.cs" />
     <Compile Include="Core\SDataSingleResourceRequest.cs" />
     <Compile Include="Core\SDataSystemRequest.cs" />
     <Compile Include="Core\SDataTemplateResourceRequest.cs" />
+    <Compile Include="Core\UrlBuilder.cs" />
     <Compile Include="Extensions\OpenSearch\OpenSearchExtension.cs" />
     <Compile Include="Extensions\OpenSearch\OpenSearchExtensionContext.cs" />
     <Compile Include="Extensions\OpenSearch\OpenSearchExtensionHelper.cs" />
@@ -134,6 +138,31 @@
     <Compile Include="Extensions\ISyndicationExtension.cs" />
     <Compile Include="Common\Guard.cs" />
     <Compile Include="Extensions\SyndicationExtensionLoadedEventArgs.cs" />
+    <Compile Include="LinqBridge\ExtensionAttribute.cs" />
+    <Compile Include="LinqBridge\Func and Action delegates.cs" />
+    <Compile Include="LinqBridge\GroupedEnumerable.cs" />
+    <Compile Include="LinqBridge\Grouping.cs" />
+    <Compile Include="LinqBridge\IGrouping.cs" />
+    <Compile Include="LinqBridge\ILookup.cs" />
+    <Compile Include="LinqBridge\IOrderedEnumerable.cs" />
+    <Compile Include="LinqBridge\Lookup.cs" />
+    <Compile Include="LinqBridge\OrderByEnumerable.cs" />
+    <Compile Include="LinqBridge\Query Operators\Aggregation Operators - Average.cs" />
+    <Compile Include="LinqBridge\Query Operators\Aggregation Operators - Sum.cs" />
+    <Compile Include="LinqBridge\Query Operators\Aggregation Operators.cs" />
+    <Compile Include="LinqBridge\Query Operators\Conversion Operators.cs" />
+    <Compile Include="LinqBridge\Query Operators\Element Operators.cs" />
+    <Compile Include="LinqBridge\Query Operators\Enumerable Private.cs" />
+    <Compile Include="LinqBridge\Query Operators\Filtering Operators.cs" />
+    <Compile Include="LinqBridge\Query Operators\Generation Operators.cs" />
+    <Compile Include="LinqBridge\Query Operators\Grouping Operators.cs" />
+    <Compile Include="LinqBridge\Query Operators\Joining Operators.cs" />
+    <Compile Include="LinqBridge\Query Operators\Misc Operators.cs" />
+    <Compile Include="LinqBridge\Query Operators\Ordering Operators.cs" />
+    <Compile Include="LinqBridge\Query Operators\Projection Operators.cs" />
+    <Compile Include="LinqBridge\Query Operators\Quantifiers.cs" />
+    <Compile Include="LinqBridge\Query Operators\Set Operators.cs" />
+    <Compile Include="LinqBridge\ThenByEnumerable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\SyndicationResourceLoadSettings.cs" />
   </ItemGroup>
