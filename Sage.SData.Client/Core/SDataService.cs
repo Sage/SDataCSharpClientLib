@@ -375,16 +375,17 @@ namespace Sage.SData.Client.Core
         /// <returns>AtomFeed <see cref="AtomFeed"/> populated with the specified resources's information from the data source.</returns>
         public AtomFeed ReadFeed(SDataBaseRequest request)
         {
-            return ReadFeed(request, null);
+            SyndicationResourceLoadSettings settings = new SyndicationResourceLoadSettings {Timeout = new TimeSpan(0, 0, 120)};
+            return ReadFeed(request, settings);
         }
 
         /// <summary>
-        /// Reads resource information from the data source based on the URL. Allows override 
-        /// of load settings
+        /// Reads resource information from the data source based on the URL.
+        /// Allows override of load settings.
         /// </summary>
-        /// <param name="request">request for the syndication resource to get information for.</param>
-        /// <param name="settings"> if not null, used to override web timeouts</param>
-        /// <returns>AtomFeed <see cref="AtomFeed"/> populated with the specified resources's information from the data source.</returns>
+        /// <param name="request">Request for the syndication resource to get information for.</param>
+        /// <param name="settings">If not null, used to override web timeouts.</param>
+        /// <returns>An <see cref="AtomFeed"/> populated with the specified resources' information from the data source.</returns>
         public AtomFeed ReadFeed(SDataBaseRequest request, SyndicationResourceLoadSettings settings)
         {
             try
@@ -392,8 +393,7 @@ namespace Sage.SData.Client.Core
                 CredentialCache cache = new CredentialCache();
                 cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
                 cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
-
-                return AtomFeed.Create(new Uri(request.ToString()), cache, null, settings);
+                return AtomFeed.Create(new Uri(request.ToString()), new WebRequestContext(cache, null, _cookies), settings);
             }
             catch (WebException e)
             {
@@ -416,8 +416,8 @@ namespace Sage.SData.Client.Core
         /// <summary>
         /// Reads resource information from the data source based on the URL.
         /// </summary>
-        /// <param name="request">request for the syndication resource to get information for.</param>
-        /// <returns>An AtomEntry <see cref="AtomEntry"/> populated with the specified resources's information from the data source.</returns>
+        /// <param name="request">Request for the syndication resource to get information for.</param>
+        /// <returns>An <see cref="AtomEntry"/> populated with the specified resources' information from the data source.</returns>
         public AtomEntry ReadEntry(SDataBaseRequest request)
         {
             try
@@ -434,15 +434,20 @@ namespace Sage.SData.Client.Core
                 CredentialCache cache = new CredentialCache();
                 cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
                 cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
-                return AtomEntry.Read(new Uri(request.ToString()), cache, null);
+                SyndicationResourceLoadSettings settings = new SyndicationResourceLoadSettings {Timeout = new TimeSpan(0, 0, 120)};
+                return AtomEntry.Create(new Uri(request.ToString()), new WebRequestContext(cache, null, _cookies), settings);
             }
             catch (WebException e)
             {
-                StreamReader sr = new StreamReader(e.Response.GetResponseStream());
-                string data = sr.ReadToEnd();
-                SDataServiceException ex = new SDataServiceException();
-                ex.Data = data;
-                throw ex;
+                if (e.Response != null)
+                {
+                    SDataServiceException ex = new SDataServiceException();
+                    StreamReader sr = new StreamReader(e.Response.GetResponseStream());
+                    ex.Data = sr.ReadToEnd();
+                    throw ex;
+                }
+
+                throw;
             }
             catch (Exception ex)
             {

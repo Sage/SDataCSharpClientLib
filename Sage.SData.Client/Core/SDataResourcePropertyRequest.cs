@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Core

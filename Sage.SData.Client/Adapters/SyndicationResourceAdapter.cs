@@ -126,17 +126,6 @@ namespace Sage.SData.Client.Adapter
 
                     this.FillAtomResource(resource, resourceMetadata);
                     break;
-
-                case SyndicationContentFormat.AtomCategoryDocument:
-
-                    this.FillAtomPublishingResource(resource, resourceMetadata);
-                    break;
-
-                case SyndicationContentFormat.AtomServiceDocument:
-
-                    this.FillAtomPublishingResource(resource, resourceMetadata);
-                    break;
-
             }
         }
         #endregion
@@ -144,6 +133,7 @@ namespace Sage.SData.Client.Adapter
         //============================================================
         //	PRIVATE METHODS
         //============================================================
+
         #region FillAtomResource(ISyndicationResource resource, SyndicationResourceMetadata resourceMetadata)
         /// <summary>
         /// Modifies the <see cref="ISyndicationResource"/> to match the data source.
@@ -178,24 +168,6 @@ namespace Sage.SData.Client.Adapter
                     atom10Adapter.Fill(atomEntry);
                 }
             }
-        }
-        #endregion
-
-        #region FillAtomPublishingResource(ISyndicationResource resource, SyndicationResourceMetadata resourceMetadata)
-        /// <summary>
-        /// Modifies the <see cref="ISyndicationResource"/> to match the data source.
-        /// </summary>
-        /// <param name="resource">The Atom Publishing Protocol <see cref="ISyndicationResource"/> to be filled.</param>
-        /// <param name="resourceMetadata">A <see cref="SyndicationResourceMetadata"/> object that represents the meta-data describing the <paramref name="resource"/>.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="resource"/> is a null reference (Nothing in Visual Basic).</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="resourceMetadata"/> is a null reference (Nothing in Visual Basic).</exception>
-        private void FillAtomPublishingResource(ISyndicationResource resource, SyndicationResourceMetadata resourceMetadata)
-        {
-            //------------------------------------------------------------
-            //	Validate parameter
-            //------------------------------------------------------------
-            Guard.ArgumentNotNull(resource, "resource");
-            Guard.ArgumentNotNull(resourceMetadata, "resourceMetadata");
         }
         #endregion
     }

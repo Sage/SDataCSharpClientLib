@@ -665,7 +665,7 @@ namespace Sage.SData.Client.Atom
         //============================================================
         //	STATIC METHODS
         //============================================================
-        #region Read(Uri source)
+        #region Create(Uri source)
         /// <summary>
         /// Creates a new <see cref="AtomEntry"/> instance using the specified <see cref="Uri"/>.
         /// </summary>
@@ -676,16 +676,16 @@ namespace Sage.SData.Client.Atom
         /// </remarks>
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
         /// <exception cref="FormatException">The <paramref name="source"/> data does not conform to the expected syndication content format. In this case, the entry remains empty.</exception>
-        public static AtomEntry Read(Uri source)
+        public static AtomEntry Create(Uri source)
         {
             //------------------------------------------------------------
             //	Create instance using supplied parameter and default settings
             //------------------------------------------------------------
-            return AtomEntry.Read(source, null);
+            return AtomEntry.Create(source, (SyndicationResourceLoadSettings) null);
         }
         #endregion
 
-        #region Read(Uri source, SyndicationResourceLoadSettings settings)
+        #region Create(Uri source, SyndicationResourceLoadSettings settings)
         /// <summary>
         /// Creates a new <see cref="AtomEntry"/> instance using the specified <see cref="Uri"/> and <see cref="SyndicationResourceLoadSettings"/> object.
         /// </summary>
@@ -694,16 +694,16 @@ namespace Sage.SData.Client.Atom
         /// <returns>An <see cref="AtomEntry"/> object loaded using the <paramref name="source"/> data.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
         /// <exception cref="FormatException">The <paramref name="source"/> data does not conform to the expected syndication content format. In this case, the entry remains empty.</exception>
-        public static AtomEntry Read(Uri source, SyndicationResourceLoadSettings settings)
+        public static AtomEntry Create(Uri source, SyndicationResourceLoadSettings settings)
         {
             //------------------------------------------------------------
             //	Create instance using supplied parameters and default settings
             //------------------------------------------------------------
-            return AtomEntry.Read(source, null, null, settings);
+            return AtomEntry.Create(source, new WebRequestContext(), settings);
         }
         #endregion
 
-        #region Read(Uri source, ICredentials credentials, IWebProxy proxy)
+        #region Create(Uri source, ICredentials credentials, IWebProxy proxy)
         /// <summary>
         /// Creates a new <see cref="AtomEntry"/> instance using the specified <see cref="Uri"/>, <see cref="ICredentials"/>, and <see cref="IWebProxy"/>.
         /// </summary>
@@ -720,16 +720,37 @@ namespace Sage.SData.Client.Atom
         /// </remarks>
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
         /// <exception cref="FormatException">The <paramref name="source"/> data does not conform to the expected syndication content format. In this case, the entry remains empty.</exception>
-        public static AtomEntry Read(Uri source, ICredentials credentials, IWebProxy proxy)
+        public static AtomEntry Create(Uri source, ICredentials credentials, IWebProxy proxy)
         {
             //------------------------------------------------------------
             //	Create instance using supplied parameters and default settings
             //------------------------------------------------------------
-            return AtomEntry.Read(source, credentials, proxy, null);
+            return AtomEntry.Create(source, new WebRequestContext(credentials, proxy));
         }
         #endregion
 
-        #region Read(Uri source, ICredentials credentials, IWebProxy proxy, SyndicationResourceLoadSettings settings)
+        #region Create(Uri source, WebRequestContext context)
+        /// <summary>
+        /// Creates a new <see cref="AtomEntry"/> instance using the specified <see cref="Uri"/>, <see cref="ICredentials"/>, and <see cref="IWebProxy"/>.
+        /// </summary>
+        /// <param name="source">A <see cref="Uri"/> that represents the URL of the syndication resource XML data.</param>
+        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <returns>An <see cref="AtomEntry"/> object loaded using the <paramref name="source"/> data.</returns>
+        /// <remarks>
+        ///     The <see cref="AtomEntry"/> is created using the default <see cref="SyndicationResourceLoadSettings"/>.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
+        /// <exception cref="FormatException">The <paramref name="source"/> data does not conform to the expected syndication content format. In this case, the entry remains empty.</exception>
+        public static AtomEntry Create(Uri source, WebRequestContext context)
+        {
+            //------------------------------------------------------------
+            //	Create instance using supplied parameters and default settings
+            //------------------------------------------------------------
+            return AtomEntry.Create(source, context, null);
+        }
+        #endregion
+
+        #region Create(Uri source, ICredentials credentials, IWebProxy proxy, SyndicationResourceLoadSettings settings)
         /// <summary>
         /// Creates a new <see cref="AtomEntry"/> instance using the specified <see cref="Uri"/>, <see cref="ICredentials"/>, <see cref="IWebProxy"/>, and <see cref="SyndicationResourceLoadSettings"/> object.
         /// </summary>
@@ -744,7 +765,26 @@ namespace Sage.SData.Client.Atom
         /// <returns>An <see cref="AtomEntry"/> object loaded using the <paramref name="source"/> data.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
         /// <exception cref="FormatException">The <paramref name="source"/> data does not conform to the expected syndication content format. In this case, the entry remains empty.</exception>
-        public static AtomEntry Read(Uri source, ICredentials credentials, IWebProxy proxy, SyndicationResourceLoadSettings settings)
+        public static AtomEntry Create(Uri source, ICredentials credentials, IWebProxy proxy, SyndicationResourceLoadSettings settings)
+        {
+            //------------------------------------------------------------
+            //	Create instance using supplied parameters
+            //------------------------------------------------------------
+            return AtomEntry.Create(source, new WebRequestContext(credentials, proxy), settings);
+        }
+        #endregion
+
+        #region Create(Uri source, WebRequestContext context, SyndicationResourceLoadSettings settings)
+        /// <summary>
+        /// Creates a new <see cref="AtomEntry"/> instance using the specified <see cref="Uri"/>, <see cref="ICredentials"/>, <see cref="IWebProxy"/>, and <see cref="SyndicationResourceLoadSettings"/> object.
+        /// </summary>
+        /// <param name="source">A <see cref="Uri"/> that represents the URL of the syndication resource XML data.</param>
+        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <param name="settings">The <see cref="SyndicationResourceLoadSettings"/> object used to configure the <see cref="AtomEntry"/> instance. This value can be <b>null</b>.</param>
+        /// <returns>An <see cref="AtomEntry"/> object loaded using the <paramref name="source"/> data.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
+        /// <exception cref="FormatException">The <paramref name="source"/> data does not conform to the expected syndication content format. In this case, the entry remains empty.</exception>
+        public static AtomEntry Create(Uri source, WebRequestContext context, SyndicationResourceLoadSettings settings)
         {
             //------------------------------------------------------------
             //	Local members
@@ -759,7 +799,7 @@ namespace Sage.SData.Client.Atom
             //------------------------------------------------------------
             //	Create new instance using supplied parameters
             //------------------------------------------------------------
-            syndicationResource.Load(source, credentials, proxy, settings);
+            syndicationResource.Load(source, context, settings);
 
             return syndicationResource;
         }
@@ -822,7 +862,7 @@ namespace Sage.SData.Client.Atom
             //------------------------------------------------------------
             //	Create instance using supplied parameter and specified settings
             //------------------------------------------------------------
-            this.LoadAsync(source, settings, null, null, userToken);
+            this.LoadAsync(source, settings, new WebRequestContext(), userToken);
         }
         #endregion
 
@@ -853,6 +893,36 @@ namespace Sage.SData.Client.Atom
         /// <exception cref="FormatException">The <paramref name="source"/> data does not conform to the expected syndication content format. In this case, the feed remains empty.</exception>
         /// <exception cref="InvalidOperationException">This <see cref="AtomEntry"/> has a <see cref="LoadAsync(Uri, SyndicationResourceLoadSettings, ICredentials, IWebProxy, Object)"/> call in progress.</exception>
         public void LoadAsync(Uri source, SyndicationResourceLoadSettings settings, ICredentials credentials, IWebProxy proxy, Object userToken)
+        {
+            //------------------------------------------------------------
+            //	Create instance using supplied parameters and specified settings
+            //------------------------------------------------------------
+            this.LoadAsync(source, settings, new WebRequestContext(credentials, proxy), userToken);
+        }
+        #endregion
+
+        #region LoadAsync(Uri source, SyndicationResourceLoadSettings settings, WebRequestContext context, Object userToken)
+        /// <summary>
+        /// Loads this <see cref="AtomEntry"/> instance asynchronously using the specified <see cref="Uri"/>, <see cref="SyndicationResourceLoadSettings"/>, <see cref="ICredentials"/>, and <see cref="IWebProxy"/>.
+        /// </summary>
+        /// <param name="source">A <see cref="Uri"/> that represents the URL of the syndication resource XML data.</param>
+        /// <param name="settings">The <see cref="SyndicationResourceLoadSettings"/> object used to configure the <see cref="AtomEntry"/> instance. This value can be <b>null</b>.</param>
+        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <param name="userToken">A user-defined object that is passed to the method invoked when the asynchronous operation completes.</param>
+        /// <remarks>
+        ///     <para>
+        ///         To receive notification when the operation has completed or the operation has been canceled, add an event handler to the <see cref="Loaded"/> event. 
+        ///         You can cancel a <see cref="LoadAsync(Uri, SyndicationResourceLoadSettings, ICredentials, IWebProxy, Object)"/> operation by calling the <see cref="LoadAsyncCancel()"/> method.
+        ///     </para>
+        ///     <para>
+        ///         After calling <see cref="LoadAsync(Uri, SyndicationResourceLoadSettings, ICredentials, IWebProxy, Object)"/>, 
+        ///         you must wait for the load operation to complete before attempting to load the syndication resource using the <see cref="LoadAsync(Uri, Object)"/> method.
+        ///     </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
+        /// <exception cref="FormatException">The <paramref name="source"/> data does not conform to the expected syndication content format. In this case, the feed remains empty.</exception>
+        /// <exception cref="InvalidOperationException">This <see cref="AtomEntry"/> has a <see cref="LoadAsync(Uri, SyndicationResourceLoadSettings, ICredentials, IWebProxy, Object)"/> call in progress.</exception>
+        public void LoadAsync(Uri source, SyndicationResourceLoadSettings settings, WebRequestContext context, Object userToken)
         {
             //------------------------------------------------------------
             //	Validate parameters
@@ -888,13 +958,13 @@ namespace Sage.SData.Client.Atom
             //------------------------------------------------------------
             //	Build HTTP web request used to retrieve the syndication resource
             //------------------------------------------------------------
-            asyncHttpWebRequest         = SyndicationEncodingUtility.CreateWebRequest(source, credentials, proxy);
+            asyncHttpWebRequest         = SyndicationEncodingUtility.CreateWebRequest(source, context);
             asyncHttpWebRequest.Timeout = Convert.ToInt32(settings.Timeout.TotalMilliseconds, System.Globalization.NumberFormatInfo.InvariantInfo);
 
             //------------------------------------------------------------
             //	Get the async response to the web request
             //------------------------------------------------------------
-            object[] state      = new object[7] { asyncHttpWebRequest, this, source, settings, credentials, proxy, userToken };
+            object[] state      = new object[6] { asyncHttpWebRequest, this, source, settings, context, userToken };
             IAsyncResult result = asyncHttpWebRequest.BeginGetResponse(new AsyncCallback(AsyncLoadCallback), state);
 
             //------------------------------------------------------------
@@ -949,11 +1019,10 @@ namespace Sage.SData.Client.Atom
             //------------------------------------------------------------
             System.Text.Encoding encoding               = System.Text.Encoding.UTF8;
             XPathNavigator navigator                    = null;
-            WebRequest httpWebRequest               = null;
+            WebRequest httpWebRequest                   = null;
             AtomEntry entry                             = null;
             Uri source                                  = null;
-            ICredentials credentials                    = null;
-            IWebProxy proxy                             = null;
+            WebRequestContext context;
             SyndicationResourceLoadSettings settings    = null;
 
             //------------------------------------------------------------
@@ -969,9 +1038,8 @@ namespace Sage.SData.Client.Atom
                 entry               = parameters[1] as AtomEntry;
                 source              = parameters[2] as Uri;
                 settings            = parameters[3] as SyndicationResourceLoadSettings;
-                credentials         = parameters[4] as ICredentials;
-                proxy               = parameters[5] as IWebProxy;
-                object userToken    = parameters[6];
+                context             = (parameters[4] as WebRequestContext?) ?? new WebRequestContext();
+                object userToken    = parameters[5];
 
                 //------------------------------------------------------------
                 //	Verify expected parameters were found
@@ -1004,11 +1072,11 @@ namespace Sage.SData.Client.Atom
                             {
                                 if (encoding == System.Text.Encoding.UTF8)
                                 {
-                                    navigator   = SyndicationEncodingUtility.CreateSafeNavigator(source, credentials, proxy, settings, null);
+                                    navigator   = SyndicationEncodingUtility.CreateSafeNavigator(source, context, null);
                                 }
                                 else
                                 {
-                                    navigator   = SyndicationEncodingUtility.CreateSafeNavigator(source, credentials, proxy, settings, settings.CharacterEncoding);
+                                    navigator   = SyndicationEncodingUtility.CreateSafeNavigator(source, context, settings.CharacterEncoding);
                                 }
 
                                 //------------------------------------------------------------
@@ -1020,7 +1088,7 @@ namespace Sage.SData.Client.Atom
                                 //------------------------------------------------------------
                                 //	Raise Loaded event to notify registered handlers of state change
                                 //------------------------------------------------------------
-                                entry.OnEntryLoaded(new SyndicationResourceLoadedEventArgs(navigator, source, credentials, proxy, userToken));
+                                entry.OnEntryLoaded(new SyndicationResourceLoadedEventArgs(navigator, source, context, userToken));
                             }
                         }
                     }
@@ -1388,7 +1456,46 @@ namespace Sage.SData.Client.Atom
             //------------------------------------------------------------
             //	Load syndication resource using default settings
             //------------------------------------------------------------
-            this.Load(source, credentials, proxy, null);
+            this.Load(source, new WebRequestContext(credentials, proxy));
+        }
+        #endregion
+
+        #region Load(Uri source, WebRequestContext context)
+        /// <summary>
+        /// Loads the syndication resource from the supplied <see cref="Uri"/> using the specified <see cref="ICredentials">credentials</see> and <see cref="IWebProxy">proxy</see>.
+        /// </summary>
+        /// <param name="source">A <see cref="Uri"/> that points to the location of the web resource used to load the syndication resource.</param>
+        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <remarks>
+        ///     <para>
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                      If <paramref name="credentials"/> is <b>null</b>, request is made using the default application credentials.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     If <paramref name="proxy"/> is <b>null</b>, request is made using the <see cref="WebRequest"/> default proxy settings.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     After the load operation has successfully completed, the <see cref="AtomEntry.Loaded"/> event will be raised.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///     </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
+        /// <exception cref="FormatException">The <paramref name="source"/> data does not conform to the expected syndication content format. In this case, the entry remains empty.</exception>
+        /// <exception cref="XmlException">There is a load or parse error in the XML. In this case, the entry remains empty.</exception>
+        public void Load(Uri source, WebRequestContext context)
+        {
+            //------------------------------------------------------------
+            //	Load syndication resource using default settings
+            //------------------------------------------------------------
+            this.Load(source, context, null);
         }
         #endregion
 
@@ -1438,6 +1545,53 @@ namespace Sage.SData.Client.Atom
         public void Load(Uri source, ICredentials credentials, IWebProxy proxy, SyndicationResourceLoadSettings settings)
         {
             //------------------------------------------------------------
+            //	Load syndication resource using supplied settings
+            //------------------------------------------------------------
+            this.Load(source, new WebRequestContext(credentials, proxy), settings);
+        }
+        #endregion
+
+        #region Load(Uri source, WebRequestContext context, SyndicationResourceLoadSettings settings)
+        /// <summary>
+        /// Loads the syndication resource from the supplied <see cref="Uri"/> using the specified <see cref="ICredentials">credentials</see>, <see cref="IWebProxy">proxy</see> and <see cref="SyndicationResourceLoadSettings"/>.
+        /// </summary>
+        /// <param name="source">A <see cref="Uri"/> that points to the location of the web resource used to load the syndication resource.</param>
+        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <param name="settings">The <see cref="SyndicationResourceLoadSettings"/> object used to configure the <see cref="AtomEntry"/> instance. This value can be <b>null</b>.</param>
+        /// <remarks>
+        ///     <para>
+        ///         <list type="bullet">
+        ///             <item>
+        ///                 <description>
+        ///                      If <paramref name="credentials"/> is <b>null</b>, request is made using the default application credentials.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     If <paramref name="proxy"/> is <b>null</b>, request is made using the <see cref="WebRequest"/> default proxy settings.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     If <paramref name="settings"/> has a <see cref="SyndicationResourceLoadSettings.CharacterEncoding">character encoding</see> of <see cref="System.Text.Encoding.UTF8"/> 
+        ///                     the character encoding of the <paramref name="source"/> will be attempt to be determined automatically, otherwise the specified character encoding will be used. 
+        ///                     If automatic detection fails, a character encoding of <see cref="System.Text.Encoding.UTF8"/> is used by default.
+        ///                 </description>
+        ///             </item>
+        ///             <item>
+        ///                 <description>
+        ///                     After the load operation has successfully completed, the <see cref="AtomEntry.Loaded"/> event will be raised.
+        ///                 </description>
+        ///             </item>
+        ///         </list>
+        ///     </para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
+        /// <exception cref="FormatException">The <paramref name="source"/> data does not conform to the expected syndication content format. In this case, the entry remains empty.</exception>
+        /// <exception cref="XmlException">There is a load or parse error in the XML. In this case, the entry remains empty.</exception>
+        public void Load(Uri source, WebRequestContext context, SyndicationResourceLoadSettings settings)
+        {
+            //------------------------------------------------------------
             //	Local members
             //------------------------------------------------------------
             XPathNavigator navigator    = null;
@@ -1460,17 +1614,17 @@ namespace Sage.SData.Client.Atom
             //------------------------------------------------------------
             if (settings.CharacterEncoding == System.Text.Encoding.UTF8)
             {
-                navigator    = SyndicationEncodingUtility.CreateSafeNavigator(source, credentials, proxy, settings, null);
+                navigator    = SyndicationEncodingUtility.CreateSafeNavigator(source, context, null);
             }
             else
             {
-                navigator    = SyndicationEncodingUtility.CreateSafeNavigator(source, credentials, proxy, settings, settings.CharacterEncoding);
+                navigator    = SyndicationEncodingUtility.CreateSafeNavigator(source, context, settings.CharacterEncoding);
             }
 
             //------------------------------------------------------------
             //	Load syndication resource using the framework adapters
             //------------------------------------------------------------
-            this.Load(navigator, settings, new SyndicationResourceLoadedEventArgs(navigator, source, credentials, proxy));
+            this.Load(navigator, settings, new SyndicationResourceLoadedEventArgs(navigator, source, context));
         }
         #endregion
 

@@ -226,7 +226,7 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             //	Return a safe navigator for endpoint
             //------------------------------------------------------------
-            return SyndicationEncodingUtility.CreateSafeNavigator(this.Source, null, null, null);
+            return SyndicationEncodingUtility.CreateSafeNavigator(this.Source, null, null);
         }
         #endregion
 

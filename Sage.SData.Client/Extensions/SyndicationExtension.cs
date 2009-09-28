@@ -25,13 +25,6 @@ namespace Sage.SData.Client.Extensions
     ///         appropriate <see cref="SecurityPermissionAttribute"/> and <see cref="ReflectionPermissionAttribute"/> attributes applied as necessary.
     ///     </para>
     /// </remarks>
-    /// <example>
-    ///     <code lang="cs" title="The following code example demonstrates the usage of the SyndicationExtension abstract base class.">
-    ///         <code 
-    ///             source="..\..\Documentation\Microsoft .NET 3.5\CodeExamplesLibrary\Extensions\SyndicationExtensionExample.cs" 
-    ///         />
-    ///     </code>
-    /// </example>
     [Serializable()]
     public abstract class SyndicationExtension : ISyndicationExtension, IXmlSerializable
     {

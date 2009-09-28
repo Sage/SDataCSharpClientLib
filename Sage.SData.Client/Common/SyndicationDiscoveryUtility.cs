@@ -136,7 +136,7 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             Guard.ArgumentNotNull(source, "source");
 
-            using (WebResponse response = SyndicationEncodingUtility.CreateWebResponse(source, credentials, null))
+            using (WebResponse response = SyndicationEncodingUtility.CreateWebResponse(source, new WebRequestContext(credentials)))
             {
                 if (response != null)
                 {
@@ -506,7 +506,7 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             //	Determine if source URI contains a reference to the target
             //------------------------------------------------------------
-            using (WebResponse response = SyndicationEncodingUtility.CreateWebResponse(source, credentials, null))
+            using (WebResponse response = SyndicationEncodingUtility.CreateWebResponse(source, new WebRequestContext(credentials)))
             {
                 if (response != null)
                 {
@@ -591,7 +591,7 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             try
             {
-                using (WebResponse response = SyndicationEncodingUtility.CreateWebResponse(uri, credentials, null))
+                using (WebResponse response = SyndicationEncodingUtility.CreateWebResponse(uri, new WebRequestContext(credentials)))
                 {
                     if (response != null && response.ContentLength > 0)
                     {
@@ -632,7 +632,7 @@ namespace Sage.SData.Client.Common
             //	Attempt to perform conditional GET against supplied URI
             //  using the default application credentials
             //------------------------------------------------------------
-            return SyndicationDiscoveryUtility.ConditionalGet(source, lastModified, entityTag, null);
+            return SyndicationDiscoveryUtility.ConditionalGet(source, lastModified, entityTag, new WebRequestContext());
         }
         #endregion
 
@@ -689,6 +689,26 @@ namespace Sage.SData.Client.Common
         public static HttpWebResponse ConditionalGet(Uri source, DateTime lastModified, string entityTag, ICredentials credentials, IWebProxy proxy)
         {
             //------------------------------------------------------------
+            //	Attempt to perform conditional GET against supplied URI
+            //  using the default application credentials
+            //------------------------------------------------------------
+            return SyndicationDiscoveryUtility.ConditionalGet(source, lastModified, entityTag, new WebRequestContext(credentials, proxy));
+        }
+        #endregion
+
+        #region ConditionalGet(Uri source, DateTime lastModified, string entityTag, WebRequestContext context)
+        /// <summary>
+        /// Performs a conditional get operation against the supplied <see cref="Uri"/> using the specified <see cref="DateTime"/>, entity tag and <see cref="ICredentials">credentials</see>.
+        /// </summary>
+        /// <param name="source">The <see cref="Uri"/> to perform a conditional GET operation against.</param>
+        /// <param name="lastModified">A <see cref="DateTime"/> object that represents the date and time at which the <paramref name="source"/> was last known to be modified.</param>
+        /// <param name="entityTag">The entity tag provided by the <paramref name="source"/> that is used to determine change in content.</param>
+        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <returns>A <see cref="HttpWebResponse"/> for the <paramref name="source"/> if it has been modfied, otherwise <b>null</b>.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
+        public static HttpWebResponse ConditionalGet(Uri source, DateTime lastModified, string entityTag, WebRequestContext context)
+        {
+            //------------------------------------------------------------
             //	Local members
             //------------------------------------------------------------
             HttpWebResponse response    = null;
@@ -696,7 +716,7 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             //	Attempt to perform conditional get operation
             //------------------------------------------------------------
-            if (SyndicationDiscoveryUtility.TryConditionalGet(source, lastModified, entityTag, credentials, proxy, out response))
+            if (SyndicationDiscoveryUtility.TryConditionalGet(source, lastModified, entityTag, context, out response))
             {
                 return response;
             }
@@ -726,7 +746,7 @@ namespace Sage.SData.Client.Common
             //	Attempt to try conditional GET against supplied URI
             //  using the default application credentials
             //------------------------------------------------------------
-            return SyndicationDiscoveryUtility.TryConditionalGet(source, lastModified, entityTag, null, out response);
+            return SyndicationDiscoveryUtility.TryConditionalGet(source, lastModified, entityTag, new WebRequestContext(), out response);
         }
         #endregion
 
@@ -837,6 +857,30 @@ namespace Sage.SData.Client.Common
         public static bool TryConditionalGet(Uri source, DateTime lastModified, string entityTag, ICredentials credentials, IWebProxy proxy, out HttpWebResponse response)
         {
             //------------------------------------------------------------
+            //	Attempt to try conditional GET against supplied URI
+            //  using the default application credentials
+            //------------------------------------------------------------
+            return SyndicationDiscoveryUtility.TryConditionalGet(source, lastModified, entityTag, new WebRequestContext(credentials, proxy), out response);
+        }
+        #endregion
+
+        #region TryConditionalGet(Uri source, DateTime lastModified, string entityTag, WebRequestContext context, out HttpWebResponse response)
+        /// <summary>
+        /// Performs a conditional get operation against the supplied <see cref="Uri"/> using the specified <see cref="DateTime"/>, entity tag and <see cref="ICredentials">credentials</see>.
+        /// </summary>
+        /// <param name="source">The <see cref="Uri"/> to perform a conditional GET operation against.</param>
+        /// <param name="lastModified">A <see cref="DateTime"/> object that represents the date and time at which the <paramref name="source"/> was last known to be modified.</param>
+        /// <param name="entityTag">The entity tag provided by the <paramref name="source"/> that is used to determine change in content.</param>
+        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <param name="response">
+        ///     When this method returns, contains the <see cref="HttpWebResponse"/> for the supplied <paramref name="source"/>, if the web resource has been modified, or <b>null</b> if the web resource has <u>not</u> been modified. 
+        ///     This parameter is passed uninitialized.
+        /// </param>
+        /// <returns><b>true</b> if the <paramref name="source"/> has been modified, otherwise <b>false</b>.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
+        public static bool TryConditionalGet(Uri source, DateTime lastModified, string entityTag, WebRequestContext context, out HttpWebResponse response)
+        {
+            //------------------------------------------------------------
             //	Local members
             //------------------------------------------------------------
             bool sourceHasBeenModified  = false;
@@ -854,18 +898,23 @@ namespace Sage.SData.Client.Common
             httpRequest.KeepAlive           = true;
             httpRequest.UserAgent           = frameworkUserAgent;
 
-            if (credentials != null)
+            if (context.Credentials != null)
             {
-                httpRequest.Credentials     = credentials;
+                httpRequest.Credentials     = context.Credentials;
             }
             else
             {
                 httpRequest.UseDefaultCredentials   = true;
             }
 
-            if (proxy != null)
+            if (context.Proxy != null)
             {
-                httpRequest.Proxy           = proxy;
+                httpRequest.Proxy           = context.Proxy;
+            }
+
+            if (context.Cookies != null)
+            {
+                httpRequest.CookieContainer = context.Cookies;
             }
 
             httpRequest.IfModifiedSince     = lastModified;
@@ -1069,7 +1118,7 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             //	Attempt to locate Trackback notification endpoints
             //------------------------------------------------------------
-            using (WebResponse webResponse = SyndicationEncodingUtility.CreateWebResponse(uri, credentials, null))
+            using (WebResponse webResponse = SyndicationEncodingUtility.CreateWebResponse(uri, new WebRequestContext(credentials)))
             {
                 if (webResponse == null)
                 {
@@ -1299,7 +1348,7 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             //	Attempt to determine if resource is pingback enabled
             //------------------------------------------------------------
-            using (WebResponse webResponse = SyndicationEncodingUtility.CreateWebResponse(uri, credentials, null))
+            using (WebResponse webResponse = SyndicationEncodingUtility.CreateWebResponse(uri, new WebRequestContext(credentials)))
             {
                 if (webResponse == null)
                 {
@@ -1473,7 +1522,7 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             //	Attempt to locate using pingback HTTP header discovery mechanism
             //------------------------------------------------------------
-            using (WebResponse webResponse = SyndicationEncodingUtility.CreateWebResponse(uri, credentials, null))
+            using (WebResponse webResponse = SyndicationEncodingUtility.CreateWebResponse(uri, new WebRequestContext(credentials)))
             {
                 if (webResponse == null)
                 {
@@ -1792,7 +1841,7 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             //	Attempt to locate Trackback notification endpoints
             //------------------------------------------------------------
-            using (WebResponse webResponse = SyndicationEncodingUtility.CreateWebResponse(uri, credentials, null))
+            using (WebResponse webResponse = SyndicationEncodingUtility.CreateWebResponse(uri, new WebRequestContext(credentials)))
             {
                 if (webResponse == null)
                 {

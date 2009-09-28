@@ -26,7 +26,7 @@ namespace Sage.SData.Client.Common
         /// <summary>
         /// Private member to hold a value that specifies the amount of time after which a asynchronous load operation call times out.
         /// </summary>
-        private TimeSpan requestTimeout                         = TimeSpan.FromSeconds(120);
+        private TimeSpan requestTimeout                         = TimeSpan.FromSeconds(15);
         /// <summary>
         /// Private member to hold a collection of types that represent the syndication extensions supported by the load operation.
         /// </summary>

@@ -43,6 +43,10 @@ namespace Sage.SData.Client.Common
         /// </summary>
         private IWebProxy eventProxy;
         /// <summary>
+        /// Private member to hold the cookie container used to share state information between requests.
+        /// </summary>
+        private CookieContainer eventCookies;
+        /// <summary>
         /// Private member to hold an object containing state information that was passed to the asynchronous load operation.
         /// </summary>
         private Object eventUserToken;
@@ -109,6 +113,31 @@ namespace Sage.SData.Client.Common
         }
         #endregion
 
+        #region SyndicationResourceLoadedEventArgs(IXPathNavigable data, Uri source, WebRequestContext context)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SyndicationResourceLoadedEventArgs"/> class using the supplied <see cref="IXPathNavigable"/>, <see cref="ICredentials">credentials</see> and <see cref="IWebProxy">proxy</see>.
+        /// </summary>
+        /// <param name="data">A <see cref="IXPathNavigable"/> object that represents the XML data that was used to load the syndication resource.</param>
+        /// <param name="source">
+        ///     The <see cref="Uri"/> of the Internet resource that the syndication resource was loaded from. Can be <b>null</b> if syndication resource was not loaded using an Internet resource.
+        /// </param>
+        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="data"/> is a null reference (Nothing in Visual Basic).</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
+        public SyndicationResourceLoadedEventArgs(IXPathNavigable data, Uri source, WebRequestContext context) : this(data)
+        {
+            //------------------------------------------------------------
+            //	Validate parameters
+            //------------------------------------------------------------
+            Guard.ArgumentNotNull(source, "source");
+
+            eventSource         = source;
+            eventCredentials    = context.Credentials;
+            eventProxy          = context.Proxy;
+            eventCookies        = context.Cookies;
+        }
+        #endregion
+
         #region SyndicationResourceLoadedEventArgs(IXPathNavigable data, Uri source, ICredentials credentials, IWebProxy proxy, Object state)
         /// <summary>
         /// Initializes a new instance of the <see cref="SyndicationResourceLoadedEventArgs"/> class using the supplied <see cref="IXPathNavigable"/>, <see cref="ICredentials">credentials</see>, <see cref="IWebProxy">proxy</see> and user token.
@@ -127,6 +156,24 @@ namespace Sage.SData.Client.Common
         /// <exception cref="ArgumentNullException">The <paramref name="data"/> is a null reference (Nothing in Visual Basic).</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
         public SyndicationResourceLoadedEventArgs(IXPathNavigable data, Uri source, ICredentials credentials, IWebProxy proxy, Object state) : this(data, source, credentials, proxy)
+        {
+            eventUserToken  = state;
+        }
+        #endregion
+
+        #region SyndicationResourceLoadedEventArgs(IXPathNavigable data, Uri source, WebRequestContext context, Object state)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SyndicationResourceLoadedEventArgs"/> class using the supplied <see cref="IXPathNavigable"/>, <see cref="ICredentials">credentials</see>, <see cref="IWebProxy">proxy</see> and user token.
+        /// </summary>
+        /// <param name="data">A <see cref="IXPathNavigable"/> object that represents the XML data that was used to load the syndication resource.</param>
+        /// <param name="source">
+        ///     The <see cref="Uri"/> of the Internet resource that the syndication resource was loaded from. Can be <b>null</b> if syndication resource was not loaded using an Internet resource.
+        /// </param>
+        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <param name="state">The user-defined object that was passed to the asynchronous operation.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="data"/> is a null reference (Nothing in Visual Basic).</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
+        public SyndicationResourceLoadedEventArgs(IXPathNavigable data, Uri source, WebRequestContext context, Object state) : this(data, source, context)
         {
             eventUserToken  = state;
         }
@@ -205,6 +252,23 @@ namespace Sage.SData.Client.Common
         }
         #endregion
 
+        #region Cookies
+        /// <summary>
+        /// Gets or sets the cookie container used by the client to share state between requests.
+        /// </summary>
+        /// <value>
+        ///     A <see cref="CookieContainer"/> object that represents the cookie container used by the client to share state between requests.
+        ///     The default is a null reference (Nothing in Visual Basic), which indicates no cookies will be shared between requests.
+        /// </value>
+        public CookieContainer Cookies
+        {
+            get
+            {
+                return eventCookies;
+            }
+        }
+        #endregion
+
         #region Source
         /// <summary>
         /// Gets the <see cref="Uri"/> of the Internet resource that the syndication resource was loaded from.
@@ -261,9 +325,10 @@ namespace Sage.SData.Client.Common
             string data         = this.Data != null ? this.Data.GetHashCode().ToString(System.Globalization.NumberFormatInfo.InvariantInfo) : String.Empty;
             string credentials  = this.Credentials != null ? this.Credentials.GetHashCode().ToString(System.Globalization.NumberFormatInfo.InvariantInfo) : String.Empty;
             string proxy        = this.Proxy != null ? this.Proxy.GetHashCode().ToString(System.Globalization.NumberFormatInfo.InvariantInfo) : String.Empty;
+            string cookies      = this.Cookies != null ? this.Cookies.GetHashCode().ToString(System.Globalization.NumberFormatInfo.InvariantInfo) : String.Empty;
             string state        = this.State != null ? this.State.GetHashCode().ToString(System.Globalization.NumberFormatInfo.InvariantInfo) : String.Empty;
 
-            return String.Format(null, "[SyndicationResourceLoadedEventArgs(Source = \"{0}\", Data = \"{1}\", Credentials = \"{2}\", Proxy = \"{3}\", State = \"{4}\")]", source, data, credentials, proxy, state);
+            return String.Format(null, "[SyndicationResourceLoadedEventArgs(Source = \"{0}\", Data = \"{1}\", Credentials = \"{2}\", Proxy = \"{3}\", Cookies = \"{4}\", State = \"{5}\")]", source, data, credentials, proxy, cookies, state);
         }
         #endregion
 

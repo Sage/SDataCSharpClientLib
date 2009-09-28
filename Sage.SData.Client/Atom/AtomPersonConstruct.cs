@@ -225,7 +225,7 @@ namespace Sage.SData.Client.Atom
 
             set
             {
-                //Guard.ArgumentNotNullOrEmptyString(value, "value");
+                Guard.ArgumentNotNullOrEmptyString(value, "value");
                 personConstructName = value.Trim();
             }
         }

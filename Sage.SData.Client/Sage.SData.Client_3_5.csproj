@@ -26,7 +26,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET3_5</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\Sage.SData.Client.XML</DocumentationFile>
@@ -72,6 +72,7 @@
     <Compile Include="Atom\AtomTextConstruct.cs" />
     <Compile Include="Atom\AtomTextConstructType.cs" />
     <Compile Include="Atom\AtomUtility.cs" />
+    <Compile Include="Common\WebRequestContext.cs" />
     <Compile Include="Core\AtomFeedReader.cs" />
     <Compile Include="Core\BatchProcess.cs" />
     <Compile Include="Atom\IAtomCommonObjectAttributes.cs" />
@@ -106,8 +107,7 @@
     <Compile Include="Core\SDataResourceCollectionRequest.cs" />
     <Compile Include="Core\SDataResourcePropertyRequest.cs" />
     <Compile Include="Core\SDataResourceSchemaRequest.cs" />
-    <Compile Include="Core\SDataService.cs">
-    </Compile>
+    <Compile Include="Core\SDataService.cs" />
     <Compile Include="Core\SDataServiceException.cs" />
     <Compile Include="Core\SDataServiceOperationRequest.cs" />
     <Compile Include="Core\SDataSingleResourceRequest.cs" />

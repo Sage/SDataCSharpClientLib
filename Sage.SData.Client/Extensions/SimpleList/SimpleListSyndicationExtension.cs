@@ -18,14 +18,6 @@ namespace Sage.SData.Client.Extensions
     ///         at <a href="http://msdn2.microsoft.com/en-us/xml/bb190612.aspx">http://msdn2.microsoft.com/en-us/xml/bb190612.aspx</a>.
     ///     </para>
     /// </remarks>
-    /// <example>
-    ///     <code lang="cs" title="The following code example demonstrates the usage of the SimpleListSyndicationExtension class.">
-    ///         <code 
-    ///             source="..\..\Documentation\Microsoft .NET 3.5\CodeExamplesLibrary\Extensions\Core\SimpleListSyndicationExtensionExample.cs" 
-    ///             region="SimpleListSyndicationExtension"
-    ///         />
-    ///     </code>
-    /// </example>
     [Serializable()]
     public class SimpleListSyndicationExtension : SyndicationExtension, IComparable
     {

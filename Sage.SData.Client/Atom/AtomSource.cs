@@ -842,7 +842,7 @@ namespace Sage.SData.Client.Atom
             //------------------------------------------------------------
             //	Determine comparison result using property state of objects
             //------------------------------------------------------------
-            AtomSource value = obj as AtomSource;
+            AtomSource value  = obj as AtomSource;
 
             if (value != null)
             {

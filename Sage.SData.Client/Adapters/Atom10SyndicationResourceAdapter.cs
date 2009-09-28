@@ -78,12 +78,12 @@ namespace Sage.SData.Client.Adapter
             //	Attempt to fill syndication resource
             //------------------------------------------------------------
             
+            //BEGIN PATCH
             //Update from tracker #4797, but changed slightly from that patch.
             //Not all hosts are explicitly tagging the entry as "atom:entry".
-
             //XPathNavigator entryNavigator   = this.Navigator.SelectSingleNode("atom:entry", manager);
             XPathNavigator entryNavigator = this.Navigator.SelectSingleNode("//*[local-name()='entry']", manager);
-
+            //END PATCH
 
             if (entryNavigator != null)
             {
