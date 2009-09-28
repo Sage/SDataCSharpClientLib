@@ -100,7 +100,6 @@ namespace Sage.SData.Client.Core
         /// </example>
         public AtomFeed Read()
         {
-            Service.Url = Service.Url + ResourceKind;
             return Service.ReadFeed(this);
         }
 
@@ -121,6 +120,11 @@ namespace Sage.SData.Client.Core
         protected override void BuildUrl(UrlBuilder builder)
         {
             base.BuildUrl(builder);
+
+            if (_query != null)
+            {
+                builder.Query = _query;
+            }
 
             foreach (var pair in QueryValues)
             {
