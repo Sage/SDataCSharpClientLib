@@ -32,8 +32,7 @@ namespace Sage.SData.Client.Core
         private string _contractName;
         private string _url;
 
-        private WebClient _client;
-        private readonly CookieContainer _cookies = new CookieContainer();
+        private CookieContainer _cookies;
 
         private string _userName;
         private string _passWord;
@@ -45,7 +44,6 @@ namespace Sage.SData.Client.Core
         public bool Initialized
         {
             get { return _initialized; }
-            set { _initialized = value; }
         }
 
         /// <summary>
@@ -166,11 +164,11 @@ namespace Sage.SData.Client.Core
                 var requestUrl = request.ToString();
                 string strxml = resource.OuterXml;
 
-                _client = CreateWebClient(requestUrl);
+                var client = CreateWebClient(requestUrl);
 
-                _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=feed");
+                client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=feed");
 
-                string result = _client.UploadString(requestUrl, "POST", strxml);
+                string result = client.UploadString(requestUrl, "POST", strxml);
                 AtomFeed feed = new AtomFeed();
                 feed.Load(new MemoryStream(Encoding.UTF8.GetBytes(result)));
 
@@ -211,12 +209,12 @@ namespace Sage.SData.Client.Core
                     return null;
                 }
 
-                _client = CreateWebClient(requestUrl);
+                var client = CreateWebClient(requestUrl);
 
-                _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
-                _client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
+                client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
+                client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
 
-                string result = _client.UploadString(requestUrl, "POST", strxml);
+                string result = client.UploadString(requestUrl, "POST", strxml);
                 AtomEntry entry = new AtomEntry();
                 entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(result)));
 
@@ -245,11 +243,11 @@ namespace Sage.SData.Client.Core
             try
             {
                 var requestUrl = request.ToString();
-                _client = CreateWebClient(requestUrl);
+                var client = CreateWebClient(requestUrl);
 
-                _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml");
+                client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml");
 
-                string result = _client.UploadString(requestUrl, "POST", requestUrl);
+                string result = client.UploadString(requestUrl, "POST", requestUrl);
                 XmlDocument document = new XmlDocument();
 
                 document.Load(new MemoryStream(Encoding.UTF8.GetBytes(result)));
@@ -262,7 +260,7 @@ namespace Sage.SData.Client.Core
                 asyncRequest.RemainingSeconds = Convert.ToInt32(document.SelectSingleNode("remainingSeconds").InnerXml);
                 asyncRequest.PollingMilliseconds = Convert.ToInt32(document.SelectSingleNode("pollingMillis").InnerXml);
                 //asyncRequest.XmlDoc = document;
-                asyncRequest.TrackingUrl = _client.Headers.Get("Location");
+                asyncRequest.TrackingUrl = client.Headers.Get("Location");
 
                 return asyncRequest;
             }
@@ -289,9 +287,9 @@ namespace Sage.SData.Client.Core
         {
             try
             {
-                _client = CreateWebClient(_url);
+                var client = CreateWebClient(_url);
 
-                _client.UploadString(url, "DELETE");
+                client.UploadString(url, "DELETE");
 
                 return true;
             }
@@ -330,11 +328,11 @@ namespace Sage.SData.Client.Core
                     return true;
                 }
 
-                _client = CreateWebClient(requestUrl);
+                var client = CreateWebClient(requestUrl);
 
-                _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
-                _client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
-                _client.UploadString(requestUrl, "DELETE", resource.CreateNavigator().OuterXml);
+                client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
+                client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
+                client.UploadString(requestUrl, "DELETE", resource.CreateNavigator().OuterXml);
                 return true;
             }
             catch (WebException e)
@@ -358,14 +356,16 @@ namespace Sage.SData.Client.Core
         /// <returns>string response from server</returns>
         public string Read(string url)
         {
+            var client = CreateWebClient(_url);
+
             CredentialCache cache = new CredentialCache();
-            _client.Encoding = Encoding.UTF8;
-            _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml");
+            client.Encoding = Encoding.UTF8;
+            client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml");
             cache.Add(new Uri(_url), "Digest", new NetworkCredential(_userName, _passWord));
             cache.Add(new Uri(_url), "Basic", new NetworkCredential(_userName, _passWord));
 
-            _client.Credentials = cache; // digest authentication supported 
-            return _client.DownloadString(url);
+            client.Credentials = cache; // digest authentication supported 
+            return client.DownloadString(url);
         }
 
         /// <summary>
@@ -393,7 +393,7 @@ namespace Sage.SData.Client.Core
                 CredentialCache cache = new CredentialCache();
                 cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
                 cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
-                return AtomFeed.Create(new Uri(request.ToString()), new WebRequestContext(cache, null, _cookies), settings);
+                return AtomFeed.Create(new Uri(request.ToString()), new WebRequestContext(cache, null, Cookies), settings);
             }
             catch (WebException e)
             {
@@ -435,7 +435,7 @@ namespace Sage.SData.Client.Core
                 cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
                 cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
                 SyndicationResourceLoadSettings settings = new SyndicationResourceLoadSettings {Timeout = new TimeSpan(0, 0, 120)};
-                return AtomEntry.Create(new Uri(request.ToString()), new WebRequestContext(cache, null, _cookies), settings);
+                return AtomEntry.Create(new Uri(request.ToString()), new WebRequestContext(cache, null, Cookies), settings);
             }
             catch (WebException e)
             {
@@ -465,11 +465,11 @@ namespace Sage.SData.Client.Core
             try
             {
                 var requestUrl = request.ToString();
-                _client = CreateWebClient(requestUrl);
+                var client = CreateWebClient(requestUrl);
 
-                _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
+                client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
 
-                string result = _client.DownloadString(requestUrl);
+                string result = client.DownloadString(requestUrl);
 
                 XmlTextReader reader = new XmlTextReader(new MemoryStream(Encoding.UTF8.GetBytes(result)));
 
@@ -512,11 +512,11 @@ namespace Sage.SData.Client.Core
                     return null;
                 }
 
-                _client = CreateWebClient(requestUrl);
+                var client = CreateWebClient(requestUrl);
 
-                _client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
-                _client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
-                string result = _client.UploadString(requestUrl, "PUT", resource.CreateNavigator().OuterXml);
+                client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
+                client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
+                string result = client.UploadString(requestUrl, "PUT", resource.CreateNavigator().OuterXml);
                 AtomEntry entry = new AtomEntry();
                 entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(result)));
                 return entry;
@@ -613,8 +613,7 @@ namespace Sage.SData.Client.Core
                 _url = builder.ToString();
             }
 
-            _client = CreateWebClient(_url);
-            Initialized = true;
+            _initialized = true;
         }
 
         protected virtual WebClient CreateWebClient(string url)
@@ -626,7 +625,7 @@ namespace Sage.SData.Client.Core
                                 {uri, "Digest", cred},
                                 {uri, "Basic", cred}
                             };
-            return new CookieAwareWebClient(_cookies)
+            return new CookieAwareWebClient(Cookies)
                        {
                            Encoding = Encoding.UTF8,
                            Credentials = cache
@@ -638,7 +637,8 @@ namespace Sage.SData.Client.Core
         /// </summary>
         public CookieContainer Cookies
         {
-            get { return _cookies; }
+            get { return _cookies ?? (_cookies = new CookieContainer()); }
+            set { _cookies = value; }
         }
 
         private class CookieAwareWebClient : WebClient

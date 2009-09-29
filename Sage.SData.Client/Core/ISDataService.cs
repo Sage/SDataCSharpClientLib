@@ -13,7 +13,7 @@ namespace Sage.SData.Client.Core
         /// <summary>
         /// Flag set when service has been initialized
         /// </summary>
-        bool Initialized { get; set; }
+        bool Initialized { get; }
 
         /// <summary>
         /// Gets or sets the name of the application.
