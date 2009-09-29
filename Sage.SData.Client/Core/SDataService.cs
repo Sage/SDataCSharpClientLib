@@ -633,23 +633,21 @@ namespace Sage.SData.Client.Core
                        };
         }
 
-        protected void AppendCookie(Cookie cookie)
+        /// <summary>
+        /// Gets the cookie collection associated with all requests to the server.
+        /// </summary>
+        public CookieContainer Cookies
         {
-            _cookies.Add(cookie);
-        }
-
-        protected void AppendCookies(CookieCollection cookies)
-        {
-            _cookies.Add(cookies);
+            get { return _cookies; }
         }
 
         private class CookieAwareWebClient : WebClient
         {
-            private readonly CookieContainer _container;
+            private readonly CookieContainer _cookies;
 
-            public CookieAwareWebClient(CookieContainer container)
+            public CookieAwareWebClient(CookieContainer cookies)
             {
-                _container = container;
+                _cookies = cookies;
             }
 
             protected override WebRequest GetWebRequest(Uri address)
@@ -659,7 +657,7 @@ namespace Sage.SData.Client.Core
 
                 if (httpWebRequest != null)
                 {
-                    httpWebRequest.CookieContainer = _container;
+                    httpWebRequest.CookieContainer = _cookies;
                 }
 
                 return request;
