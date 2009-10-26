@@ -38,11 +38,11 @@ namespace Sage.SData.Client.Core
         /// <summary>
         /// Adds a url to the batch for processing
         /// </summary>
-        /// <param name="batchitem">url for batch item</param>
-        public void AddToBatch(string[] batchitem)
+        /// <param name="item">url for batch item</param>
+        public void AddToBatch(SDataBatchRequestItem item)
         {
             SDataBatchRequest batchRequest = (SDataBatchRequest) _stack.Peek();
-            batchRequest.Requests.Enqueue(batchitem);
+            batchRequest.Requests.Enqueue(item);
         }
     }
 }

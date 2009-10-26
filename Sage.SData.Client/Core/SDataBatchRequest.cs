@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -15,12 +15,12 @@ namespace Sage.SData.Client.Core
     public class SDataBatchRequest : SDataApplicationRequest, IDisposable
     {
         private static string _batch = "$batch";
-        private Queue _requests;
+        private Queue<SDataBatchRequestItem> _requests;
 
         /// <summary>
         /// Queue of batch requests
         /// </summary>
-        public Queue Requests
+        public Queue<SDataBatchRequestItem> Requests
         {
             get { return _requests; }
             set { _requests = value; }
@@ -44,7 +44,7 @@ namespace Sage.SData.Client.Core
         public SDataBatchRequest(ISDataService service)
             : base(service)
         {
-            _requests = new Queue();
+            _requests = new Queue<SDataBatchRequestItem>();
             BatchProcess.Instance.CurrentStack.Push(this);
         }
 
@@ -75,7 +75,7 @@ namespace Sage.SData.Client.Core
         /// <summary>
         /// Processes the batch
         /// </summary>
-        public void Dispose()
+        public void Commit()
         {
             AtomFeed feed = new AtomFeed();
             feed.Title = new AtomTextConstruct("Batch");
@@ -90,15 +90,15 @@ namespace Sage.SData.Client.Core
             feedDoc.DocumentElement.Attributes.Append(attr);
             feedNav = feedDoc.CreateNavigator();
 
-            foreach (string[] request in Requests)
+            foreach (var request in Requests)
             {
                 AtomEntry entry = new AtomEntry();
-                entry.Id = new AtomId(new Uri(request[0]));
-                string verb = request[1];
+                entry.Id = new AtomId(new Uri(request.Uri));
+                string verb = request.Verb;
 
                 if (verb == "PUT" || verb == "POST")
                 {
-                    entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(request[2])));
+                    entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(request.Body)));
                 }
 
                 XmlDocument doc = new XmlDocument();
@@ -107,14 +107,34 @@ namespace Sage.SData.Client.Core
                 XmlElement method = doc.CreateElement("http", "httpMethod", "http://schemas.sage.com/sdata/http/2008/1");
                 method.AppendChild(doc.CreateTextNode(verb));
                 doc.DocumentElement.AppendChild(method);
-                XPathNavigator navigator = doc.CreateNavigator();
+
+                if (!string.IsNullOrEmpty(request.IfMatch))
+                {
+                    XmlElement ifMatch = doc.CreateElement("http", "ifMatch", "http://schemas.sage.com/sdata/http/2008/1");
+                    ifMatch.AppendChild(doc.CreateTextNode(request.IfMatch));
+                    doc.DocumentElement.AppendChild(ifMatch);
+                }
 
                 feedNav.MoveToRoot();
                 feedNav.MoveToFirstChild();
-                feedNav.AppendChild(navigator.OuterXml);
+                feedNav.AppendChild(doc.CreateNavigator().OuterXml);
             }
 
             _feed = Service.CreateFeed(this, feedNav) as AtomFeed;
+            _requests.Clear();
         }
+
+        public void Dispose()
+        {
+            _requests.Clear();
+        }
+    }
+
+    public class SDataBatchRequestItem
+    {
+        public string Uri { get; set; }
+        public string Verb { get; set; }
+        public string Body { get; set; }
+        public string IfMatch { get; set; }
     }
 }

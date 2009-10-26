@@ -201,10 +201,10 @@ namespace Sage.SData.Client.Core
                 string strxml = resource.CreateNavigator().OuterXml;
                 if (BatchProcess.Instance.CurrentStack.Count > 0)
                 {
-                    string[] batchrequest = new string[3];
-                    batchrequest[0] = requestUrl;
-                    batchrequest[1] = "POST";
-                    batchrequest[2] = resource.CreateNavigator().OuterXml;
+                    SDataBatchRequestItem batchrequest = new SDataBatchRequestItem();
+                    batchrequest.Uri = requestUrl;
+                    batchrequest.Verb = "POST";
+                    batchrequest.Body = resource.CreateNavigator().OuterXml;
                     BatchProcess.Instance.AddToBatch(batchrequest);
                     return null;
                 }
@@ -318,12 +318,14 @@ namespace Sage.SData.Client.Core
             try
             {
                 var requestUrl = request.ToString();
+                var ifMatch = resource != null ? ((AtomEntry) resource).GetSDataHttpETag() : null;
 
                 if (BatchProcess.Instance.CurrentStack.Count > 0)
                 {
-                    string[] batchrequest = new string[3];
-                    batchrequest[0] = requestUrl;
-                    batchrequest[1] = "DELETE";
+                    SDataBatchRequestItem batchrequest = new SDataBatchRequestItem();
+                    batchrequest.Uri = requestUrl;
+                    batchrequest.Verb = "DELETE";
+                    batchrequest.IfMatch = ifMatch;
                     BatchProcess.Instance.AddToBatch(batchrequest);
                     return true;
                 }
@@ -331,8 +333,8 @@ namespace Sage.SData.Client.Core
                 var client = CreateWebClient(requestUrl);
 
                 client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
-                client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
-                client.UploadString(requestUrl, "DELETE", resource.CreateNavigator().OuterXml);
+                client.Headers.Add(HttpRequestHeader.IfMatch, ifMatch);
+                client.UploadString(requestUrl, "DELETE", resource != null ? resource.CreateNavigator().OuterXml : string.Empty);
                 return true;
             }
             catch (WebException e)
@@ -424,9 +426,9 @@ namespace Sage.SData.Client.Core
             {
                 if (BatchProcess.Instance.CurrentStack.Count > 0)
                 {
-                    string[] batchrequest = new string[3];
-                    batchrequest[0] = request.ToString();
-                    batchrequest[1] = "GET";
+                    SDataBatchRequestItem batchrequest = new SDataBatchRequestItem();
+                    batchrequest.Uri = request.ToString();
+                    batchrequest.Verb = "GET";
                     BatchProcess.Instance.AddToBatch(batchrequest);
                     return null;
                 }
@@ -501,13 +503,15 @@ namespace Sage.SData.Client.Core
             try
             {
                 var requestUrl = request.ToString();
+                string ifMatch = ((AtomEntry) resource).GetSDataHttpETag();
 
                 if (BatchProcess.Instance.CurrentStack.Count > 0)
                 {
-                    string[] batchrequest = new string[3];
-                    batchrequest[0] = requestUrl;
-                    batchrequest[1] = "PUT";
-                    batchrequest[2] = resource.CreateNavigator().OuterXml;
+                    SDataBatchRequestItem batchrequest = new SDataBatchRequestItem();
+                    batchrequest.Uri = requestUrl;
+                    batchrequest.Verb = "PUT";
+                    batchrequest.Body = resource.CreateNavigator().OuterXml;
+                    batchrequest.IfMatch = ifMatch;
                     BatchProcess.Instance.AddToBatch(batchrequest);
                     return null;
                 }
@@ -515,7 +519,7 @@ namespace Sage.SData.Client.Core
                 var client = CreateWebClient(requestUrl);
 
                 client.Headers.Add(HttpRequestHeader.ContentType, "application/atom+xml;type=entry");
-                client.Headers.Add(HttpRequestHeader.IfMatch, ((AtomEntry) resource).GetSDataHttpETag());
+                client.Headers.Add(HttpRequestHeader.IfMatch, ifMatch);
                 string result = client.UploadString(requestUrl, "PUT", resource.CreateNavigator().OuterXml);
                 AtomEntry entry = new AtomEntry();
                 entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(result)));
