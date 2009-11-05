@@ -288,12 +288,12 @@ namespace Sage.SData.Client.Core
         /// <returns>bool</returns>
         public bool MoveNext()
         {
-            _entryIndex++;
-            if (_entryIndex > _itemsAvailable)
+            var hasMore = _entryIndex < _itemsAvailable;
+            if (hasMore)
             {
-                _entryIndex = _itemsAvailable;
+                _entryIndex++;
             }
-            return true;
+            return hasMore;
         }
 
         /// <summary>
