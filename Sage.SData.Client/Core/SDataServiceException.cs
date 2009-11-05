@@ -1,7 +1,7 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Xml;
 using System.Xml.XPath;
+using Sage.SData.Client.Extensions;
 
 namespace Sage.SData.Client.Core
 {
@@ -10,53 +10,51 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataServiceException : WebException
     {
-        private string _data;
+        private readonly SDataDiagnosis _diagnosis;
 
-        /// <summary>
-        /// data from underlying webexception stream
-        /// </summary>
-        public new string Data
+        public SDataDiagnosis Diagnosis
         {
-            get { return _data; }
-            set { _data = value; }
+            get { return _diagnosis; }
         }
-
-        /// <summary>
-        /// constructor
-        /// </summary>
-        public SDataServiceException() {}
-
-        /// <summary>
-        /// constructor
-        /// </summary>
-        /// <param name="message"></param>
-        public SDataServiceException(String message)
-            : base(message) {}
 
         /// <summary>
         /// constructor
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
-        public SDataServiceException(String message, WebException innerException)
-            : base(message, innerException) {}
+        public SDataServiceException(string message, WebException innerException)
+            : base(message, innerException)
+        {
+            if (innerException.Response == null)
+            {
+                return;
+            }
+
+            XPathNavigator nav;
+
+            using (var stream = innerException.Response.GetResponseStream())
+            {
+                nav = new XPathDocument(stream).CreateNavigator();
+            }
+
+            var mgr = new XmlNamespaceManager(nav.NameTable);
+            mgr.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            mgr.AddNamespace("sdata", "http://schemas.sage.com/sdata/2008/1");
+            nav.MoveToChild(XPathNodeType.Element);
+            var diagnosis = new SDataDiagnosis();
+
+            if (diagnosis.Load(nav, mgr))
+            {
+                _diagnosis = diagnosis;
+            }
+        }
 
         /// <summary>
         /// gets the exception message
         /// </summary>
         public override string Message
         {
-            get
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(Data);
-
-                XmlNamespaceManager manager = new XmlNamespaceManager(doc.NameTable);
-                manager.AddNamespace("sdata", "http://schemas.sage.com/sdata/2008/1");
-                XPathNavigator nav = doc.DocumentElement.CreateNavigator();
-                XPathNavigator messageNav = nav.SelectSingleNode(".//sdata:message", manager);
-                return messageNav.InnerXml;
-            }
+            get { return _diagnosis != null ? _diagnosis.Message : base.Message; }
         }
     }
 }

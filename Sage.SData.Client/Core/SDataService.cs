@@ -176,11 +176,7 @@ namespace Sage.SData.Client.Core
             }
             catch (WebException e)
             {
-                StreamReader sr = new StreamReader(e.Response.GetResponseStream());
-                string data = sr.ReadToEnd();
-                SDataServiceException ex = new SDataServiceException();
-                ex.Data = data;
-                throw ex;
+                throw new SDataServiceException(e.Message, e);
             }
             catch (Exception ex)
             {
@@ -222,11 +218,7 @@ namespace Sage.SData.Client.Core
             }
             catch (WebException e)
             {
-                StreamReader sr = new StreamReader(e.Response.GetResponseStream());
-                string data = sr.ReadToEnd();
-                SDataServiceException ex = new SDataServiceException();
-                ex.Data = data;
-                throw ex;
+                throw new SDataServiceException(e.Message, e);
             }
             catch (Exception ex)
             {
@@ -266,11 +258,7 @@ namespace Sage.SData.Client.Core
             }
             catch (WebException e)
             {
-                StreamReader sr = new StreamReader(e.Response.GetResponseStream());
-                string data = sr.ReadToEnd();
-                SDataServiceException ex = new SDataServiceException();
-                ex.Data = data;
-                throw ex;
+                throw new SDataServiceException(e.Message, e);
             }
             catch (Exception ex)
             {
@@ -295,11 +283,7 @@ namespace Sage.SData.Client.Core
             }
             catch (WebException e)
             {
-                StreamReader sr = new StreamReader(e.Response.GetResponseStream());
-                string data = sr.ReadToEnd();
-                SDataServiceException ex = new SDataServiceException();
-                ex.Data = data;
-                throw ex;
+                throw new SDataServiceException(e.Message, e);
             }
             catch (Exception ex)
             {
@@ -339,11 +323,7 @@ namespace Sage.SData.Client.Core
             }
             catch (WebException e)
             {
-                StreamReader sr = new StreamReader(e.Response.GetResponseStream());
-                string data = sr.ReadToEnd();
-                SDataServiceException ex = new SDataServiceException();
-                ex.Data = data;
-                throw ex;
+                throw new SDataServiceException(e.Message, e);
             }
             catch (Exception ex)
             {
@@ -399,15 +379,7 @@ namespace Sage.SData.Client.Core
             }
             catch (WebException e)
             {
-                if (e.Response != null)
-                {
-                    SDataServiceException ex = new SDataServiceException();
-                    StreamReader sr = new StreamReader(e.Response.GetResponseStream());
-                    ex.Data = sr.ReadToEnd();
-                    throw ex;
-                }
-
-                throw;
+                throw new SDataServiceException(e.Message, e);
             }
             catch (Exception ex)
             {
@@ -441,15 +413,7 @@ namespace Sage.SData.Client.Core
             }
             catch (WebException e)
             {
-                if (e.Response != null)
-                {
-                    SDataServiceException ex = new SDataServiceException();
-                    StreamReader sr = new StreamReader(e.Response.GetResponseStream());
-                    ex.Data = sr.ReadToEnd();
-                    throw ex;
-                }
-
-                throw;
+                throw new SDataServiceException(e.Message, e);
             }
             catch (Exception ex)
             {
@@ -479,11 +443,7 @@ namespace Sage.SData.Client.Core
             }
             catch (WebException e)
             {
-                StreamReader sr = new StreamReader(e.Response.GetResponseStream());
-                string data = sr.ReadToEnd();
-                SDataServiceException ex = new SDataServiceException();
-                ex.Data = data;
-                throw ex;
+                throw new SDataServiceException(e.Message, e);
             }
             catch (Exception ex)
             {
@@ -527,17 +487,7 @@ namespace Sage.SData.Client.Core
             }
             catch (WebException e)
             {
-                SDataServiceException ex = new SDataServiceException(e.Message, e);
-
-                if (e.Response != null)
-                {
-                    using (StreamReader sr = new StreamReader(e.Response.GetResponseStream()))
-                    {
-                        ex.Data = sr.ReadToEnd();
-                    }
-                }
-
-                throw ex;
+                throw new SDataServiceException(e.Message, e);
             }
             catch (Exception ex)
             {
