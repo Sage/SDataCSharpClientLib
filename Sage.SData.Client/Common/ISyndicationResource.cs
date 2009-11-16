@@ -281,12 +281,12 @@ namespace Sage.SData.Client.Common
         void Load(Uri source, ICredentials credentials, IWebProxy proxy);
         #endregion
 
-        #region Load(Uri source, WebRequestContext context)
+        #region Load(Uri source, WebRequestOptions options)
         /// <summary>
         /// Loads the syndication resource from the supplied <see cref="Uri"/> using the specified <see cref="ICredentials">credentials</see> and <see cref="IWebProxy">proxy</see>.
         /// </summary>
         /// <param name="source">A <see cref="Uri"/> that points to the location of the web resource used to load the syndication resource.</param>
-        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <param name="options">A <see cref="WebRequestOptions"/> that holds options that should be applied to web requests.</param>
         /// <remarks>
         ///     <para>
         ///         Place your custom code in the <b>Load</b> abstract method to load the syndication resource from the supplied <see cref="Uri"/> 
@@ -296,7 +296,7 @@ namespace Sage.SData.Client.Common
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
         /// <exception cref="FormatException">The <paramref name="source"/> data does not conform to the expected syndication content format. In this case, the resource remains empty.</exception>
         /// <exception cref="XmlException">There is a load or parse error in the XML. In this case, the resource remains empty.</exception>
-        void Load(Uri source, WebRequestContext context);
+        void Load(Uri source, WebRequestOptions options);
         #endregion
 
         #region Load(Uri source, ICredentials credentials, IWebProxy proxy, SyndicationResourceLoadSettings settings)
@@ -349,12 +349,12 @@ namespace Sage.SData.Client.Common
         void Load(Uri source, ICredentials credentials, IWebProxy proxy, SyndicationResourceLoadSettings settings);
         #endregion
 
-        #region Load(Uri source, WebRequestContext context, SyndicationResourceLoadSettings settings)
+        #region Load(Uri source, WebRequestOptions options, SyndicationResourceLoadSettings settings)
         /// <summary>
         /// Loads the syndication resource from the supplied <see cref="Uri"/> using the specified <see cref="ICredentials">credentials</see>, <see cref="IWebProxy">proxy</see> and <see cref="SyndicationResourceLoadSettings"/>.
         /// </summary>
         /// <param name="source">A <see cref="Uri"/> that points to the location of the web resource used to load the syndication resource.</param>
-        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <param name="options">A <see cref="WebRequestOptions"/> that holds options that should be applied to web requests.</param>
         /// <param name="settings">The <see cref="SyndicationResourceLoadSettings"/> object used to configure the <see cref="ISyndicationResource"/> instance. This value can be <b>null</b>.</param>
         /// <remarks>
         ///     <para>
@@ -365,7 +365,7 @@ namespace Sage.SData.Client.Common
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
         /// <exception cref="FormatException">The <paramref name="source"/> data does not conform to the expected syndication content format. In this case, the resource remains empty.</exception>
         /// <exception cref="XmlException">There is a load or parse error in the XML. In this case, the resource remains empty.</exception>
-        void Load(Uri source, WebRequestContext context, SyndicationResourceLoadSettings settings);
+        void Load(Uri source, WebRequestOptions options, SyndicationResourceLoadSettings settings);
         #endregion
 
         #region LoadAsync(Uri source, Object userToken)
@@ -446,13 +446,13 @@ namespace Sage.SData.Client.Common
         void LoadAsync(Uri source, SyndicationResourceLoadSettings settings, ICredentials credentials, IWebProxy proxy, Object userToken);
         #endregion
 
-        #region LoadAsync(Uri source, SyndicationResourceLoadSettings settings, WebRequestContext context, Object userToken)
+        #region LoadAsync(Uri source, SyndicationResourceLoadSettings settings, WebRequestOptions options, Object userToken)
         /// <summary>
         /// Loads the syndication resource asynchronously using the specified <see cref="Uri"/>, <see cref="SyndicationResourceLoadSettings"/>, <see cref="ICredentials"/>, and <see cref="IWebProxy"/>.
         /// </summary>
         /// <param name="source">A <see cref="Uri"/> that represents the URL of the syndication resource XML data.</param>
         /// <param name="settings">The <see cref="SyndicationResourceLoadSettings"/> object used to configure the <see cref="ISyndicationResource"/> instance. This value can be <b>null</b>.</param>
-        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <param name="options">A <see cref="WebRequestOptions"/> that holds options that should be applied to web requests.</param>
         /// <param name="userToken">A user-defined object that is passed to the method invoked when the asynchronous operation completes.</param>
         /// <remarks>
         ///     <para>Place your custom code in the <b>LoadAsync</b> abstract method to load the syndication resource asynchronously from the specified <see cref="Uri"/>, <see cref="SyndicationResourceLoadSettings"/>, <see cref="ICredentials"/> and <see cref="IWebProxy"/>.</para>
@@ -468,7 +468,7 @@ namespace Sage.SData.Client.Common
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
         /// <exception cref="FormatException">The <paramref name="source"/> data does not conform to the expected syndication content format. In this case, the feed remains empty.</exception>
         /// <exception cref="InvalidOperationException">This <see cref="ISyndicationResource"/> has a <see cref="LoadAsync(Uri, SyndicationResourceLoadSettings, ICredentials, IWebProxy, Object)"/> call in progress.</exception>
-        void LoadAsync(Uri source, SyndicationResourceLoadSettings settings, WebRequestContext context, Object userToken);
+        void LoadAsync(Uri source, SyndicationResourceLoadSettings settings, WebRequestOptions options, Object userToken);
         #endregion
 
         #region LoadAsyncCancel()

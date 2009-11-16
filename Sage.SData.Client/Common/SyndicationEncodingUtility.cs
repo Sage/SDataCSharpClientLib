@@ -192,28 +192,28 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             //	Create safe navigator using auto-detection of encoding
             //------------------------------------------------------------
-            return SyndicationEncodingUtility.CreateSafeNavigator(source, new WebRequestContext(credentials, proxy));
+            return SyndicationEncodingUtility.CreateSafeNavigator(source, new WebRequestOptions(credentials, proxy));
         }
         #endregion
 
-        #region CreateSafeNavigator(Uri source, WebRequestContext context)
+        #region CreateSafeNavigator(Uri source, WebRequestOptions options)
         /// <summary>
         /// Creates a <see cref="XPathNavigator"/> against the supplied <see cref="Uri"/> using the specified <see cref="ICredentials">credentials</see> and <see cref="IWebProxy">proxy</see>.
         /// </summary>
         /// <param name="source">A <see cref="Uri"/> that points to the location of the XML data to be navigated by the created <see cref="XPathNavigator"/>.</param>
-        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <param name="options">A <see cref="WebRequestOptions"/> that holds options that should be applied to web requests.</param>
         /// <returns>
         ///     An <see cref="XPathNavigator"/> that provides a cursor model for navigating the supplied <paramref name="source"/>. 
         ///     The supplied <paramref name="source"/> XML data is parsed to remove invalid XML characters that would normally prevent 
         ///     a navigator from being created.
         /// </returns>
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
-        public static XPathNavigator CreateSafeNavigator(Uri source, WebRequestContext context)
+        public static XPathNavigator CreateSafeNavigator(Uri source, WebRequestOptions options)
         {
             //------------------------------------------------------------
             //	Create safe navigator using auto-detection of encoding
             //------------------------------------------------------------
-            return SyndicationEncodingUtility.CreateSafeNavigator(source, context, null);
+            return SyndicationEncodingUtility.CreateSafeNavigator(source, options, null);
         }
         #endregion
 
@@ -246,16 +246,16 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             //	Create safe navigator using the specified encoding
             //------------------------------------------------------------
-            return SyndicationEncodingUtility.CreateSafeNavigator(source, new WebRequestContext(credentials, proxy), encoding);
+            return SyndicationEncodingUtility.CreateSafeNavigator(source, new WebRequestOptions(credentials, proxy), encoding);
         }
         #endregion
 
-        #region CreateSafeNavigator(Uri source, WebRequestContext context, Encoding encoding)
+        #region CreateSafeNavigator(Uri source, WebRequestOptions options, Encoding encoding)
         /// <summary>
         /// Creates a <see cref="XPathNavigator"/> against the supplied <see cref="Uri"/> using the specified <see cref="ICredentials">credentials</see> and <see cref="IWebProxy">proxy</see>.
         /// </summary>
         /// <param name="source">A <see cref="Uri"/> that points to the location of the XML data to be navigated by the created <see cref="XPathNavigator"/>.</param>
-        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <param name="options">A <see cref="WebRequestOptions"/> that holds options that should be applied to web requests.</param>
         /// <param name="encoding">A <see cref="Encoding"/> object that indicates the expected character encoding of the supplied <paramref name="source"/>. This value can be <b>null</b>.</param>
         /// <returns>
         ///     An <see cref="XPathNavigator"/> that provides a cursor model for navigating the supplied <paramref name="source"/>. 
@@ -267,14 +267,14 @@ namespace Sage.SData.Client.Common
         ///     Otherwise the specified <paramref name="encoding"/> is used when reading the XML data represented by the supplied <paramref name="source"/>.
         /// </remarks>
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
-        public static XPathNavigator CreateSafeNavigator(Uri source, WebRequestContext context, Encoding encoding)
+        public static XPathNavigator CreateSafeNavigator(Uri source, WebRequestOptions options, Encoding encoding)
         {
             //------------------------------------------------------------
             //	Validate parameters
             //------------------------------------------------------------
             Guard.ArgumentNotNull(source, "source");
 
-            using (WebResponse response = SyndicationEncodingUtility.CreateWebResponse(source, context))
+            using (WebResponse response = SyndicationEncodingUtility.CreateWebResponse(source, options))
             {
                 Stream stream                   = null;
                 HttpWebResponse httpResponse    = response as HttpWebResponse;
@@ -333,22 +333,22 @@ namespace Sage.SData.Client.Common
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
         public static WebRequest CreateWebRequest(Uri source, ICredentials credentials, IWebProxy proxy)
         {
-            return SyndicationEncodingUtility.CreateWebRequest(source, new WebRequestContext(credentials, proxy));
+            return SyndicationEncodingUtility.CreateWebRequest(source, new WebRequestOptions(credentials, proxy));
         }
         #endregion
 
-        #region CreateWebRequest(Uri source, WebRequestContext context)
+        #region CreateWebRequest(Uri source, WebRequestOptions options)
         /// <summary>
         /// Returns a <see cref="WebRequest"/> that makes a request for a resource located at the supplied <see cref="Uri"/> using the specified <see cref="ICredentials">credentials</see> and <see cref="IWebProxy">proxy</see>.
         /// </summary>
         /// <param name="source">A <see cref="Uri"/> that points to the location of the resource to be retrieved.</param>
-        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <param name="options">A <see cref="WebRequestOptions"/> that holds options that should be applied to web requests.</param>
         /// <returns>
         ///     An <see cref="WebRequest"/> that makes a request to the <paramref name="source"/>. If unable to create a <see cref="WebRequest"/> for 
         ///     the specified <paramref name="source"/>, returns a <b>null</b> reference (Nothing in Visual Basic).
         /// </returns>
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
-        public static WebRequest CreateWebRequest(Uri source, WebRequestContext context)
+        public static WebRequest CreateWebRequest(Uri source, WebRequestOptions options)
         {
             //------------------------------------------------------------
             //	Validate parameters
@@ -360,105 +360,17 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             Guard.ArgumentNotNull(source, "source");
 
+            request             = WebRequest.Create(source);
+            if (options != null) options.ApplyOptions(request);
+
             if(source.IsAbsoluteUri)
             {
-                if(String.Compare(source.Scheme, Uri.UriSchemeFile, StringComparison.OrdinalIgnoreCase) == 0)
+                if (String.Compare(source.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase) == 0 ||
+                    String.Compare(source.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    FileWebRequest fileRequest  = (FileWebRequest)FileWebRequest.Create(source);
-
-                    if (context.Credentials != null)
-                    {
-                        fileRequest.Credentials = context.Credentials;
-                    }
-                    if (context.Proxy != null)
-                    {
-                        fileRequest.Proxy       = context.Proxy;
-                    }
-
-                    request                     = fileRequest;
-                }
-                else if (String.Compare(source.Scheme, Uri.UriSchemeFtp, StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    FtpWebRequest ftpRequest    = (FtpWebRequest)FtpWebRequest.Create(source);
-
-                    if (context.Credentials != null)
-                    {
-                        ftpRequest.Credentials  = context.Credentials;
-                    }
-                    if (context.Proxy != null)
-                    {
-                        ftpRequest.Proxy        = context.Proxy;
-                    }
-
-                    request                     = ftpRequest;
-                }
-                else if (String.Compare(source.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    HttpWebRequest httpRequest      = (HttpWebRequest)HttpWebRequest.Create(source);
-                    httpRequest.AllowAutoRedirect   = true;
-                    httpRequest.KeepAlive           = true;
+                    HttpWebRequest httpRequest      = (HttpWebRequest)request;
                     httpRequest.UserAgent           = SyndicationDiscoveryUtility.FrameworkUserAgent;
-
-                    if (context.Credentials != null)
-                    {
-                        httpRequest.Credentials     = context.Credentials;
-                    }
-                    else
-                    {
-                        httpRequest.UseDefaultCredentials   = true;
-                    }
-
-                    if (context.Proxy != null)
-                    {
-                        httpRequest.Proxy           = context.Proxy;
-                    }
-                    if (context.Cookies != null)
-                    {
-                        httpRequest.CookieContainer = context.Cookies;
-                    }
-
                     request                         = httpRequest;
-                }
-                else if (String.Compare(source.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    HttpWebRequest httpsRequest     = (HttpWebRequest)HttpWebRequest.Create(source);
-                    httpsRequest.AllowAutoRedirect  = true;
-                    httpsRequest.KeepAlive          = true;
-                    httpsRequest.UserAgent          = SyndicationDiscoveryUtility.FrameworkUserAgent;
-
-                    if (context.Credentials != null)
-                    {
-                        httpsRequest.Credentials    = context.Credentials;
-                    }
-                    else
-                    {
-                        httpsRequest.UseDefaultCredentials  = true;
-                    }
-
-                    if (context.Proxy != null)
-                    {
-                        httpsRequest.Proxy          = context.Proxy;
-                    }
-                    if (context.Cookies != null)
-                    {
-                        httpsRequest.CookieContainer = context.Cookies;
-                    }
-
-                    request                         = httpsRequest;
-                }
-            }
-
-            if (request == null)
-            {
-                request                 = WebRequest.Create(source);
-
-                if (context.Credentials != null)
-                {
-                    request.Credentials = context.Credentials;
-                }
-                if (context.Proxy != null)
-                {
-                    request.Proxy       = context.Proxy;
                 }
             }
 
@@ -486,22 +398,22 @@ namespace Sage.SData.Client.Common
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
         public static WebResponse CreateWebResponse(Uri source, ICredentials credentials, IWebProxy proxy)
         {
-            return SyndicationEncodingUtility.CreateWebResponse(source, new WebRequestContext(credentials, proxy));
+            return SyndicationEncodingUtility.CreateWebResponse(source, new WebRequestOptions(credentials, proxy));
         }
         #endregion
 
-        #region CreateWebResponse(Uri source, WebRequestContext context)
+        #region CreateWebResponse(Uri source, WebRequestOptions options)
         /// <summary>
         /// Returns the <see cref="WebResponse"/> to a request for a resource located at the supplied <see cref="Uri"/> using the specified <see cref="ICredentials">credentials</see> and <see cref="IWebProxy">proxy</see>.
         /// </summary>
         /// <param name="source">A <see cref="Uri"/> that points to the location of the resource to be retrieved.</param>
-        /// <param name="context">A <see cref="WebRequestContext"/> that holds shared contextual information about the web request.</param>
+        /// <param name="options">A <see cref="WebRequestOptions"/> that holds options that should be applied to web requests.</param>
         /// <returns>
         ///     An <see cref="WebResponse"/> that contains the response from the requested resource. If unable to create a <see cref="WebResponse"/> for 
         ///     the requested <paramref name="source"/>, returns a <b>null</b> reference (Nothing in Visual Basic).
         /// </returns>
         /// <exception cref="ArgumentNullException">The <paramref name="source"/> is a null reference (Nothing in Visual Basic).</exception>
-        public static WebResponse CreateWebResponse(Uri source, WebRequestContext context)
+        public static WebResponse CreateWebResponse(Uri source, WebRequestOptions options)
         {
             //------------------------------------------------------------
             //	Validate parameters
@@ -513,7 +425,7 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             Guard.ArgumentNotNull(source, "source");
 
-            WebRequest webRequest   = SyndicationEncodingUtility.CreateWebRequest(source, context);
+            WebRequest webRequest   = SyndicationEncodingUtility.CreateWebRequest(source, options);
             if (webRequest != null)
             {
                 response    = webRequest.GetResponse();

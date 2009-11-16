@@ -375,7 +375,10 @@ namespace Sage.SData.Client.Core
                 CredentialCache cache = new CredentialCache();
                 cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
                 cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
-                return AtomFeed.Create(new Uri(request.ToString()), new WebRequestContext(cache, null, Cookies), settings);
+                var options = new WebRequestOptions(cache);
+                options.CookieContainer = Cookies;
+                options.UserAgent = request.UserAgent;
+                return AtomFeed.Create(new Uri(request.ToString()), options, settings);
             }
             catch (WebException e)
             {
@@ -409,7 +412,10 @@ namespace Sage.SData.Client.Core
                 cache.Add(new Uri(request.ToString()), "Digest", new NetworkCredential(_userName, _passWord));
                 cache.Add(new Uri(request.ToString()), "Basic", new NetworkCredential(_userName, _passWord));
                 SyndicationResourceLoadSettings settings = new SyndicationResourceLoadSettings {Timeout = new TimeSpan(0, 0, 120)};
-                return AtomEntry.Create(new Uri(request.ToString()), new WebRequestContext(cache, null, Cookies), settings);
+                var options = new WebRequestOptions(cache);
+                options.CookieContainer = Cookies;
+                options.UserAgent = request.UserAgent;
+                return AtomEntry.Create(new Uri(request.ToString()), options, settings);
             }
             catch (WebException e)
             {

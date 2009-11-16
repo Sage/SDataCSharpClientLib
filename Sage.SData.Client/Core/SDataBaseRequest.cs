@@ -67,6 +67,11 @@
             set { _service = value; }
         }
 
+		/// <summary>
+		/// gets or sets the user agent
+		/// </summary>
+		public string UserAgent { get; set; }
+
         protected virtual void BuildUrl(UrlBuilder builder)
         {
             var server = ServerName;

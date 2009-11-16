@@ -34,7 +34,14 @@ namespace Sage.SData.Client.Core
 
             using (var stream = innerException.Response.GetResponseStream())
             {
-                nav = new XPathDocument(stream).CreateNavigator();
+                try
+                {
+                    nav = new XPathDocument(stream).CreateNavigator();
+                }
+                catch (XmlException)
+                {
+                    return;
+                }
             }
 
             var mgr = new XmlNamespaceManager(nav.NameTable);
