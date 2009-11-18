@@ -225,8 +225,18 @@ namespace Sage.SData.Client.Atom
 
             set
             {
-                Guard.ArgumentNotNullOrEmptyString(value, "value");
-                personConstructName = value.Trim();
+                //BEGIN PATCH
+                //Guard.ArgumentNotNullOrEmptyString(value, "value");
+                //personConstructName = value.Trim();
+                if (String.IsNullOrEmpty(value))
+                {
+                    personConstructName = String.Empty;
+                }
+                else
+                {
+                    personConstructName = value.Trim();
+                }
+                //END PATCH
             }
         }
         #endregion

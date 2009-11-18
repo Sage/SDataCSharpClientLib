@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 
 namespace Sage.SData.Client.Core
 {
@@ -92,7 +93,7 @@ namespace Sage.SData.Client.Core
         {
             if (_pathSegments != null)
             {
-                _builder.Path = string.Join("/", _pathSegments.Select(segment => Uri.EscapeUriString(segment).Replace("+", "%20")).ToArray());
+                _builder.Path = string.Join("/", _pathSegments.Select(segment => HttpUtility.UrlPathEncode(segment)).ToArray());
             }
         }
 
@@ -149,9 +150,9 @@ namespace Sage.SData.Client.Core
 
         private static string BuildQueryParameter(KeyValuePair<string, string> param)
         {
-            var key = Uri.EscapeUriString(param.Key).Replace("+", "%20");
+            var key = HttpUtility.UrlPathEncode(param.Key);
             return param.Value != null
-                       ? string.Format("{0}={1}", key, Uri.EscapeUriString(param.Value).Replace("+", "%20"))
+                       ? string.Format("{0}={1}", key, HttpUtility.UrlPathEncode(param.Value))
                        : key;
         }
 
