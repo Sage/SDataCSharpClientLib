@@ -10,13 +10,16 @@ namespace Sage.SData.Client.Extensions
     /// Extends the atomentry to handle SData.
     /// </summary>
     [Serializable]
-    public class SDataExtension : SyndicationExtension
+    public class SDataExtension : SyndicationExtension, ISyndicationExtension
     {
         //============================================================
         //	PUBLIC/PRIVATE/PROTECTED MEMBERS
         //============================================================
 
         #region PRIVATE/PROTECTED/PUBLIC MEMBERS
+
+        public const string XsiNamespaceUri = "http://www.w3.org/2001/XMLSchema-instance";
+        public const string SDataNamespaceUri = "http://schemas.sage.com/sdata/2008/1";
 
         /// <summary>
         /// Private member to hold specific information about the extension.
@@ -35,7 +38,7 @@ namespace Sage.SData.Client.Extensions
         /// Initializes a new instance of the <see cref="SDataExtension"/> class.
         /// </summary>
         public SDataExtension()
-            : base("sdata", "http://schemas.sage.com/sdata/2008/1", new Version("1.0"))
+            : base("sdata", SDataNamespaceUri, new Version("1.0"))
         {
             //------------------------------------------------------------
             //	Initialization handled by base class
@@ -229,5 +232,11 @@ namespace Sage.SData.Client.Extensions
         }
 
         #endregion
+
+        void ISyndicationExtension.WriteXmlNamespaceDeclaration(XmlWriter writer)
+        {
+            WriteXmlNamespaceDeclaration(writer);
+            writer.WriteAttributeString("xmlns", "xsi", null, XsiNamespaceUri);
+        }
     }
 }

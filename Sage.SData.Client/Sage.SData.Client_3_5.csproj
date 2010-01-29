@@ -104,7 +104,6 @@
     <Compile Include="Core\SDataClientException.cs" />
     <Compile Include="Core\SDataEndPointCollectionRequest.cs" />
     <Compile Include="Core\SDataOperationalRequest.cs" />
-    <Compile Include="Core\SDataPayload.cs" />
     <Compile Include="Core\SDataResourceCollectionRequest.cs" />
     <Compile Include="Core\SDataResourcePropertyRequest.cs" />
     <Compile Include="Core\SDataResourceSchemaRequest.cs" />
@@ -127,6 +126,10 @@
     <Compile Include="Extensions\SData\SDataExtension.cs" />
     <Compile Include="Extensions\SData\SDataExtensionContext.cs" />
     <Compile Include="Extensions\SData\SDataExtensionHelper.cs" />
+    <Compile Include="Extensions\SData\SDataPayload.cs" />
+    <Compile Include="Extensions\SData\SDataPayloadCollection.cs" />
+    <Compile Include="Extensions\SData\SDataPayloadTypeDescriptionProvider.cs" />
+    <Compile Include="Extensions\SData\XPathNavigatorExtensions.cs" />
     <Compile Include="Extensions\SimpleList\SimpleListDataType.cs" />
     <Compile Include="Extensions\SimpleList\SimpleListGroup.cs" />
     <Compile Include="Extensions\SimpleList\SimpleListSort.cs" />

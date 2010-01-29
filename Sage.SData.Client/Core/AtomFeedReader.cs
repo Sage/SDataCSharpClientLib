@@ -8,9 +8,9 @@ using Sage.SData.Client.Extensions;
 namespace Sage.SData.Client.Core
 {
     /// <summary>
-    /// reader that returns an SDataPayload for AtomEntries within an AtomFeed.  The AtomFeedReader automatically handles paging 
+    /// reader that returns an AtomEntry for AtomEntries within an AtomFeed.  The AtomFeedReader automatically handles paging 
     /// </summary>
-    public class AtomFeedReader : IList<SDataPayload>
+    public class AtomFeedReader : IList<AtomEntry>
     {
         private readonly ISDataService _service;
         private readonly int _itemsPerPage;
@@ -27,21 +27,21 @@ namespace Sage.SData.Client.Core
             get { return _itemsAvailable; }
         }
 
-        private List<SDataPayload> _listPayloads;
+        private List<AtomEntry> _entries;
 
         /// <summary>
-        /// The list of SDataPayloads for the reader
+        /// The list of atom entries for the reader
         /// </summary>
-        public List<SDataPayload> ListPayloads
+        public List<AtomEntry> Entries
         {
-            get { return _listPayloads; }
-            set { _listPayloads = value; }
+            get { return _entries; }
+            set { _entries = value; }
         }
 
         private int _entryIndex;
 
         /// <summary>
-        /// Accessor method for the current payload index
+        /// Accessor method for the current entry index
         /// </summary>
         public int EntryIndex
         {
@@ -101,9 +101,9 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        public void Insert(int index, SDataPayload value)
+        public void Insert(int index, AtomEntry value)
         {
-            ListPayloads.Insert(index, value);
+            Entries.Insert(index, value);
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Sage.SData.Client.Core
         /// <param name="index"></param>
         public void RemoveAt(int index)
         {
-            ListPayloads.RemoveAt(index);
+            Entries.RemoveAt(index);
         }
 
         /// <summary>
@@ -120,18 +120,18 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public int IndexOf(SDataPayload value)
+        public int IndexOf(AtomEntry value)
         {
-            return ListPayloads.IndexOf(value);
+            return Entries.IndexOf(value);
         }
 
         /// <summary>
         /// IList Implementation
         /// </summary>
         /// <param name="value"></param>
-        public void Add(SDataPayload value)
+        public void Add(AtomEntry value)
         {
-            ListPayloads.Add(value);
+            Entries.Add(value);
         }
 
         /// <summary>
@@ -139,40 +139,40 @@ namespace Sage.SData.Client.Core
         /// </summary>
         public void Clear()
         {
-            ListPayloads.Clear();
+            Entries.Clear();
         }
 
         /// <summary>
         /// IList Implementation
         /// </summary>
-        public bool Contains(SDataPayload value)
+        public bool Contains(AtomEntry value)
         {
-            return ListPayloads.Contains(value);
+            return Entries.Contains(value);
         }
 
         /// <summary>
         /// IList Implementation
         /// </summary>
-        public SDataPayload this[int index]
+        public AtomEntry this[int index]
         {
-            get { return ListPayloads[index]; }
-            set { ListPayloads[index] = value; }
+            get { return Entries[index]; }
+            set { Entries[index] = value; }
         }
 
         /// <summary>
         /// IList Implementation
         /// </summary>
-        public void CopyTo(SDataPayload[] payloads, int index)
+        public void CopyTo(AtomEntry[] entries, int index)
         {
-            ListPayloads.CopyTo(payloads, index);
+            Entries.CopyTo(entries, index);
         }
 
         /// <summary>
         /// IList Implementation
         /// </summary>
-        public bool Remove(SDataPayload payload)
+        public bool Remove(AtomEntry entry)
         {
-            return ListPayloads.Remove(payload);
+            return Entries.Remove(entry);
         }
 
         /// <summary>
@@ -195,9 +195,9 @@ namespace Sage.SData.Client.Core
         /// IEnumerable implementation
         /// </summary>
         /// <returns></returns>
-        IEnumerator<SDataPayload> IEnumerable<SDataPayload>.GetEnumerator()
+        IEnumerator<AtomEntry> IEnumerable<AtomEntry>.GetEnumerator()
         {
-            return ListPayloads.GetEnumerator();
+            return Entries.GetEnumerator();
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace Sage.SData.Client.Core
         /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ListPayloads.GetEnumerator();
+            return Entries.GetEnumerator();
         }
 
         #endregion
@@ -261,20 +261,20 @@ namespace Sage.SData.Client.Core
             // now set up our pages
             for (int x = 0; x < _numberOfPages; x++)
             {
-                List<SDataPayload> list = new List<SDataPayload>();
+                List<AtomEntry> list = new List<AtomEntry>();
                 _listPages.Add(list);
             }
 
             // fill the first page
             foreach (AtomEntry entry in firstFeed.Entries)
             {
-                _listPages[0].Add(new SDataPayload(entry.GetSDataPayload(), entry));
+                _listPages[0].Add(entry);
             }
 
             // fill the last page
             foreach (AtomEntry entry in lastFeed.Entries)
             {
-                _listPages[_listPages.Count - 1].Add(new SDataPayload(entry.GetSDataPayload(), entry));
+                _listPages[_listPages.Count - 1].Add(entry);
             }
 
             _entryIndex = 1;
@@ -283,7 +283,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Moves the next SDataPayload in the reader. If the the reader has no more SDataPayloads the next page will be retrieved
+        /// Moves the next AtomEntry in the reader. If the the reader has no more AtomEntrys the next page will be retrieved
         /// </summary>
         /// <returns>bool</returns>
         public bool MoveNext()
@@ -297,16 +297,14 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// The current SDataPayload for the reader
+        /// The current AtomEntry for the reader
         /// </summary>
-        public SDataPayload Current
+        public AtomEntry Current
         {
             get
             {
                 int currentPage = (_entryIndex - 1)/_itemsPerPage;
 
-                //if ((_entryIndex % _itemsPerPage) == 0)
-                //    currentPage--;
                 if (currentPage < 0)
                 {
                     currentPage = 0;
@@ -320,11 +318,11 @@ namespace Sage.SData.Client.Core
 
                     foreach (AtomEntry entry in Feed.Entries)
                     {
-                        _listPages[currentPage].Add(new SDataPayload(entry.GetSDataPayload(), entry));
+                        _listPages[currentPage].Add(entry);
                     }
                 }
 
-                List<SDataPayload> list = (List<SDataPayload>) _listPages[currentPage];
+                List<AtomEntry> list = (List<AtomEntry>) _listPages[currentPage];
 
                 int index = (_entryIndex - 1 - (_itemsPerPage*currentPage));
                 if (index < 0)
@@ -334,7 +332,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Gets the last SDataPayload contained in the reader
+        /// Gets the last AtomEntry contained in the reader
         /// NOTE: this does not retrieve the last page of data for the feed
         /// </summary>
         /// <returns></returns>
@@ -345,7 +343,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Sets the current SDataPayload to the first item in the reader
+        /// Sets the current AtomEntry to the first item in the reader
         /// </summary>
         /// <returns>bool</returns>
         public bool First()
@@ -355,7 +353,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Sets the current SDataPayload to the previous item in the reader.
+        /// Sets the current AtomEntry to the previous item in the reader.
         /// </summary>
         /// <returns></returns>
         public bool Previous()

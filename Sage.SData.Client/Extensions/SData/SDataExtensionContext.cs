@@ -30,9 +30,9 @@ namespace Sage.SData.Client.Extensions
         //============================================================
 
         /// <summary>
-        /// XPathNavigator that represent the sdata:payload element in a an AtomEntry
+        /// SDataPayload that represent the sdata:payload element in an AtomEntry
         /// </summary>
-        public XPathNavigator Payload { get; set; }
+        public SDataPayload Payload { get; set; }
 
         /// <summary>
         /// Gets information that allows the client to diagnose errors
@@ -41,6 +41,11 @@ namespace Sage.SData.Client.Extensions
         {
             get { return _diagnoses ?? (_diagnoses = new Collection<SDataDiagnosis>()); }
         }
+
+        /// <summary>
+        /// Gets the inline XML schema that describes the feed or entry
+        /// </summary>
+        public string Schema { get; set; }
 
         //============================================================
         //	PUBLIC METHODS
@@ -77,8 +82,12 @@ namespace Sage.SData.Client.Extensions
                 var payloadNavigator = source.SelectSingleNode("sdata:payload/*", manager);
                 if (payloadNavigator != null)
                 {
-                    Payload = payloadNavigator;
-                    wasLoaded = true;
+                    var payload = new SDataPayload();
+                    if (payload.Load(payloadNavigator, manager))
+                    {
+                        Payload = payload;
+                        wasLoaded = true;
+                    }
                 }
 
                 var diagnoses = source.Select("sdata:diagnoses", manager);
@@ -90,6 +99,13 @@ namespace Sage.SData.Client.Extensions
                         Diagnoses.Add(diagnosis);
                         wasLoaded = true;
                     }
+                }
+
+                var schemaNavigator = source.SelectSingleNode("sdata:schema", manager);
+                if (schemaNavigator != null && !string.IsNullOrEmpty(schemaNavigator.Value))
+                {
+                    Schema = schemaNavigator.Value;
+                    wasLoaded = true;
                 }
             }
 
@@ -122,9 +138,7 @@ namespace Sage.SData.Client.Extensions
 
             if (Payload != null)
             {
-                writer.WriteStartElement("payload", xmlNamespace);
-                writer.WriteNode(Payload, true);
-                writer.WriteEndElement();
+                Payload.WriteTo(writer, xmlNamespace);
             }
 
             if (Diagnoses.Count > 0)
@@ -134,6 +148,13 @@ namespace Sage.SData.Client.Extensions
                 {
                     diagnosis.WriteTo(writer, xmlNamespace);
                 }
+                writer.WriteEndElement();
+            }
+
+            if (Schema != null)
+            {
+                writer.WriteStartElement("schema", xmlNamespace);
+                writer.WriteCData(Schema);
                 writer.WriteEndElement();
             }
         }

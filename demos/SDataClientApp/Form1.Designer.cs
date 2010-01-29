@@ -59,10 +59,6 @@
             this.tbCurrentItem = new System.Windows.Forms.TextBox();
             this.label27 = new System.Windows.Forms.Label();
             this.tbReaderCount = new System.Windows.Forms.TextBox();
-            this.btnReaderLast = new System.Windows.Forms.Button();
-            this.btnReaderFirst = new System.Windows.Forms.Button();
-            this.btnReaderPrevious = new System.Windows.Forms.Button();
-            this.btnReaderNext = new System.Windows.Forms.Button();
             this.lblFeedReader = new System.Windows.Forms.Label();
             this.btnReaderRead = new System.Windows.Forms.Button();
             this.numStartIndex = new System.Windows.Forms.NumericUpDown();
@@ -82,6 +78,8 @@
             this.collectionPayloadGrid = new System.Windows.Forms.PropertyGrid();
             this.label10 = new System.Windows.Forms.Label();
             this.tabSingle = new System.Windows.Forms.TabPage();
+            this.label30 = new System.Windows.Forms.Label();
+            this.tbSingleResourceInclude = new System.Windows.Forms.TextBox();
             this.btnSingleDelete = new System.Windows.Forms.Button();
             this.btnSingleCreate = new System.Windows.Forms.Button();
             this.btnSingleUpdate = new System.Windows.Forms.Button();
@@ -125,31 +123,25 @@
             this.label24 = new System.Windows.Forms.Label();
             this.tbRPResourceSelector = new System.Windows.Forms.TextBox();
             this.gridRPPayloads = new System.Windows.Forms.PropertyGrid();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnPropertiesRead = new System.Windows.Forms.Button();
             this.tbResourcePropertiesURL = new System.Windows.Forms.TextBox();
             this.label25 = new System.Windows.Forms.Label();
             this.tbRPResourceKind = new System.Windows.Forms.TextBox();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.label30 = new System.Windows.Forms.Label();
-            this.tbSingleResourceInclude = new System.Windows.Forms.TextBox();
             label23 = new System.Windows.Forms.Label();
             label22 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabService.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabCollection.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numStartIndex)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numCount)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.atomEntryGrid)).BeginInit();
             this.tabSingle.SuspendLayout();
             this.tabTemplate.SuspendLayout();
             this.tabSchema.SuspendLayout();
             this.tabResourceProperties.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.rpGridEntries)).BeginInit();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -344,10 +336,6 @@
             this.tabCollection.Controls.Add(this.tbCurrentItem);
             this.tabCollection.Controls.Add(this.label27);
             this.tabCollection.Controls.Add(this.tbReaderCount);
-            this.tabCollection.Controls.Add(this.btnReaderLast);
-            this.tabCollection.Controls.Add(this.btnReaderFirst);
-            this.tabCollection.Controls.Add(this.btnReaderPrevious);
-            this.tabCollection.Controls.Add(this.btnReaderNext);
             this.tabCollection.Controls.Add(this.lblFeedReader);
             this.tabCollection.Controls.Add(this.btnReaderRead);
             this.tabCollection.Controls.Add(this.numStartIndex);
@@ -390,34 +378,6 @@
             // 
             resources.ApplyResources(this.tbReaderCount, "tbReaderCount");
             this.tbReaderCount.Name = "tbReaderCount";
-            // 
-            // btnReaderLast
-            // 
-            resources.ApplyResources(this.btnReaderLast, "btnReaderLast");
-            this.btnReaderLast.Name = "btnReaderLast";
-            this.btnReaderLast.UseVisualStyleBackColor = true;
-            this.btnReaderLast.Click += new System.EventHandler(this.btnReaderLast_Click);
-            // 
-            // btnReaderFirst
-            // 
-            resources.ApplyResources(this.btnReaderFirst, "btnReaderFirst");
-            this.btnReaderFirst.Name = "btnReaderFirst";
-            this.btnReaderFirst.UseVisualStyleBackColor = true;
-            this.btnReaderFirst.Click += new System.EventHandler(this.btnReaderFirst_Click);
-            // 
-            // btnReaderPrevious
-            // 
-            resources.ApplyResources(this.btnReaderPrevious, "btnReaderPrevious");
-            this.btnReaderPrevious.Name = "btnReaderPrevious";
-            this.btnReaderPrevious.UseVisualStyleBackColor = true;
-            this.btnReaderPrevious.Click += new System.EventHandler(this.btnReaderPrevious_Click);
-            // 
-            // btnReaderNext
-            // 
-            resources.ApplyResources(this.btnReaderNext, "btnReaderNext");
-            this.btnReaderNext.Name = "btnReaderNext";
-            this.btnReaderNext.UseVisualStyleBackColor = true;
-            this.btnReaderNext.Click += new System.EventHandler(this.btnReaderNext_Click);
             // 
             // lblFeedReader
             // 
@@ -578,6 +538,17 @@
             this.tabSingle.Name = "tabSingle";
             this.tabSingle.UseVisualStyleBackColor = true;
             this.tabSingle.Enter += new System.EventHandler(this.tabSingle_Enter);
+            // 
+            // label30
+            // 
+            resources.ApplyResources(this.label30, "label30");
+            this.label30.Name = "label30";
+            // 
+            // tbSingleResourceInclude
+            // 
+            resources.ApplyResources(this.tbSingleResourceInclude, "tbSingleResourceInclude");
+            this.tbSingleResourceInclude.Name = "tbSingleResourceInclude";
+            this.tbSingleResourceInclude.TextChanged += new System.EventHandler(this.tbSingleResourceInclude_TextChanged);
             // 
             // btnSingleDelete
             // 
@@ -795,7 +766,7 @@
             this.tabResourceProperties.Controls.Add(this.label24);
             this.tabResourceProperties.Controls.Add(this.tbRPResourceSelector);
             this.tabResourceProperties.Controls.Add(this.gridRPPayloads);
-            this.tabResourceProperties.Controls.Add(this.button1);
+            this.tabResourceProperties.Controls.Add(this.btnPropertiesRead);
             this.tabResourceProperties.Controls.Add(this.tbResourcePropertiesURL);
             this.tabResourceProperties.Controls.Add(this.label25);
             this.tabResourceProperties.Controls.Add(this.tbRPResourceKind);
@@ -879,12 +850,12 @@
             this.gridRPPayloads.Name = "gridRPPayloads";
             this.gridRPPayloads.ToolbarVisible = false;
             // 
-            // button1
+            // btnPropertiesRead
             // 
-            resources.ApplyResources(this.button1, "button1");
-            this.button1.Name = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            resources.ApplyResources(this.btnPropertiesRead, "btnPropertiesRead");
+            this.btnPropertiesRead.Name = "btnPropertiesRead";
+            this.btnPropertiesRead.UseVisualStyleBackColor = true;
+            this.btnPropertiesRead.Click += new System.EventHandler(this.btnPropertiesRead_Click);
             // 
             // tbResourcePropertiesURL
             // 
@@ -916,20 +887,6 @@
             this.statusLabel.Name = "statusLabel";
             resources.ApplyResources(this.statusLabel, "statusLabel");
             // 
-            // label30
-            // 
-            resources.ApplyResources(this.label30, "label30");
-            this.label30.Name = "label30";
-            // 
-            // tbSingleResourceInclude
-            // 
-            //this.tbSingleResourceInclude.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::SDataClientApp.Properties.Settings.Default, "SingleResourceInclude", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            resources.ApplyResources(this.tbSingleResourceInclude, "tbSingleResourceInclude");
-            this.tbSingleResourceInclude.Name = "tbSingleResourceInclude";
-            
-            //this.tbSingleResourceInclude.Text = global::SDataClientApp.Properties.Settings.Default.SingleResourceInclude;
-            this.tbSingleResourceInclude.TextChanged += new System.EventHandler(this.tbSingleResourceInclude_TextChanged);
-            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
@@ -945,12 +902,9 @@
             this.groupBox1.PerformLayout();
             this.tabCollection.ResumeLayout(false);
             this.tabCollection.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numStartIndex)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numCount)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.atomEntryGrid)).EndInit();
             this.tabSingle.ResumeLayout(false);
             this.tabSingle.PerformLayout();
             this.tabTemplate.ResumeLayout(false);
@@ -959,7 +913,6 @@
             this.tabSchema.PerformLayout();
             this.tabResourceProperties.ResumeLayout(false);
             this.tabResourceProperties.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.rpGridEntries)).EndInit();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -1042,7 +995,6 @@
         private System.Windows.Forms.Button btnFirst;
         private System.Windows.Forms.NumericUpDown numStartIndex;
         private System.Windows.Forms.NumericUpDown numCount;
-        private System.Windows.Forms.Button btnReaderNext;
         private System.Windows.Forms.Label lblFeedReader;
         private System.Windows.Forms.Button btnReaderRead;
         private System.Windows.Forms.TabPage tabResourceProperties;
@@ -1050,7 +1002,7 @@
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.TextBox tbRPResourceSelector;
         private System.Windows.Forms.PropertyGrid gridRPPayloads;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnPropertiesRead;
         private System.Windows.Forms.TextBox tbResourcePropertiesURL;
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.TextBox tbRPResourceKind;
@@ -1062,9 +1014,6 @@
         private System.Windows.Forms.Button btnClearProperties;
         private System.Windows.Forms.CheckBox cbIsFeed;
         private System.Windows.Forms.DataGridView rpGridEntries;
-        private System.Windows.Forms.Button btnReaderPrevious;
-        private System.Windows.Forms.Button btnReaderLast;
-        private System.Windows.Forms.Button btnReaderFirst;
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.TextBox tbReaderCount;
         private System.Windows.Forms.Label label29;

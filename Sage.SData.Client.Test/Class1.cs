@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Xml;
 using System.Xml.Schema;
-using System.Xml.XPath;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using Sage.SData.Client.Atom;
@@ -538,17 +537,10 @@ namespace Sage.SData.Client.Test
 
             AtomEntry entry1 = c.Read();
 
-            XPathNavigator payload = entry1.GetSDataPayload();
+            var payload = entry1.GetSDataPayload();
             if (payload != null)
             {
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(payload.OuterXml);
-                XPathNavigator employee = doc.DocumentElement.CreateNavigator();
-                XmlNamespaceManager manager = new XmlNamespaceManager(payload.NameTable);
-                manager.AddNamespace("aw", "http://schemas.sage.com/dynamic/2007");
-                employee.MoveToFirst();
-                XPathNavigator title = employee.SelectSingleNode(".//aw:MaritalStatus", manager);
-                title.SetValue("Married");
+                payload.Values["MaritalStatus"] = "Married";
                 entry1.SetSDataPayload(payload);
             }
 
@@ -616,57 +608,20 @@ namespace Sage.SData.Client.Test
             SDataSingleResourceRequest c = new SDataSingleResourceRequest(a);
             c.ResourceKind = "employees";
 
-            XPathNavigator payload = templateentry.GetSDataPayload();
-
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(payload.OuterXml);
-            XPathNavigator employee = doc.DocumentElement.CreateNavigator();
-            XmlNamespaceManager manager = new XmlNamespaceManager(payload.NameTable);
-            manager.AddNamespace("a", "http://schemas.sage.com/dynamic/2007");
-            employee.MoveToFirst();
-
-
-            XPathNavigator title = employee.SelectSingleNode(".//a:Title", manager);
-            title.SetValue("create 1");
-
-            XPathNavigator nationalid = employee.SelectSingleNode(".//a:NationalIdNumber", manager);
-            nationalid.SetValue("44444");
-
-            XPathNavigator loginid = employee.SelectSingleNode(".//a:LoginId", manager);
-            loginid.SetValue("create 4");
-
-            XPathNavigator contactid = employee.SelectSingleNode(".//a:ContactId", manager);
-            contactid.SetValue("9999");
-
-            XPathNavigator birthdate = employee.SelectSingleNode(".//a:BirthDate", manager);
-            birthdate.SetValue(SyndicationDateTimeUtility.ToRfc3339DateTime(new DateTime(1970, 8, 2)));
-
-
-            XPathNavigator hiredate = employee.SelectSingleNode(".//a:HireDate", manager);
-
-            hiredate.SetValue(SyndicationDateTimeUtility.ToRfc3339DateTime(DateTime.Now));
-
-            XPathNavigator modifieddate = employee.SelectSingleNode(".//a:ModifiedDate", manager);
-            modifieddate.SetValue(SyndicationDateTimeUtility.ToRfc3339DateTime(DateTime.Now));
-
-
-            XPathNavigator maritalstatus = employee.SelectSingleNode(".//a:MaritalStatus", manager);
-            maritalstatus.SetValue("Single");
-
-
-            XPathNavigator salariedflag = employee.SelectSingleNode(".//a:SalariedFlag", manager);
-            salariedflag.SetValue(XmlConvert.ToString(true));
-
-            XPathNavigator currentflag = employee.SelectSingleNode(".//a:CurrentFlag", manager);
-            currentflag.SetValue(XmlConvert.ToString(true));
-
-            XPathNavigator gender = employee.SelectSingleNode(".//a:Gender", manager);
-            gender.SetValue("Male");
-
-            XPathNavigator guid = employee.SelectSingleNode(".//a:RowGuid", manager);
-            guid.SetValue(Guid.NewGuid().ToString());
-
-            templateentry.SetSDataPayload(employee);
+            var payload = templateentry.GetSDataPayload();
+            payload.Values["Title"] = "create 1";
+            payload.Values["NationalIdNumber"] = "44444";
+            payload.Values["LoginId"] = "create 4";
+            payload.Values["ContactId"] = "9999";
+            payload.Values["BirthDate"] = SyndicationDateTimeUtility.ToRfc3339DateTime(new DateTime(1970, 8, 2));
+            payload.Values["HireDate"] = SyndicationDateTimeUtility.ToRfc3339DateTime(DateTime.Now);
+            payload.Values["ModifiedDate"] = SyndicationDateTimeUtility.ToRfc3339DateTime(DateTime.Now);
+            payload.Values["MaritalStatus"] = "Single";
+            payload.Values["SalariedFlag"] = XmlConvert.ToString(true);
+            payload.Values["CurrentFlag"] = XmlConvert.ToString(true);
+            payload.Values["Gender"] = "Male";
+            payload.Values["RowGuid"] = Guid.NewGuid().ToString();
+            templateentry.SetSDataPayload(payload);
 
             c.Entry = templateentry;
             templateentry.UpdatedOn = DateTime.Now;
@@ -693,17 +648,10 @@ namespace Sage.SData.Client.Test
 
             AtomEntry entry = b.Read();
 
-            XPathNavigator payload = entry.GetSDataPayload();
+            var payload = entry.GetSDataPayload();
             if (payload != null)
             {
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(payload.OuterXml);
-                XPathNavigator employee = doc.DocumentElement.CreateNavigator();
-                XmlNamespaceManager manager = new XmlNamespaceManager(payload.NameTable);
-                manager.AddNamespace("a", "http://schemas.sage.com/dynamic/2007");
-                employee.MoveToFirst();
-                XPathNavigator title = employee.SelectSingleNode(".//a:Title", manager);
-                title.SetValue("test update");
+                payload.Values["Title"] = "test update";
                 entry.SetSDataPayload(payload);
             }
 

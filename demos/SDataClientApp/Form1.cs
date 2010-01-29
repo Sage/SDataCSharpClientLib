@@ -4,10 +4,8 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Schema;
 using Sage.SData.Client.Atom;
-using Sage.SData.Client.Common;
 using Sage.SData.Client.Core;
 using Sage.SData.Client.Extensions;
 using SDataClientApp.Properties;
@@ -26,7 +24,6 @@ namespace SDataClientApp
         private XmlSchema _schema;
         private string _url;
         private AtomFeed _feed;
-        private DataTable _table;
 
         public Form1()
         {
@@ -71,7 +68,9 @@ namespace SDataClientApp
                 _url = builder.ToString();
                 tbURL.Text = _url;
             }
-            catch (UriFormatException) {}
+            catch (UriFormatException)
+            {
+            }
         }
 
         private void tbApplication_TextChanged(object sender, EventArgs e)
@@ -102,17 +101,52 @@ namespace SDataClientApp
 
         private void tabCollection_Enter(object sender, EventArgs e)
         {
-            tbCollectionURL.Text = _url + tbCollectionResourceKind.Text;
+            tbCollectionURL.Text = string.Format("{0}/{1}", _url, tbCollectionResourceKind.Text);
         }
 
         private void tbCollectionResourceKind_TextChanged(object sender, EventArgs e)
         {
-            tbCollectionURL.Text = _url + tbCollectionResourceKind.Text;
+            tbCollectionURL.Text = string.Format("{0}/{1}", _url, tbCollectionResourceKind.Text);
         }
 
         private void btnCollectionRead_Click(object sender, EventArgs e)
         {
+            btnCollectionRead.Enabled = false;
+            btnReaderRead.Enabled = true;
+            collectionPayloadGrid.SelectedObject = null;
             UpdateCollection();
+        }
+
+        private void btnReaderRead_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // create the sSDataResourceCollectionRequest
+                _sdataResourceCollectionRequest = new SDataResourceCollectionRequest(_sdataService);
+                // set the resource kind
+                _sdataResourceCollectionRequest.ResourceKind = tbCollectionResourceKind.Text;
+                _sdataResourceCollectionRequest.StartIndex = (int) numStartIndex.Value;
+                _sdataResourceCollectionRequest.Count = (int) numCount.Value;
+                // read the feed
+                _feed = _sdataResourceCollectionRequest.Read();
+
+                lblFeedReader.Text = "Reader Ready";
+                btnCollectionRead.Enabled = true;
+                btnReaderRead.Enabled = false;
+
+                if (_sdataResourceCollectionRequest.Reader == null)
+                {
+                    _sdataResourceCollectionRequest.Read(_feed);
+                }
+
+                tbReaderCount.Text = Convert.ToString(_sdataResourceCollectionRequest.Reader.Count);
+
+                UpdateReaderGrid();
+            }
+            catch (SDataClientException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void atomEntryGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -122,37 +156,101 @@ namespace SDataClientApp
             // get the atomentry for the row selected from the ffed
             var entry = ((IList<AtomEntry>) _feed.Entries)[index];
 
-
-            // load xml doc with xml string from the selected payload
-            var xmldoc = new XmlDocument();
-
-            xmldoc.LoadXml(entry.GetSDataPayload().OuterXml);
-
             // show it in the grid
-            var ds = new DataSet();
-            ds.ReadXml(new XmlNodeReader(xmldoc));
-
-            collectionPayloadGrid.SelectedObject = ds.Tables[0].DefaultView[0];
+            collectionPayloadGrid.SelectedObject = entry.GetSDataPayload();
         }
 
         private void btnFirst_Click(object sender, EventArgs e)
         {
-            NavigateCollection("first");
+            if (_sdataResourceCollectionRequest.Reader != null)
+            {
+                _sdataResourceCollectionRequest.Reader.First();
+                UpdateReaderGrid();
+            }
+            else
+            {
+                NavigateCollection("first");
+            }
         }
 
         private void btnPrevious_Click(object sender, EventArgs e)
         {
-            NavigateCollection("previous");
+            if (_sdataResourceCollectionRequest.Reader != null)
+            {
+                _sdataResourceCollectionRequest.Reader.Previous();
+                UpdateReaderGrid();
+            }
+            else
+            {
+                NavigateCollection("previous");
+            }
         }
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            NavigateCollection("next");
+            if (_sdataResourceCollectionRequest.Reader != null)
+            {
+                if (_sdataResourceCollectionRequest.Reader.MoveNext())
+                {
+                    UpdateReaderGrid();
+                }
+                else
+                {
+                    MessageBox.Show("No entries available");
+                }
+            }
+            else
+            {
+                NavigateCollection("next");
+            }
         }
 
         private void btnLast_Click(object sender, EventArgs e)
         {
-            NavigateCollection("last");
+            if (_sdataResourceCollectionRequest.Reader != null)
+            {
+                if (_sdataResourceCollectionRequest.Reader.Last())
+                {
+                    UpdateReaderGrid();
+                }
+                else
+                {
+                    MessageBox.Show("No entries available");
+                }
+            }
+            else
+            {
+                NavigateCollection("last");
+            }
+        }
+
+        private void tbCurrentItem_KeyDown(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                Convert.ToInt32(tbCurrentItem.Text);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("You must enter a number");
+                return;
+            }
+
+            if (Convert.ToInt32(tbCurrentItem.Text) >= Convert.ToInt32(tbReaderCount.Text))
+            {
+                tbCurrentItem.Text = Convert.ToString((Convert.ToInt32(tbReaderCount) - 1));
+            }
+
+            if (Convert.ToInt32(tbCurrentItem.Text) < 0)
+            {
+                tbCurrentItem.Text = "0";
+            }
+
+            if (e.KeyCode == Keys.Enter)
+            {
+                _sdataResourceCollectionRequest.Reader.EntryIndex = Convert.ToInt32(tbCurrentItem.Text);
+                UpdateReaderGrid();
+            }
         }
 
         private void NavigateCollection(string relation)
@@ -184,41 +282,65 @@ namespace SDataClientApp
                 // read the feed
                 _feed = _sdataResourceCollectionRequest.Read();
 
-
                 var lookup = _feed.Links.ToLookup(link => link.Relation);
                 btnFirst.Enabled = lookup["first"].Any();
                 btnPrevious.Enabled = lookup["previous"].Any();
                 btnNext.Enabled = lookup["next"].Any();
                 btnLast.Enabled = lookup["last"].Any();
 
-
-                _table = new DataTable();
-                _table.Columns.Add("Authors");
-                _table.Columns.Add("Id");
-                _table.Columns.Add("Title");
-
+                var table = new DataTable();
+                table.Columns.Add("Author");
+                table.Columns.Add("Id");
+                table.Columns.Add("Title");
 
                 // iterate through the list of entries in the feed
                 foreach (var atomentry in _feed.Entries)
                 {
-                    var dr = _table.NewRow();
+                    var dr = table.NewRow();
                     dr[0] = atomentry.Authors[0].Name;
                     dr[1] = atomentry.Id.Uri.AbsoluteUri;
                     dr[2] = atomentry.Title.Content;
 
-                    _table.Rows.Add(dr);
+                    table.Rows.Add(dr);
                 }
 
                 // show it in the grid
-                var bindingSource = new BindingSource();
-                bindingSource.DataSource = _table;
-                atomEntryGrid.DataSource = bindingSource;
+                atomEntryGrid.DataSource = table;
                 atomEntryGrid.Refresh();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void UpdateReaderGrid()
+        {
+            var table = new DataTable();
+            table.Columns.Add("Author");
+            table.Columns.Add("Id");
+            table.Columns.Add("Title");
+
+            var dr = table.NewRow();
+            var atomentry = _sdataResourceCollectionRequest.Reader.Current;
+            dr[0] = atomentry.Authors[0].Name;
+            dr[1] = atomentry.Id.Uri.AbsoluteUri;
+            dr[2] = atomentry.Title.Content;
+
+            table.Rows.Add(dr);
+
+            // show it in the grid
+            atomEntryGrid.DataSource = table;
+            atomEntryGrid.Refresh();
+
+            var payload = atomentry.GetSDataPayload();
+
+            // show it in the grid
+            collectionPayloadGrid.SelectedObject = payload;
+            tbCurrentItem.Text = Convert.ToString(_sdataResourceCollectionRequest.Reader.EntryIndex);
+
+            btnPrevious.Enabled = _sdataResourceCollectionRequest.Reader.EntryIndex > 1;
+            btnNext.Enabled = _sdataResourceCollectionRequest.Reader.EntryIndex < _sdataResourceCollectionRequest.Reader.Count;
         }
 
         //======================================================
@@ -274,40 +396,6 @@ namespace SDataClientApp
         {
             try
             {
-                var entry = _sdataSingleResourceRequest.Entry;
-                var doc = new XmlDocument();
-                doc.LoadXml(entry.GetSDataPayload().OuterXml);
-                var employee = doc.DocumentElement.CreateNavigator();
-                var manager = new XmlNamespaceManager(doc.NameTable);
-                manager.AddNamespace("a", "http://schemas.sage.com/dynamic/2007");
-                var row = ((DataRowView) singlePayloadGrid.SelectedObject).Row;
-
-                foreach (DataColumn column in row.Table.Columns)
-                {
-                    var nav = employee.SelectSingleNode("a:" + column.ColumnName, manager);
-                    var value = column.ColumnName == "RowGuid"
-                                    ? Guid.NewGuid().ToString()
-                                    : Convert.ToString(row[column]);
-
-                    if (nav == null)
-                    {
-                        if (value != null)
-                        {
-                            using (var writer = employee.AppendChild())
-                            {
-                                writer.WriteStartElement(column.ColumnName, "http://schemas.sage.com/dynamic/2007");
-                                writer.WriteValue(value);
-                                writer.WriteEndElement();
-                            }
-                        }
-                    }
-                    else if (nav.Value != value)
-                    {
-                        nav.SetValue(value);
-                    }
-                }
-
-                entry.SetSDataPayload(employee);
                 var newEntry = _sdataSingleResourceRequest.Create();
                 DisplayEntry(newEntry);
             }
@@ -321,75 +409,6 @@ namespace SDataClientApp
         {
             try
             {
-                var entry = _sdataSingleResourceRequest.Entry;
-                var doc = new XmlDocument();
-                doc.LoadXml(entry.GetSDataPayload().OuterXml);
-                var employee = doc.DocumentElement.CreateNavigator();
-                var manager = new XmlNamespaceManager(doc.NameTable);
-                manager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-                manager.AddNamespace("a", "http://schemas.sage.com/dynamic/2007");
-                var row = ((DataRowView) singlePayloadGrid.SelectedObject).Row;
-
-                foreach (DataColumn column in row.Table.Columns)
-                {
-                    var nav = employee.SelectSingleNode("a:" + column.ColumnName, manager);
-
-                    if (column.ColumnName == "RowGuid")
-                    {
-                        if (nav != null)
-                        {
-                            nav.DeleteSelf();
-                        }
-                    }
-                    else
-                    {
-                        var value = column.ColumnName == "ModifiedDate"
-                                        ? SyndicationDateTimeUtility.ToRfc3339DateTime(DateTime.Now)
-                                        : Convert.ToString(row[column]);
-
-                        if (nav == null)
-                        {
-                            if (value != null)
-                            {
-                                using (var writer = employee.AppendChild())
-                                {
-                                    writer.WriteStartElement(column.ColumnName, "http://schemas.sage.com/dynamic/2007");
-                                    writer.WriteValue(value);
-                                    writer.WriteEndElement();
-                                }
-                            }
-                        }
-                        else if (nav.Value != value)
-                        {
-                            var nil = nav.SelectSingleNode("@xsi:nil", manager);
-
-                            if (value == null)
-                            {
-                                if (nil == null)
-                                {
-                                    var attributes = nav.CreateAttributes();
-                                    attributes.WriteAttributeString("xsi:nil", "true");
-                                    attributes.Close();
-                                }
-                            }
-                            else
-                            {
-                                if (nil != null)
-                                {
-                                    nil.DeleteSelf();
-                                }
-                            }
-
-                            nav.SetValue(value);
-                        }
-                        else
-                        {
-                            nav.DeleteSelf();
-                        }
-                    }
-                }
-
-                entry.SetSDataPayload(employee);
                 var newEntry = _sdataSingleResourceRequest.Update();
                 DisplayEntry(newEntry);
                 statusLabel.Text = Resources.statusUpdateComplete;
@@ -429,15 +448,8 @@ namespace SDataClientApp
                 var end = uri.IndexOf(")", start);
                 tbSingleResourceSelector.Text = uri.Substring(start, end + 1 - start);
 
-                // load xml doc with xml string from the selected payload
-                var xmldoc = new XmlDocument();
-                xmldoc.LoadXml(entry.GetSDataPayload().OuterXml);
-
                 // show it in the grid
-                var ds = new DataSet();
-                ds.ReadXml(new XmlNodeReader(xmldoc));
-
-                singlePayloadGrid.SelectedObject = ds.Tables[0].DefaultView[0];
+                singlePayloadGrid.SelectedObject = entry.GetSDataPayload();
             }
             else
             {
@@ -476,14 +488,9 @@ namespace SDataClientApp
             try
             {
                 var entry = _sdataTemplateResourceRequest.Read();
-                var xmldoc = new XmlDocument();
-                xmldoc.LoadXml(entry.GetSDataPayload().OuterXml);
 
                 // show it in the grid
-                var ds = new DataSet();
-                ds.ReadXml(new XmlNodeReader(xmldoc));
-
-                templatePayloadGrid.SelectedObject = ds.Tables[0].DefaultView[0];
+                templatePayloadGrid.SelectedObject = entry.GetSDataPayload();
             }
             catch (Exception ex)
             {
@@ -551,103 +558,6 @@ namespace SDataClientApp
             statusLabel.Text = string.Empty;
         }
 
-        private void UpdateReaderGrid()
-        {
-            _table = new DataTable();
-            _table.Columns.Add("Authors");
-            _table.Columns.Add("Id");
-            _table.Columns.Add("Title");
-
-
-            var dr = _table.NewRow();
-            dr[0] = _sdataResourceCollectionRequest.Reader.Current.Parent.Authors[0].Name;
-            dr[1] = _sdataResourceCollectionRequest.Reader.Current.Parent.Id.Uri.AbsoluteUri;
-            dr[2] = _sdataResourceCollectionRequest.Reader.Current.Parent.Title.Content;
-
-            _table.Rows.Add(dr);
-
-
-            // show it in the grid
-            var bindingSource = new BindingSource();
-            bindingSource.DataSource = _table;
-            atomEntryGrid.DataSource = bindingSource;
-            atomEntryGrid.Refresh();
-
-
-            var payload = _sdataResourceCollectionRequest.Reader.Current.Payload;
-
-
-            // load xml doc with xml string from the selected payload
-            var xmldoc = new XmlDocument();
-
-            xmldoc.LoadXml(payload.OuterXml);
-
-            // show it in the grid
-            var ds = new DataSet();
-            ds.ReadXml(new XmlNodeReader(xmldoc));
-
-            collectionPayloadGrid.SelectedObject = ds.Tables[0].DefaultView[0];
-            tbCurrentItem.Text = Convert.ToString(_sdataResourceCollectionRequest.Reader.EntryIndex);
-        }
-
-        private void btnReaderRead_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                // create the sSDataResourceCollectionRequest
-                _sdataResourceCollectionRequest = new SDataResourceCollectionRequest(_sdataService);
-                // set the resource kind
-                _sdataResourceCollectionRequest.ResourceKind = tbCollectionResourceKind.Text;
-                _sdataResourceCollectionRequest.StartIndex = (int) numStartIndex.Value;
-                _sdataResourceCollectionRequest.Count = (int) numCount.Value;
-                // read the feed
-                _feed = _sdataResourceCollectionRequest.Read();
-
-                lblFeedReader.Text = "Reader Ready";
-                btnReaderRead.Enabled = false;
-                btnReaderNext.Visible = true;
-                btnReaderFirst.Visible = true;
-                btnReaderPrevious.Visible = true;
-                btnReaderLast.Visible = true;
-
-
-                if (_sdataResourceCollectionRequest.Reader == null)
-                {
-                    _sdataResourceCollectionRequest.Read(_feed);
-                }
-
-                tbReaderCount.Text = Convert.ToString(_sdataResourceCollectionRequest.Reader.Count);
-
-                UpdateReaderGrid();
-            }
-            catch (SDataClientException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void btnReaderNext_Click(object sender, EventArgs e)
-        {
-            _table = new DataTable();
-            _table.Columns.Add("Authors");
-            _table.Columns.Add("Id");
-            _table.Columns.Add("Title");
-
-
-            if (_sdataResourceCollectionRequest.Reader == null)
-            {
-                _sdataResourceCollectionRequest.Read(_feed);
-            }
-            if (_sdataResourceCollectionRequest.Reader.MoveNext())
-            {
-                UpdateReaderGrid();
-            }
-            else
-            {
-                MessageBox.Show("No entries available");
-            }
-        }
-
         private void tabResourceProperties_Enter(object sender, EventArgs e)
         {
             try
@@ -688,7 +598,7 @@ namespace SDataClientApp
             {
                 return;
             }
-            
+
             try
             {
                 _sdataResourcePropertyRequest.ResourceKind = tbRPResourceKind.Text;
@@ -706,7 +616,7 @@ namespace SDataClientApp
             {
                 return;
             }
-            
+
             try
             {
                 _sdataResourcePropertyRequest.ResourceSelector = tbRPResourceSelector.Text;
@@ -725,101 +635,40 @@ namespace SDataClientApp
             tbResourcePropertiesURL.Text = "";
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnPropertiesRead_Click(object sender, EventArgs e)
         {
             if (cbIsFeed.Checked)
             {
                 _feed = _sdataResourcePropertyRequest.ReadFeed();
-                _table = new DataTable();
-                _table.Columns.Add("Authors");
-                _table.Columns.Add("Id");
-                _table.Columns.Add("Title");
-
+                var table = new DataTable();
+                table.Columns.Add("Author");
+                table.Columns.Add("Id");
+                table.Columns.Add("Title");
 
                 // iterate through the list of entries in the feed
                 foreach (var atomentry in _feed.Entries)
                 {
-                    var dr = _table.NewRow();
+                    var dr = table.NewRow();
                     dr[0] = atomentry.Authors[0].Name;
                     dr[1] = atomentry.Id.Uri.AbsoluteUri;
                     dr[2] = atomentry.Title.Content;
 
-                    _table.Rows.Add(dr);
+                    table.Rows.Add(dr);
                 }
 
                 // show it in the grid
-                var bindingSource = new BindingSource();
-
-                bindingSource.DataSource = _table;
-                rpGridEntries.DataSource = bindingSource;
+                rpGridEntries.DataSource = table;
 
                 rpGridEntries.Refresh();
             }
             else
             {
-                AtomEntry entry = _sdataResourcePropertyRequest.Read();
-                var xmldoc = new XmlDocument();
-                xmldoc.LoadXml(entry.GetSDataPayload().OuterXml);
+                var entry = _sdataResourcePropertyRequest.Read();
+                var payload = entry.GetSDataPayload();
 
                 // show it in the grid
-                var ds = new DataSet();
-                ds.ReadXml(new XmlNodeReader(xmldoc));
-
-                gridRPPayloads.SelectedObject = ds.Tables[0].DefaultView[0];
-                singlePayloadGrid.SelectedObject = ds.Tables[0].DefaultView[0];
-            }
-        }
-
-        private void btnReaderPrevious_Click(object sender, EventArgs e)
-        {
-            _sdataResourceCollectionRequest.Reader.Previous();
-            UpdateReaderGrid();
-        }
-
-        private void btnReaderFirst_Click(object sender, EventArgs e)
-        {
-            _sdataResourceCollectionRequest.Reader.First();
-            UpdateReaderGrid();
-        }
-
-        private void btnReaderLast_Click(object sender, EventArgs e)
-        {
-            if (_sdataResourceCollectionRequest.Reader.Last())
-            {
-                UpdateReaderGrid();
-            }
-            else
-            {
-                MessageBox.Show("No entries available");
-            }
-        }
-
-        private void tbCurrentItem_KeyDown(object sender, KeyEventArgs e)
-        {
-            try
-            {
-                Convert.ToInt32(tbCurrentItem.Text);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("You must enter a number");
-                return;
-            }
-
-            if (Convert.ToInt32(tbCurrentItem.Text) >= Convert.ToInt32(tbReaderCount.Text))
-            {
-                tbCurrentItem.Text = Convert.ToString((Convert.ToInt32(tbReaderCount) - 1));
-            }
-
-            if (Convert.ToInt32(tbCurrentItem.Text) < 0)
-            {
-                tbCurrentItem.Text = "0";
-            }
-
-            if (e.KeyCode == Keys.Enter)
-            {
-                _sdataResourceCollectionRequest.Reader.EntryIndex = Convert.ToInt32(tbCurrentItem.Text);
-                UpdateReaderGrid();
+                gridRPPayloads.SelectedObject = payload;
+                singlePayloadGrid.SelectedObject = payload;
             }
         }
 

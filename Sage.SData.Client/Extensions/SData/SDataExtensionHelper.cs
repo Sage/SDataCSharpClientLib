@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Xml.XPath;
 using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Extensions
@@ -15,7 +14,7 @@ namespace Sage.SData.Client.Extensions
         /// </summary>
         /// <param name="entry">the entry</param>
         /// <returns></returns>
-        public static XPathNavigator GetSDataPayload(this AtomEntry entry)
+        public static SDataPayload GetSDataPayload(this AtomEntry entry)
         {
             var context = GetContext(entry, false);
             return context != null ? context.Payload : null;
@@ -44,11 +43,33 @@ namespace Sage.SData.Client.Extensions
         }
 
         /// <summary>
+        /// Retrieves the inline XML schema embedded in the feed
+        /// </summary>
+        /// <param name="feed"></param>
+        /// <returns></returns>
+        public static string GetSDataSchema(this AtomFeed feed)
+        {
+            var context = GetContext(feed, true);
+            return context != null ? context.Schema : null;
+        }
+
+        /// <summary>
+        /// Retrieves the inline XML schema embedded in the feed entry
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <returns></returns>
+        public static string GetSDataSchema(this AtomEntry entry)
+        {
+            var context = GetContext(entry, true);
+            return context != null ? context.Schema : null;
+        }
+
+        /// <summary>
         /// Extension method to set sdata payload
         /// </summary>
         /// <param name="entry"></param>
         /// <param name="payload"></param>
-        public static void SetSDataPayload(this AtomEntry entry, XPathNavigator payload)
+        public static void SetSDataPayload(this AtomEntry entry, SDataPayload payload)
         {
             var context = GetContext(entry, true);
             context.Payload = payload;
