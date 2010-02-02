@@ -22,7 +22,7 @@ namespace Sage.SData.Client.Extensions
             //	Attempt to extract syndication information
             //------------------------------------------------------------
             string value;
-            Uri = source.TryGetAttribute("uri", SDataExtension.SDataNamespaceUri, out value) ? new Uri(value) : null;
+            Uri = source.TryGetAttribute("uri", SDataExtension.SDataNamespaceUri, out value) && !string.IsNullOrEmpty(value) ? new Uri(value) : null;
             DeleteMissing = source.TryGetAttribute("deleteMissing", SDataExtension.SDataNamespaceUri, out value) ? XmlConvert.ToBoolean(value) : (bool?) null;
 
             foreach (XPathNavigator item in source.SelectChildren(XPathNodeType.Element))

@@ -42,11 +42,11 @@ namespace Sage.SData.Client.Extensions
 
             string value;
             Key = source.TryGetAttribute("key", SDataExtension.SDataNamespaceUri, out value) ? value : null;
-            Uri = source.TryGetAttribute("uri", SDataExtension.SDataNamespaceUri, out value) ? new Uri(value) : null;
-            Uuid = source.TryGetAttribute("uuid", SDataExtension.SDataNamespaceUri, out value) ? new Guid(value) : (Guid?) null;
+            Uri = source.TryGetAttribute("uri", SDataExtension.SDataNamespaceUri, out value) && !string.IsNullOrEmpty(value) ? new Uri(value) : null;
+            Uuid = source.TryGetAttribute("uuid", SDataExtension.SDataNamespaceUri, out value) && !string.IsNullOrEmpty(value) ? new Guid(value) : (Guid?) null;
             Descriptor = source.TryGetAttribute("descriptor", SDataExtension.SDataNamespaceUri, out value) ? value : null;
             Lookup = source.TryGetAttribute("lookup", SDataExtension.SDataNamespaceUri, out value) ? value : null;
-            IsDeleted = source.TryGetAttribute("isDeleted", SDataExtension.SDataNamespaceUri, out value) ? XmlConvert.ToBoolean(value) : (bool?) null;
+            IsDeleted = source.TryGetAttribute("isDeleted", SDataExtension.SDataNamespaceUri, out value) && !string.IsNullOrEmpty(value) ? XmlConvert.ToBoolean(value) : (bool?) null;
 
             return source.SelectChildren(XPathNodeType.Element).Cast<XPathNavigator>().All(item => LoadItem(item, manager));
         }
