@@ -20,10 +20,9 @@ namespace Sage.SData.Client.Core
         /// <summary>
         /// constructor
         /// </summary>
-        /// <param name="message"></param>
         /// <param name="innerException"></param>
-        public SDataServiceException(string message, WebException innerException)
-            : base(message, innerException)
+        public SDataServiceException(WebException innerException)
+            : base(innerException.Message, innerException)
         {
             if (innerException.Response == null)
             {

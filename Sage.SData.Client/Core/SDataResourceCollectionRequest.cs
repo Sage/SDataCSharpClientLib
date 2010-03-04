@@ -8,8 +8,6 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataResourceCollectionRequest : SDataApplicationRequest
     {
-        private string _query;
-
         /// <summary>
         /// Accessor method for query can be null
         /// </summary>
@@ -18,13 +16,7 @@ namespace Sage.SData.Client.Core
         /// </remarks>
         /// <example>startIndex=21&amp;count=10
         ///</example>
-        public string Query
-        {
-            get { return _query; }
-            set { _query = value; }
-        }
-
-        private IDictionary<string, string> _queryValues;
+        public string Query { get; set; }
 
         /// <summary>
         ///  Dictionary of query name value pairs
@@ -32,46 +24,24 @@ namespace Sage.SData.Client.Core
         /// <example>where, salesorderamount lt 15.00
         /// orderby, salesorderid
         /// </example>
-        public IDictionary<string, string> QueryValues
-        {
-            get { return _queryValues; }
-            set { _queryValues = value; }
-        }
-
-        private int _startIndex;
+        public IDictionary<string, string> QueryValues { get; set; }
 
         /// <summary>
         /// Indicates the index of the first resource returned by the query. This index is 1-based (not 0-based).
         /// </summary>
-        public int StartIndex
-        {
-            get { return _startIndex; }
-            set { _startIndex = value; }
-        }
-
-        private int _count;
+        public int StartIndex { get; set; }
 
         /// <summary>
         /// Indicates the number of resources requested by the service consumer.
         /// The service may choose to return a different number of resources and it
         /// indicates this by setting the itemsPerPage element in the returned feed.
         /// </summary>
-        public int Count
-        {
-            get { return _count; }
-            set { _count = value; }
-        }
-
-        private AtomFeedReader _reader;
+        public int Count { get; set; }
 
         /// <summary>
         /// AtomFeed Reader for the request
         /// </summary>
-        public AtomFeedReader Reader
-        {
-            get { return _reader; }
-            set { _reader = value; }
-        }
+        public AtomFeedReader Reader { get; set; }
 
         /// <summary>
         /// Constructor
@@ -82,7 +52,6 @@ namespace Sage.SData.Client.Core
         {
             Count = -1;
             StartIndex = -1;
-
             QueryValues = new Dictionary<string, string>();
         }
 
@@ -121,9 +90,9 @@ namespace Sage.SData.Client.Core
         {
             base.BuildUrl(builder);
 
-            if (_query != null)
+            if (Query != null)
             {
-                builder.Query = _query;
+                builder.Query = Query;
             }
 
             foreach (var pair in QueryValues)

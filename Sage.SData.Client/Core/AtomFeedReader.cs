@@ -15,7 +15,7 @@ namespace Sage.SData.Client.Core
         private readonly ISDataService _service;
         private readonly int _itemsPerPage;
         private readonly int _itemsAvailable;
-        private readonly List<IList> _listPages;
+        private readonly IList<IList> _listPages;
         private int _numberOfPages;
         private int _lastPageSize;
 
@@ -27,49 +27,25 @@ namespace Sage.SData.Client.Core
             get { return _itemsAvailable; }
         }
 
-        private List<AtomEntry> _entries;
-
         /// <summary>
         /// The list of atom entries for the reader
         /// </summary>
-        public List<AtomEntry> Entries
-        {
-            get { return _entries; }
-            set { _entries = value; }
-        }
-
-        private int _entryIndex;
+        public IList<AtomEntry> Entries { get; set; }
 
         /// <summary>
         /// Accessor method for the current entry index
         /// </summary>
-        public int EntryIndex
-        {
-            get { return _entryIndex; }
-            set { _entryIndex = value; }
-        }
-
-        private AtomFeed _feed;
+        public int EntryIndex { get; set; }
 
         /// <summary>
         /// The AtomFeed the reader uses
         /// </summary>
-        public AtomFeed Feed
-        {
-            get { return _feed; }
-            set { _feed = value; }
-        }
-
-        private SDataResourceCollectionRequest _parent;
+        public AtomFeed Feed { get; set; }
 
         /// <summary>
         /// The parent request 
         /// </summary>
-        public SDataResourceCollectionRequest Parent
-        {
-            get { return _parent; }
-            set { _parent = value; }
-        }
+        public SDataResourceCollectionRequest Parent { get; set; }
 
         /// <summary>
         /// Create the reader for the specified AtomFeed
@@ -83,9 +59,9 @@ namespace Sage.SData.Client.Core
             {
                 throw new SDataClientException("AtomFeed is null");
             }
-            _parent = parent;
-            _feed = feed;
-            _entryIndex = 0;
+            Parent = parent;
+            Feed = feed;
+            EntryIndex = 0;
             _itemsPerPage = feed.GetOpenSearchItemsPerPage() ?? 0;
             _service = service;
             _itemsAvailable = feed.GetOpenSearchTotalResults() ?? 0;
@@ -225,16 +201,16 @@ namespace Sage.SData.Client.Core
         /// </example>
         public bool Read()
         {
-            int lastIndex = 1;
+            var lastIndex = 1;
             // caculate the number of pages
             // first get the number of items in the feed
-            foreach (AtomLink link in Feed.Links)
+            foreach (var link in Feed.Links)
             {
                 if (link.Relation == "last")
                 {
-                    string query = link.Uri.Query;
-                    int pos1 = query.IndexOf("startIndex=") + 11;
-                    int pos2 = query.IndexOf("&", pos1);
+                    var query = link.Uri.Query;
+                    var pos1 = query.IndexOf("startIndex=") + 11;
+                    var pos2 = query.IndexOf("&", pos1);
 
                     if (pos2 < 0)
                     {
@@ -245,8 +221,8 @@ namespace Sage.SData.Client.Core
                 }
             }
 
-            AtomFeed firstFeed = Feed;
-            AtomFeed lastFeed = new AtomFeed();
+            var firstFeed = Feed;
+            var lastFeed = new AtomFeed();
             Parent.StartIndex = lastIndex;
             lastFeed.Load(new Uri(Parent.ToString()), new NetworkCredential(_service.UserName, _service.Password), null);
 
@@ -257,27 +233,26 @@ namespace Sage.SData.Client.Core
                 _numberOfPages++;
             }
 
-
             // now set up our pages
-            for (int x = 0; x < _numberOfPages; x++)
+            for (var x = 0; x < _numberOfPages; x++)
             {
-                List<AtomEntry> list = new List<AtomEntry>();
+                var list = new List<AtomEntry>();
                 _listPages.Add(list);
             }
 
             // fill the first page
-            foreach (AtomEntry entry in firstFeed.Entries)
+            foreach (var entry in firstFeed.Entries)
             {
                 _listPages[0].Add(entry);
             }
 
             // fill the last page
-            foreach (AtomEntry entry in lastFeed.Entries)
+            foreach (var entry in lastFeed.Entries)
             {
                 _listPages[_listPages.Count - 1].Add(entry);
             }
 
-            _entryIndex = 1;
+            EntryIndex = 1;
 
             return true;
         }
@@ -288,10 +263,10 @@ namespace Sage.SData.Client.Core
         /// <returns>bool</returns>
         public bool MoveNext()
         {
-            var hasMore = _entryIndex < _itemsAvailable;
+            var hasMore = EntryIndex < _itemsAvailable;
             if (hasMore)
             {
-                _entryIndex++;
+                EntryIndex++;
             }
             return hasMore;
         }
@@ -303,7 +278,7 @@ namespace Sage.SData.Client.Core
         {
             get
             {
-                int currentPage = (_entryIndex - 1)/_itemsPerPage;
+                var currentPage = (EntryIndex - 1)/_itemsPerPage;
 
                 if (currentPage < 0)
                 {
@@ -316,15 +291,15 @@ namespace Sage.SData.Client.Core
                     Feed = new AtomFeed();
                     Feed.Load(new Uri(Parent.ToString()), new NetworkCredential(_service.UserName, _service.Password), null);
 
-                    foreach (AtomEntry entry in Feed.Entries)
+                    foreach (var entry in Feed.Entries)
                     {
                         _listPages[currentPage].Add(entry);
                     }
                 }
 
-                List<AtomEntry> list = (List<AtomEntry>) _listPages[currentPage];
+                var list = (List<AtomEntry>) _listPages[currentPage];
 
-                int index = (_entryIndex - 1 - (_itemsPerPage*currentPage));
+                var index = (EntryIndex - 1 - (_itemsPerPage*currentPage));
                 if (index < 0)
                     index = 0;
                 return list[index];
@@ -338,7 +313,7 @@ namespace Sage.SData.Client.Core
         /// <returns></returns>
         public bool Last()
         {
-            _entryIndex = Count;
+            EntryIndex = Count;
             return true;
         }
 
@@ -348,7 +323,7 @@ namespace Sage.SData.Client.Core
         /// <returns>bool</returns>
         public bool First()
         {
-            _entryIndex = 1;
+            EntryIndex = 1;
             return true;
         }
 
@@ -358,9 +333,10 @@ namespace Sage.SData.Client.Core
         /// <returns></returns>
         public bool Previous()
         {
-            _entryIndex--;
-            if (_entryIndex < 1)
-                _entryIndex = 1;
+            if (EntryIndex > 1)
+                EntryIndex--;
+            else if (EntryIndex < 1)
+                EntryIndex = 1;
             return true;
         }
     }

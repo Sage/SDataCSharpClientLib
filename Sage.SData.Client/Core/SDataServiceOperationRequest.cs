@@ -7,9 +7,7 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataServiceOperationRequest : SDataApplicationRequest
     {
-        private const string _keyword = "$service";
-
-        private string _operationName;
+        private const string ServiceTerm = "$service";
 
         /// <summary>
         /// Accessor method for operationName
@@ -22,19 +20,9 @@ namespace Sage.SData.Client.Core
         /// The $service component may be placed after the contract segment (after test in the example above), 
         /// if it applies globally to the entire contract or it may be placed after the resource kind segment (as in the example above), if it applies to resources of a specific kind.
         /// </remarks>
-        public string OperationName
-        {
-            get { return _operationName; }
-            set { _operationName = value; }
-        }
+        public string OperationName { get; set; }
 
-        private AtomEntry _entry;
-
-        public AtomEntry Entry
-        {
-            get { return _entry; }
-            set { _entry = value; }
-        }
+        public AtomEntry Entry { get; set; }
 
         /// <summary>
         /// Constructor
@@ -63,7 +51,7 @@ namespace Sage.SData.Client.Core
         protected override void BuildUrl(UrlBuilder builder)
         {
             base.BuildUrl(builder);
-            builder.PathSegments.Add(_keyword);
+            builder.PathSegments.Add(ServiceTerm);
 
             if (!string.IsNullOrEmpty(OperationName))
             {

@@ -5,19 +5,11 @@
     /// </summary>
     public abstract class SDataApplicationRequest : SDataBaseRequest
     {
-        private string _application;
-
         /// <summary>
         /// Accessor method for application
         /// </summary>
         /// <remarks>the application name</remarks>
-        public string Application
-        {
-            get { return _application; }
-            set { _application = value; }
-        }
-
-        private string _contractName;
+        public string Application { get; set; }
 
         /// <summary>
         /// Accessor method for contractName
@@ -27,13 +19,7 @@
         /// the resources required by CRM integration (with schemas imposed by the CRM/ERP contract) 
         /// and a native or default contract which exposes all the resources of the ERP in their native format.
         /// </remarks>
-        public string ContractName
-        {
-            get { return _contractName; }
-            set { _contractName = value; }
-        }
-
-        private string _dataSet;
+        public string ContractName { get; set; }
 
         /// <summary>
         /// Accessor method for dataSet
@@ -46,13 +32,7 @@
         /// If several parameters are required to specify the dataset (for example database name and company id), 
         /// they should be formatted as a single segment in the URL. For example, sageApp/test/demodb;acme/accounts -- the semicolon separator is application specific, not imposed by SData.
         ///</remarks>
-        public string DataSet
-        {
-            get { return _dataSet; }
-            set { _dataSet = value; }
-        }
-
-        private string _resourceKind;
+        public string DataSet { get; set; }
 
         /// <summary>
         /// Accessor method for resourceKind
@@ -64,11 +44,7 @@
         /// resource kind segment (eventually a hierarchy of functional groups), which act as a folder (a hierarchy of folders) to organize the resources.
         /// Typical functional groups would be financials, commercials, HR, etc.
         /// </remarks>
-        public string ResourceKind
-        {
-            get { return _resourceKind; }
-            set { _resourceKind = value; }
-        }
+        public string ResourceKind { get; set; }
 
         /// <summary>
         /// Constructor
@@ -81,11 +57,6 @@
             ContractName = service.ContractName;
             DataSet = service.DataSet;
         }
-
-        /// <summary>
-        /// parameterless constructor
-        /// </summary>
-        protected SDataApplicationRequest() {}
 
         protected override void BuildUrl(UrlBuilder builder)
         {

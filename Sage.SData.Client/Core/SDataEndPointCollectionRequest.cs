@@ -7,17 +7,6 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataEndPointCollectionRequest : SDataBaseRequest
     {
-        private AtomFeedReader _reader;
-
-        /// <summary>
-        /// AtomFeed Reader for the request
-        /// </summary>
-        public AtomFeedReader Reader
-        {
-            get { return _reader; }
-            set { _reader = value; }
-        }
-
         /// <summary>
         /// Constructor
         /// </summary>

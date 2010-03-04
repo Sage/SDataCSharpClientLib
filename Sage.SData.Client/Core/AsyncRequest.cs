@@ -20,136 +20,68 @@ namespace Sage.SData.Client.Core
     /// </example>
     public class AsyncRequest
     {
-        private string _phase;
-        private string _phaseDetail;
-        private decimal _progress;
-        private int _elapsedSeconds;
-        private int _remainingSeconds;
-        private int _pollingMillSeconds;
-        private string _trackingID;
-        private string _trackingUrl;
-        private ISDataService _service;
-
-        private ISyndicationResource _response;
-        //private XDocument _xmldoc;
-
         /// <summary>
         /// the service 
         /// </summary>
-        public ISDataService Service
-        {
-            get { return _service; }
-            set { _service = value; }
-        }
-
+        public ISDataService Service { get; set; }
 
         /// <summary>
         /// Current phase of the process
         /// </summary>
-        public string Phase
-        {
-            get { return _phase; }
-            set { _phase = value; }
-        }
+        public string Phase { get; set; }
 
         /// <summary>
         /// Description of the phase
         /// </summary>
-        public string PhaseDetail
-        {
-            get { return _phaseDetail; }
-            set { _phaseDetail = value; }
-        }
+        public string PhaseDetail { get; set; }
 
         /// <summary>
         /// the amount of the process completed
         /// </summary>
-        public decimal Progress
-        {
-            get { return _progress; }
-            set { _progress = value; }
-        }
+        public decimal Progress { get; set; }
 
         /// <summary>
         /// The amount of time in seconds that the process
         /// has been executing
         /// </summary>
-        public int ElapsedSeconds
-        {
-            get { return _elapsedSeconds; }
-            set { _elapsedSeconds = value; }
-        }
+        public int ElapsedSeconds { get; set; }
 
         /// <summary>
         /// the amountof time in seconds remaining for the 
         /// process to complete
         /// </summary>
-        public int RemainingSeconds
-        {
-            get { return _remainingSeconds; }
-            set { _remainingSeconds = value; }
-        }
+        public int RemainingSeconds { get; set; }
 
         /// <summary>
         /// the amount of time in milli secs to poll the server
         /// for a response
         /// </summary>
-        public int PollingMilliseconds
-        {
-            get { return _pollingMillSeconds; }
-            set { _pollingMillSeconds = value; }
-        }
+        public int PollingMilliseconds { get; set; }
 
-
-        /// <summary>
-        /// string version of the UUID for this ansych request
-        /// </summary>
-        public string TrackingID
-        {
-            get { return _trackingID; }
-            set { _trackingID = value; }
-        }
-
-        /// <summary>
-        /// The response from the web request
-        /// </summary>
-        /*
-        public XDocument XmlDoc
-        {
-            get { return _xmldoc; }
-            set { _xmldoc = value; }
-        }
-        */
         /// <summary>
         /// The response from the asynchronous operatoin
         /// </summary>
-        public ISyndicationResource Response
-        {
-            get { return _response; }
-            set { _response = value; }
-        }
+        public ISyndicationResource Response { get; set; }
 
         /// <summary>
         /// string representing the url for the location header
         /// </summary>
-        public string TrackingUrl
-        {
-            get { return _trackingUrl; }
-            set { _trackingUrl = value; }
-        }
+        public string TrackingUrl { get; set; }
 
         /// <summary>
         /// refreshes the object, if the repsponse has been received
-        /// <see cref="_response"/> it will be non null
+        /// <see cref="Response"/> it will be non null
         /// </summary>
         public void Refresh()
         {
-            string xml = _service.Read(TrackingUrl);
-            XmlDocument doc = new XmlDocument();
-            doc.Load(new MemoryStream(Encoding.UTF8.GetBytes(xml)));
+            var xml = Service.Read(TrackingUrl);
+            var doc = new XmlDocument();
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+            {
+                doc.Load(stream);
+            }
 
-            XmlNode node = doc.SelectSingleNode("sdata:tracking");
-
+            var node = doc.SelectSingleNode("sdata:tracking");
 
             // we are still processing the request
             if (node != null)
@@ -166,22 +98,26 @@ namespace Sage.SData.Client.Core
                 if (node != null)
                 {
                     // its a feed
-                    AtomFeed feed = new AtomFeed();
-                    feed.Load(new MemoryStream(Encoding.UTF8.GetBytes(xml)));
+                    var feed = new AtomFeed();
+                    using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+                    {
+                        feed.Load(stream);
+                    }
                     Response = feed;
                 }
                 else
                 {
-                    // its an entry
-                    // we should be done
-                    AtomEntry entry = new AtomEntry();
-                    entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(xml)));
+                    // its an entry, we should be done
+                    var entry = new AtomEntry();
+                    using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+                    {
+                        entry.Load(stream);
+                    }
                     Response = entry;
                 }
 
-
                 // now we have to delete this thing, the clean up from the SData Spec
-                _service.Delete(TrackingUrl);
+                Service.Delete(TrackingUrl);
             }
         }
     }

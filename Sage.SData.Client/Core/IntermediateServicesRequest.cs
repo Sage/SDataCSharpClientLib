@@ -11,9 +11,7 @@
     /// <remarks>Feed level category = service field level category = operation</remarks>
     public class IntermediateServicesRequest : IntermediateResourceCollectionsRequest
     {
-        private const string _keyword = "$service";
-
-        private string _resourceKind;
+        private const string ServiceTerm = "$service";
 
         /// <summary>
         /// Accessor method for resourceKind
@@ -26,36 +24,8 @@
         /// Typical functional groups would be financials, commercials, HR, etc.
         /// NOTE Can be empty
         /// </remarks>
-        public string ResourceKind
-        {
-            get { return _resourceKind; }
-            set { _resourceKind = value; }
-        }
+        public string ResourceKind { get; set; }
 
-        /// <summary>
-        /// Reads the AtomFeed for enumeration services
-        /// </summary>
-        /// <returns>AtomFeed</returns>
-        /// <example>
-        ///     <code lang="cs" title="The following code example demonstrates the usage of the IntermediateServicesRequest class.">
-        ///         <code 
-        ///             source=".\Example.cs" 
-        ///             region="READ Enumeration of Services" 
-        ///         />
-        ///     </code>
-        /// </example>
-        //public AtomFeed Read()
-        //{
-        //    try
-        //    {
-        //        return Service.ReadFeed(this);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        
-        //        throw e;
-        //    }
-        //}
         public IntermediateServicesRequest(ISDataService service)
             : base(service) {}
 
@@ -68,7 +38,7 @@
                 builder.PathSegments.Add(ResourceKind);
             }
 
-            builder.PathSegments.Add(_keyword);
+            builder.PathSegments.Add(ServiceTerm);
         }
     }
 }

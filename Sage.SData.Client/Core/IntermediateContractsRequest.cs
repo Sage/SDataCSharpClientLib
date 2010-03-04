@@ -10,17 +10,11 @@ namespace Sage.SData.Client.Core
     /// <remarks>Feed level category = application Entry level category = contract</remarks>
     public class IntermediateContractsRequest : IntermediateApplicationsRequest
     {
-        private string _application;
-
         /// <summary>
         /// Accessor method for application
         /// </summary>
         /// <remarks>the application name</remarks>
-        public string Application
-        {
-            get { return _application; }
-            set { _application = value; }
-        }
+        public string Application { get; set; }
 
         /// <summary>
         /// Constructor
@@ -41,7 +35,7 @@ namespace Sage.SData.Client.Core
         ///         />
         ///     </code>
         /// </example>
-        public new AtomFeed Read()
+        public override AtomFeed Read()
         {
             return Service.ReadFeed(this);
         }

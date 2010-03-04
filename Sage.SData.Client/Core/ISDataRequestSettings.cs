@@ -12,13 +12,11 @@
         /// <remarks>HTTP is the default but can be HTTPS</remarks>
         string Protocol { get; set; }
 
-
         /// <remarks>IP address is also allowed (192.168.1.1).
         /// Can be followed by port number. For example www.example.com:5493. 
         /// 5493 is the recommended port number for SData services that are not exposed on the Internet.
         /// </remarks>
         string ServerName { get; set; }
-
 
         /// <summary>
         /// Accessor method for virtual directory

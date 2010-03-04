@@ -28,7 +28,7 @@ namespace Sage.SData.Client.Core
         ///         />
         ///     </code>
         /// </example>
-        public AtomFeed Read()
+        public virtual AtomFeed Read()
         {
             return Service.ReadFeed(this);
         }

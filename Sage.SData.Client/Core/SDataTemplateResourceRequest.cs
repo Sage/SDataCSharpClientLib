@@ -10,7 +10,7 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataTemplateResourceRequest : SDataOperationalRequest
     {
-        private static string _keyWord = "$template";
+        private const string TemplateTerm = "$template";
 
         /// <summary>
         /// gets the string version of this SData URL
@@ -22,7 +22,7 @@ namespace Sage.SData.Client.Core
         protected override void BuildUrl(UrlBuilder builder)
         {
             base.BuildUrl(builder);
-            builder.PathSegments.Add(_keyWord);
+            builder.PathSegments.Add(TemplateTerm);
             builder.QueryParameters["format"] = "atomentry";
         }
 

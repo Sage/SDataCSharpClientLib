@@ -9,26 +9,18 @@
         /// protocol value for http
         /// </summary>
         /// <remarks>the default</remarks>
-        public const string HTTP = "http";
+        public const string Http = "http";
 
         /// <summary>
         /// protocl value for https
         /// </summary>
-        public const string HTTPS = "https";
-
-        private string _protocol;
+        public const string Https = "https";
 
         /// <summary>
         /// Accessor method for protocol, 
         /// </summary>
         /// <remarks>HTTP is the default but can be HTTPS</remarks>
-        public string Protocol
-        {
-            get { return _protocol; }
-            set { _protocol = value; }
-        }
-
-        private string _serverName;
+        public string Protocol { get; set; }
 
         /// <summary>
         /// Accessor method for Server
@@ -37,35 +29,19 @@
         /// Can be followed by port number. For example www.example.com:5493. 
         /// 5493 is the recommended port number for SData services that are not exposed on the Internet.
         /// </remarks>
-        public string ServerName
-        {
-            get { return _serverName; }
-            set { _serverName = value; }
-        }
-
-        private string _virtualDirectory;
+        public string ServerName { get; set; }
 
         /// <summary>
         /// Accessor method for virtual directory
         /// </summary>
         /// <remarks>Must be sdata, unless the technical framework imposes something different.
         ///</remarks>
-        public string VirtualDirectory
-        {
-            get { return _virtualDirectory; }
-            set { _virtualDirectory = value; }
-        }
-
-        private ISDataService _service;
+        public string VirtualDirectory { get; set; }
 
         /// <summary>
         /// the ISDataService to use for this request
         /// </summary>
-        public ISDataService Service
-        {
-            get { return _service; }
-            set { _service = value; }
-        }
+        public ISDataService Service { get; set; }
 
         /// <summary>
         /// gets or sets the user agent
@@ -109,11 +85,6 @@
             ServerName = service.ServerName;
             VirtualDirectory = service.VirtualDirectory;
         }
-
-        /// <summary>
-        /// parameterless constructor
-        /// </summary>
-        protected SDataBaseRequest() {}
 
         /// <summary>
         /// function to format url string for the request

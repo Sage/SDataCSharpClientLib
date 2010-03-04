@@ -1,5 +1,4 @@
 ﻿using Sage.SData.Client.Atom;
-using Sage.SData.Client.Common;
 
 namespace Sage.SData.Client.Core
 {
@@ -8,8 +7,6 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataSingleResourceRequest : SDataApplicationRequest
     {
-        private AtomEntry _entry;
-
         /// <summary>
         /// Accessor method for entry
         /// </summary>
@@ -17,13 +14,7 @@ namespace Sage.SData.Client.Core
         /// this atom entry will be filled with the return from a resource template request and should be used for creating 
         /// a new SingleResource Request;
         /// </remarks>
-        public AtomEntry Entry
-        {
-            get { return _entry; }
-            set { _entry = value; }
-        }
-
-        private string _resourceSelector;
+        public AtomEntry Entry { get; set; }
 
         /// <summary>
         /// Accessor method for resourceSelector can be null
@@ -35,22 +26,9 @@ namespace Sage.SData.Client.Core
         /// resource by a criteria other than its primary key, which may be helpful in mashup scenarios. For example, the following URL identifies an account by its taxID:
         /// http://sdata.acme.com/sdata/sageApp/test/accounts(taxID eq '1234')
         /// </remarks>
-        public string ResourceSelector
-        {
-            get { return _resourceSelector; }
-            set { _resourceSelector = value; }
-        }
+        public string ResourceSelector { get; set; }
 
-        private string _include;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Include
-        {
-            get { return _include; }
-            set { _include = value; }
-        }
+        public string Include { get; set; }
 
         /// <summary>
         /// constructor
@@ -72,7 +50,7 @@ namespace Sage.SData.Client.Core
         public SDataSingleResourceRequest(ISDataService service, AtomEntry entry)
             : base(service)
         {
-            _entry = entry;
+            Entry = entry;
         }
 
         /// <summary>
@@ -87,7 +65,7 @@ namespace Sage.SData.Client.Core
         ///         />
         ///     </code>
         /// </example>
-        public AtomEntry Read()
+        public virtual AtomEntry Read()
         {
             return Service.ReadEntry(this);
         }
@@ -106,8 +84,7 @@ namespace Sage.SData.Client.Core
         /// </example>
         public AtomEntry Create()
         {
-            ISyndicationResource result;
-            result = Service.Create(this, Entry);
+            var result = Service.Create(this, Entry);
             return result as AtomEntry;
         }
 
@@ -125,8 +102,7 @@ namespace Sage.SData.Client.Core
         /// </example>
         public AtomEntry Update()
         {
-            ISyndicationResource result;
-            result = Service.Update(this, Entry);
+            var result = Service.Update(this, Entry);
             return result as AtomEntry;
         }
 

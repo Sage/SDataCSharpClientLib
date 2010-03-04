@@ -160,7 +160,7 @@ namespace Sage.SData.Client.Core
         /// <summary>
         /// Initializes the <see cref="SDataService"/> 
         /// </summary>
-        /// <remarks>sett the User Name and Password to authenticate with and build the url</remarks>
+        /// <remarks>Set the User Name and Password to authenticate with and build the url</remarks>
         void Initialize();
     }
 }

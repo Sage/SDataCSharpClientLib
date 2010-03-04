@@ -7,9 +7,7 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataResourceSchemaRequest : SDataOperationalRequest
     {
-        private static string _keyWord = "$schema";
-
-        private string _version;
+        private const string SchemaTerm = "$schema";
 
         /// <summary>
         /// Accessor method for version
@@ -23,11 +21,7 @@ namespace Sage.SData.Client.Core
         /// without resource kind http://sdata.acme.com/sdata/sageApp/test/$schema 
         /// with resource kind and version http://sdata.acme.com/sdata/sageApp/test/accounts/$schema?version=5
         /// </example>
-        public string Version
-        {
-            get { return _version; }
-            set { _version = value; }
-        }
+        public string Version { get; set; }
 
         /// <summary>
         /// Construtor
@@ -56,7 +50,12 @@ namespace Sage.SData.Client.Core
         protected override void BuildUrl(UrlBuilder builder)
         {
             base.BuildUrl(builder);
-            builder.PathSegments.Add(_keyWord);
+            builder.PathSegments.Add(SchemaTerm);
+
+            if (!string.IsNullOrEmpty(Version))
+            {
+                builder.QueryParameters["version"] = Version;
+            }
         }
     }
 }

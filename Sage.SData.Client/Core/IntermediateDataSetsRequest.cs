@@ -10,8 +10,6 @@ namespace Sage.SData.Client.Core
     /// <remarks>Feed level category = contract Entry level category = dataset</remarks>
     public class IntermediateDataSetsRequest : IntermediateContractsRequest
     {
-        private string _contractName;
-
         /// <summary>
         /// Accessor method for contractName
         /// </summary>
@@ -20,11 +18,7 @@ namespace Sage.SData.Client.Core
         /// the resources required by CRM integration (with schemas imposed by the CRM/ERP contract) 
         /// and a native or default contract which exposes all the resources of the ERP in their native format.
         /// </remarks>
-        public string ContractName
-        {
-            get { return _contractName; }
-            set { _contractName = value; }
-        }
+        public string ContractName { get; set; }
 
         /// <summary>
         /// Constructor
@@ -48,7 +42,7 @@ namespace Sage.SData.Client.Core
         ///         />
         ///     </code>
         /// </example>
-        public new AtomFeed Read()
+        public override AtomFeed Read()
         {
             return Service.ReadFeed(this);
         }

@@ -8,8 +8,6 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataResourcePropertyRequest : SDataSingleResourceRequest
     {
-        private IDictionary<int, string> _resourceProperties;
-
         /// <summary>
         /// Dictionary containing the resource properties
         /// </summary>
@@ -28,13 +26,7 @@ namespace Sage.SData.Client.Core
         /// http://sdata.acme.com/sdata/sageApp/test/accounts('A001')/postalAddress/country
         /// http://sdata.acme.com/sdata/sageApp/test/accounts('A001')/addresses(type eq 'postal')/country
         /// </remarks>
-        public IDictionary<int, string> ResourceProperties
-        {
-            get { return _resourceProperties; }
-            set { _resourceProperties = value; }
-        }
-
-        private IDictionary<string, string> _queryValues;
+        public IDictionary<int, string> ResourceProperties { get; set; }
 
         /// <summary>
         ///  Dictionary of query name value pairs
@@ -42,11 +34,7 @@ namespace Sage.SData.Client.Core
         /// <example>where, salesorderamount lt 15.00
         /// orderby, salesorderid
         /// </example>
-        public IDictionary<string, string> QueryValues
-        {
-            get { return _queryValues; }
-            set { _queryValues = value; }
-        }
+        public IDictionary<string, string> QueryValues { get; set; }
 
         /// <summary>
         /// Constructor
@@ -55,7 +43,7 @@ namespace Sage.SData.Client.Core
         public SDataResourcePropertyRequest(ISDataService service)
             : base(service)
         {
-            _resourceProperties = new Dictionary<int, string>();
+            ResourceProperties = new Dictionary<int, string>();
             QueryValues = new Dictionary<string, string>();
         }
 
@@ -88,7 +76,7 @@ namespace Sage.SData.Client.Core
         ///         />
         ///     </code>
         /// </example>
-        public new AtomEntry Read()
+        public override AtomEntry Read()
         {
             return Service.ReadEntry(this);
         }

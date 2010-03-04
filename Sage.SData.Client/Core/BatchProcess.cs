@@ -7,7 +7,10 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public sealed class BatchProcess
     {
-        private static readonly BatchProcess instance = new BatchProcess();
+        /// <summary>
+        /// The only instance of the BatchProcess class
+        /// </summary>
+        public static readonly BatchProcess Instance = new BatchProcess();
 
         private readonly Stack _stack;
 
@@ -20,17 +23,9 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// The only instance of the BatchProcess class
-        /// </summary>
-        public static BatchProcess Instance
-        {
-            get { return instance; }
-        }
-
-        /// <summary>
         /// Default constructor
         /// </summary>
-        public BatchProcess()
+        private BatchProcess()
         {
             _stack = new Stack();
         }
@@ -41,7 +36,7 @@ namespace Sage.SData.Client.Core
         /// <param name="item">url for batch item</param>
         public void AddToBatch(SDataBatchRequestItem item)
         {
-            SDataBatchRequest batchRequest = (SDataBatchRequest) _stack.Peek();
+            var batchRequest = (SDataBatchRequest) _stack.Peek();
             batchRequest.Requests.Enqueue(item);
         }
     }
