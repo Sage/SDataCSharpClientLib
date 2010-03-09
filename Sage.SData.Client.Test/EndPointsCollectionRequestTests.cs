@@ -2,22 +2,25 @@ using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using Sage.SData.Client.Core;
 
+// ReSharper disable InconsistentNaming
+
 namespace Sage.SData.Client.Test
 {
     [TestFixture]
     public class EndPointsCollectionRequestTests : AssertionHelper
     {
-        private bool bUseTestSerivce = true;
+        private static ISDataService GetService()
+        {
+            //uncomment to return a real service instance
+            //return new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "")
+
+            return new MockSDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
+        }
 
         [Test]
         public void verify_endpointcollection_url()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new SDataEndPointCollectionRequest(a);
 
@@ -28,12 +31,7 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canread_endpoints_collection()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new SDataEndPointCollectionRequest(a);
 

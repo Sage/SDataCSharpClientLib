@@ -12,6 +12,9 @@ namespace Sage.SData.Client.Core
     {
         private readonly SDataDiagnosis _diagnosis;
 
+        /// <summary>
+        /// TODO
+        /// </summary>
         public SDataDiagnosis Diagnosis
         {
             get { return _diagnosis; }

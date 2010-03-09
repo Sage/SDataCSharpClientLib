@@ -1,4 +1,5 @@
 ﻿using Sage.SData.Client.Atom;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Core
 {
@@ -17,17 +18,18 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <returns>return the string </returns>
         public SDataTemplateResourceRequest(ISDataService service)
-            : base(service) {}
-
-        protected override void BuildUrl(UrlBuilder builder)
+            : base(service)
         {
-            base.BuildUrl(builder);
-            builder.PathSegments.Add(TemplateTerm);
-            builder.QueryParameters["format"] = "atomentry";
+        }
+
+        protected override void BuildUrl(SDataUri uri)
+        {
+            base.BuildUrl(uri);
+            uri.AppendPath(TemplateTerm);
         }
 
         /// <summary>
-        /// Reads the templatte 
+        /// Reads the template 
         /// </summary>
         /// <returns>AtomEntry representing the template</returns>
         /// <example>

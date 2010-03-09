@@ -3,6 +3,7 @@ using System.Net;
 using System.Xml;
 using System.Xml.XPath;
 using Sage.SData.Client.Common;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Extensions
 {
@@ -19,7 +20,7 @@ namespace Sage.SData.Client.Extensions
         /// <summary>
         /// Http Method
         /// </summary>
-        public SDataHttpMethod? HttpMethod { get; set; }
+        public HttpMethod? HttpMethod { get; set; }
 
         /// <summary>
         /// Http Status
@@ -81,7 +82,7 @@ namespace Sage.SData.Client.Extensions
                 var httpMethodNavigator = source.SelectSingleNode("http:httpMethod", manager);
                 if (httpMethodNavigator != null && !string.IsNullOrEmpty(httpMethodNavigator.Value))
                 {
-                    HttpMethod = (SDataHttpMethod) Enum.Parse(typeof (SDataHttpMethod), httpMethodNavigator.Value, true);
+                    HttpMethod = (HttpMethod) Enum.Parse(typeof (HttpMethod), httpMethodNavigator.Value, true);
                     wasLoaded = true;
                 }
 
@@ -180,28 +181,5 @@ namespace Sage.SData.Client.Extensions
         }
 
         #endregion
-    }
-
-    /// <summary>
-    /// Enum of HTTP Methods
-    /// </summary>
-    public enum SDataHttpMethod
-    {
-        /// <summary>
-        /// Get Request
-        /// </summary>
-        Get,
-        /// <summary>
-        /// Post Request
-        /// </summary>
-        Post,
-        /// <summary>
-        /// Put Request
-        /// </summary>
-        Put,
-        /// <summary>
-        /// Delete Requets
-        /// </summary>
-        Delete
     }
 }

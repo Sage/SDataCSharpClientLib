@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Xml;
-using System.Xml.Schema;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using Sage.SData.Client.Atom;
@@ -8,12 +7,20 @@ using Sage.SData.Client.Common;
 using Sage.SData.Client.Core;
 using Sage.SData.Client.Extensions;
 
+// ReSharper disable InconsistentNaming
+
 namespace Sage.SData.Client.Test
 {
     [TestFixture]
     public class Class1 : AssertionHelper
     {
-        private bool bUseTestSerivce = true;
+        private static ISDataService GetService()
+        {
+            //uncomment to return a real service instance
+            //return new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "")
+
+            return new MockSDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
+        }
 
         [Test]
         public void verify_canconstruct_SDataService()
@@ -44,7 +51,10 @@ namespace Sage.SData.Client.Test
             Expect(a.Protocol == "http");
 
             Expect(a.ServerName, Is.Not.Null);
-            Expect(a.ServerName == "localhost:59213");
+            Expect(a.ServerName == "localhost");
+
+            Expect(a.Port, Is.Not.Null);
+            Expect(a.Port == 59213);
 
             Expect(a.VirtualDirectory, Is.Not.Null);
             Expect(a.VirtualDirectory == "sdata");
@@ -62,48 +72,30 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canreadatomfeed_SDataService()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourceCollectionRequest(a);
-            b.ResourceKind = "employees";
+            var b = new SDataResourceCollectionRequest(a) {ResourceKind = "employees"};
 
-            AtomFeed feed = a.ReadFeed(b);
+            var feed = a.ReadFeed(b);
             Expect(feed, Is.Not.Null);
         }
 
         [Test]
         public void verify_canread_SDataResourceSchemaRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourceSchemaRequest(a);
-            b.ResourceKind = "employees";
+            var b = new SDataResourceSchemaRequest(a) {ResourceKind = "employees"};
 
-            XmlSchema schema = b.Read();
+            var schema = b.Read();
 
             Expect(schema, Is.Not.Null);
         }
 
-
         [Test]
         public void verify_cancontruct_IntermediateApplicationsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new IntermediateApplicationsRequest(a);
             Expect(b, Is.Not.Null);
@@ -112,16 +104,10 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_tostring_IntermediateApplicationsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new IntermediateApplicationsRequest(a);
-            string url = b.ToString();
-
+            var url = b.ToString();
 
             Expect(url == "http://localhost:59213/sdata");
         }
@@ -129,12 +115,7 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canread_IntermediateApplicationsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new IntermediateApplicationsRequest(a);
             b.Read();
@@ -143,12 +124,7 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canconstruct_IntermediateContractsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new IntermediateContractsRequest(a);
             Expect(b, Is.Not.Null);
@@ -157,44 +133,27 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_tostring_IntermediateContractsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new IntermediateContractsRequest(a);
-            b.Application = "aw";
-            string url = b.ToString();
+            var b = new IntermediateContractsRequest(a) {ApplicationName = "aw"};
+            var url = b.ToString();
             Expect(url == "http://localhost:59213/sdata/aw");
         }
 
         [Test]
         public void verify_canread_IntermediateContractsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new IntermediateContractsRequest(a);
-            b.Application = "aw";
-            AtomFeed feed = b.Read();
+            var b = new IntermediateContractsRequest(a) {ApplicationName = "aw"};
+            var feed = b.Read();
             Expect(feed, Is.Not.Null);
         }
 
         [Test]
         public void verify_canconstruct_IntermediateDataSetsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             new IntermediateDataSetsRequest(a);
         }
@@ -202,46 +161,29 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_tostring_IntermediateDataSetsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new IntermediateDataSetsRequest(a);
-            b.ContractName = "dynamic";
+            var b = new IntermediateDataSetsRequest(a) {ContractName = "dynamic"};
 
-            string url = b.ToString();
+            var url = b.ToString();
             Expect(url == "http://localhost:59213/sdata/aw/dynamic");
         }
 
         [Test]
         public void verify_canread_IntermediateDataSetsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new IntermediateDataSetsRequest(a);
-            b.ContractName = "dynamic";
+            var b = new IntermediateDataSetsRequest(a) {ContractName = "dynamic"};
 
-            AtomFeed feed = b.Read();
+            var feed = b.Read();
             Expect(feed, Is.Not.Null);
         }
 
         [Test]
         public void verify_canconstruct_IntermediateResourceCollectionsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new IntermediateResourceCollectionsRequest(a);
 
@@ -251,17 +193,11 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_tostring_IntermediateResourceCollectionsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new IntermediateResourceCollectionsRequest(a);
-            b.DataSet = "-";
 
-            string url = b.ToString();
+            var url = b.ToString();
 
             Expect(url == "http://localhost:59213/sdata/aw/dynamic/-");
         }
@@ -269,17 +205,11 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canread_IntermediateResourceCollectionsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new IntermediateResourceCollectionsRequest(a);
-            b.DataSet = "-";
 
-            AtomFeed feed = b.Read();
+            var feed = b.Read();
 
             Expect(feed, Is.Not.Null);
         }
@@ -287,12 +217,7 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canconstruct_IntermediateServicesRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new IntermediateServicesRequest(a);
 
@@ -302,46 +227,29 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_tostring_IntermediateServicesRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new IntermediateServicesRequest(a);
-            b.ResourceKind = "employees";
+            var b = new IntermediateServicesRequest(a) {ResourceKind = "employees"};
 
-            string url = b.ToString();
+            var url = b.ToString();
             Expect(url == "http://localhost:59213/sdata/aw/dynamic/-/employees/$service");
         }
 
         [Test]
         public void verify_canread_IntermediateServicesRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new IntermediateServicesRequest(a);
-            b.ResourceKind = "employees";
+            var b = new IntermediateServicesRequest(a) {ResourceKind = "employees"};
 
-            AtomFeed feed = b.Read();
+            var feed = b.Read();
             Expect(feed, Is.Not.Null);
         }
 
         [Test]
         public void verify_canconstruct_SDataResourceCollectionsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new SDataResourceCollectionRequest(a);
 
@@ -351,110 +259,86 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_tostringwithpageing_SDataResourceCollectionsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourceCollectionRequest(a);
-            b.ResourceKind = "employees";
-            b.StartIndex = 1;
-            b.Count = 100;
+            var b = new SDataResourceCollectionRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        StartIndex = 1,
+                        Count = 100
+                    };
 
-            string url = b.ToString();
-            Expect(url == "http://localhost:59213/sdata/aw/dynamic/-/employees?count=100&startIndex=1");
+            var url = b.ToString();
+            Expect(url == "http://localhost:59213/sdata/aw/dynamic/-/employees?startIndex=1&count=100");
         }
 
         [Test]
         public void verify_tostringwithquery_SDataResourceCollectionsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourceCollectionRequest(a);
-            b.ResourceKind = "employees";
-            b.QueryValues.Add("where", "gender eq m");
+            var b = new SDataResourceCollectionRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        QueryValues = {{"where", "gender eq m"}}
+                    };
 
-            string url = b.ToString();
+            var url = b.ToString();
             Expect(url == "http://localhost:59213/sdata/aw/dynamic/-/employees?where=gender eq m");
         }
 
         [Test]
         public void verify_tostringwithquery_multiplevalues_SDataResourceCollectionsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourceCollectionRequest(a);
-            b.ResourceKind = "employees";
-            b.QueryValues.Add("where", "gender eq m");
-            b.QueryValues.Add("orderBy", "orderDate DESC");
+            var b = new SDataResourceCollectionRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        QueryValues =
+                            {
+                                {"where", "gender eq m"},
+                                {"orderBy", "orderDate DESC"}
+                            }
+                    };
 
-            string url = b.ToString();
+            var url = b.ToString();
             Expect(url == "http://localhost:59213/sdata/aw/dynamic/-/employees?where=gender eq m&orderBy=orderDate DESC");
         }
 
         [Test]
         public void verify_canread_SDataResourceCollectionsRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourceCollectionRequest(a);
-            b.ResourceKind = "employees";
-            //b.QueryValues.Add("where", "gender eq m");
-            //b.QueryValues.Add("orderBy", "HireDate DESC");
+            var b = new SDataResourceCollectionRequest(a) {ResourceKind = "employees"};
 
-            b.Read();
+            var c = b.Read();
 
-            Expect(b, Is.Not.Null);
+            Expect(c, Is.Not.Null);
         }
 
         [Test]
         public void verify_canread_SDataResourceCollectionsRequest_Reader()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:49327/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:49327/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourceCollectionRequest(a);
-            b.ResourceKind = "employees";
+            var b = new SDataResourceCollectionRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        Count = 10,
+                        StartIndex = 1
+                    };
 
-            b.Count = 10;
-            b.StartIndex = 1;
+            var reader = b.ExecuteReader();
 
-            b.Read();
-
-
-            Expect(b.Reader, Is.Null);
+            Expect(reader, Is.Null);
         }
 
         [Test]
         public void verify_canconstruct_SDataSingleResourceRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new SDataSingleResourceRequest(a);
 
@@ -464,34 +348,27 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canconstructwithtemplateEntry_SDataSingleResourceRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            //var b = new SDataSingleResourceRequest(a, atomfeed);
+            var entry = new AtomEntry();
+            var b = new SDataSingleResourceRequest(a, entry);
 
-            //Expect(b, Is.Not.Null);
+            Expect(b, Is.Not.Null);
+            Expect(b.Entry, Is.Not.Null);
         }
-
 
         [Test]
         public void verify_tostringwithresourcekind_SDataSingleResourceRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataSingleResourceRequest(a);
-            b.ResourceKind = "employees";
-            b.ResourceSelector = "(id = '1234')";
+            var b = new SDataSingleResourceRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "id = '1234'"
+                    };
 
-            string result = b.ToString();
+            var result = b.ToString();
 
             Expect(result == "http://localhost:59213/sdata/aw/dynamic/-/employees(id = '1234')");
         }
@@ -499,43 +376,38 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_tostringwithresourcekindandinclude_SDataSingleResourceRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataSingleResourceRequest(a);
-            b.ResourceKind = "employees";
-            b.ResourceSelector = "(1)";
-            b.Include = "contact";
+            var b = new SDataSingleResourceRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "(1)",
+                        Include = "contact"
+                    };
 
-            string result = b.ToString();
+            var result = b.ToString();
 
             Expect(result == "http://localhost:59213/sdata/aw/dynamic/-/employees(1)?include=contact");
         }
 
-
         [Test]
         public void verify_canprocess_SDataBatchRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:49327/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataSingleResourceRequest(a);
-            b.ResourceKind = "employees";
-            b.ResourceSelector = "(1)";
+            var b = new SDataSingleResourceRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "(1)"
+                    };
 
-            var c = new SDataSingleResourceRequest(a);
-            c.ResourceKind = "employees";
-            c.ResourceSelector = "(2)";
+            var c = new SDataSingleResourceRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "(2)"
+                    };
 
-            AtomEntry entry1 = c.Read();
+            var entry1 = c.Read();
 
             var payload = entry1.GetSDataPayload();
             if (payload != null)
@@ -546,46 +418,41 @@ namespace Sage.SData.Client.Test
 
             c.Entry = entry1;
 
+            var d = new SDataSingleResourceRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "(3)"
+                    };
 
-            var d = new SDataSingleResourceRequest(a);
-            d.ResourceKind = "employees";
-            d.ResourceSelector = "(3)";
-
-            AtomEntry entry2 = d.Read();
+            var entry2 = d.Read();
             d.Entry = entry2;
 
-            AtomFeed batchfeed = null;
-            using (SDataBatchRequest batch = new SDataBatchRequest(a))
+            AtomFeed batchfeed;
+            using (var batch = new SDataBatchRequest(a))
             {
                 batch.ResourceKind = "employees";
                 b.Read();
                 c.Update();
                 d.Delete();
 
-                batch.Dispose();
-                batchfeed = batch.Feed;
+                batchfeed = batch.Commit();
             }
-
 
             Expect(batchfeed, Is.Not.Null);
         }
 
-
         [Test]
         public void verify_canread_SDataSingleResourceRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataSingleResourceRequest(a);
-            b.ResourceKind = "employees";
-            b.ResourceSelector = "(1)";
+            var b = new SDataSingleResourceRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "(1)"
+                    };
 
-            AtomEntry entry = b.Read();
+            var entry = b.Read();
 
             Expect(entry, Is.Not.Null);
         }
@@ -593,20 +460,13 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_cancreate_SDataSingleResourceRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataTemplateResourceRequest(a);
-            b.ResourceKind = "employees";
+            var b = new SDataTemplateResourceRequest(a) {ResourceKind = "employees"};
 
-            AtomEntry templateentry = b.Read();
+            var templateentry = b.Read();
 
-            SDataSingleResourceRequest c = new SDataSingleResourceRequest(a);
-            c.ResourceKind = "employees";
+            var c = new SDataSingleResourceRequest(a) {ResourceKind = "employees"};
 
             var payload = templateentry.GetSDataPayload();
             payload.Values["Title"] = "create 1";
@@ -627,7 +487,7 @@ namespace Sage.SData.Client.Test
             templateentry.UpdatedOn = DateTime.Now;
             templateentry.PublishedOn = DateTime.Now;
 
-            AtomEntry newentry = c.Create();
+            var newentry = c.Create();
 
             Expect(newentry, Is.Not.Null);
         }
@@ -635,18 +495,15 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canupdate_SDataSingleResourceRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataSingleResourceRequest(a);
-            b.ResourceKind = "employees";
-            b.ResourceSelector = "(1)";
+            var b = new SDataSingleResourceRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "(1)"
+                    };
 
-            AtomEntry entry = b.Read();
+            var entry = b.Read();
 
             var payload = entry.GetSDataPayload();
             if (payload != null)
@@ -656,7 +513,7 @@ namespace Sage.SData.Client.Test
             }
 
             b.Entry = entry;
-            AtomEntry updateentry = b.Update();
+            var updateentry = b.Update();
 
             Expect(updateentry, Is.Not.Null);
         }
@@ -664,21 +521,18 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_candelete_SDataSingleResourceRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataSingleResourceRequest(a);
-            b.ResourceKind = "employees";
-            b.ResourceSelector = "(1)";
+            var b = new SDataSingleResourceRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "(1)"
+                    };
 
-            AtomEntry entry = b.Read();
+            var entry = b.Read();
             b.Entry = entry;
 
-            bool result = b.Delete();
+            var result = b.Delete();
 
             Expect(result);
         }
@@ -686,15 +540,9 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canconstruct_SDataResourcePropertyRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new SDataResourcePropertyRequest(a);
-
 
             Expect(b, Is.Not.Null);
         }
@@ -702,20 +550,16 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_tostringwithsingleresourceproperty_SDataResourcePropertyRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourcePropertyRequest(a);
-            b.ResourceKind = "employees";
-            b.ResourceSelector = "(1)";
+            var b = new SDataResourcePropertyRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "(1)",
+                        Properties = {"LoginID"}
+                    };
 
-            b.ResourceProperties.Add(0, "LoginID");
-
-            string result = b.ToString();
+            var result = b.ToString();
 
             Expect(result == "http://localhost:59213/sdata/aw/dynamic/-/employees(1)/LoginID");
         }
@@ -723,21 +567,16 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_tostringwithmultipleresourceproperties_SDataResourcePropertyRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourcePropertyRequest(a);
-            b.ResourceKind = "employees";
-            b.ResourceSelector = "(1)";
+            var b = new SDataResourcePropertyRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "(1)",
+                        Properties = {"Address", "City"}
+                    };
 
-            b.ResourceProperties.Add(0, "Address");
-            b.ResourceProperties.Add(1, "City");
-
-            string result = b.ToString();
+            var result = b.ToString();
 
             Expect(result == "http://localhost:59213/sdata/aw/dynamic/-/employees(1)/Address/City");
         }
@@ -745,21 +584,16 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canreadfeed_SDataResourcePropertyRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:51129/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourcePropertyRequest(a);
-            b.ResourceKind = "employee";
-            b.ResourceSelector = "(1)";
+            var b = new SDataResourcePropertyRequest(a)
+                    {
+                        ResourceKind = "employee",
+                        ResourceSelector = "(1)",
+                        Properties = {"Contacts"}
+                    };
 
-            b.ResourceProperties.Add(0, "Contacts");
-
-            AtomFeed feed = b.ReadFeed();
-
+            var feed = b.ReadFeed();
 
             Expect(feed, Is.Not.Null);
         }
@@ -767,21 +601,16 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canreadentry_SDataResourcePropertyRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourcePropertyRequest(a);
-            b.ResourceKind = "employees";
-            b.ResourceSelector = "(1)";
+            var b = new SDataResourcePropertyRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "(1)",
+                        Properties = {"LoginID"}
+                    };
 
-            b.ResourceProperties.Add(0, "LoginID");
-
-            AtomEntry entry = b.Read();
-
+            var entry = b.Read();
 
             Expect(entry, Is.Not.Null);
         }
@@ -789,18 +618,16 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canreadcreate_SDataResourcePropertyRequest()
         {
-            var a = new SDataServiceTest("http://localhost:8001/sdata/aw/dynamic/-", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourcePropertyRequest(a);
-            b.ResourceKind = "employees";
-            b.ResourceSelector = "(id = '1234')";
+            var b = new SDataResourcePropertyRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "(id = '1234')",
+                        Properties = {"Address", "City"}
+                    };
 
-            b.ResourceProperties.Add(0, "Address");
-            b.ResourceProperties.Add(1, "City");
-
-            AtomEntry entry = b.Create();
-
+            var entry = b.Create();
 
             Expect(entry, Is.Not.Null);
         }
@@ -808,18 +635,16 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canupdate_SDataResourcePropertyRequest()
         {
-            var a = new SDataServiceTest("http://localhost:8001/sdata/aw/dynamic/-", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourcePropertyRequest(a);
-            b.ResourceKind = "employees";
-            b.ResourceSelector = "(id = '1234')";
+            var b = new SDataResourcePropertyRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "(id = '1234')",
+                        Properties = {"Address", "City"}
+                    };
 
-            b.ResourceProperties.Add(0, "Address");
-            b.ResourceProperties.Add(1, "City");
-
-            AtomEntry entry = b.Update();
-
+            var entry = b.Update();
 
             Expect(entry, Is.Not.Null);
         }
@@ -827,22 +652,16 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_candelete_SDataResourcePropertyRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataResourcePropertyRequest(a);
-            b.ResourceKind = "employees";
-            b.ResourceSelector = "(1)";
+            var b = new SDataResourcePropertyRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        ResourceSelector = "(1)",
+                        Properties = {"Address", "City"}
+                    };
 
-            b.ResourceProperties.Add(0, "Address");
-            b.ResourceProperties.Add(1, "City");
-
-            bool result = b.Delete();
-
+            var result = b.Delete();
 
             Expect(result);
         }
@@ -850,15 +669,9 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_canconstruct_SDataTemplateResourceRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
             var b = new SDataTemplateResourceRequest(a);
-
 
             Expect(b, Is.Not.Null);
         }
@@ -866,37 +679,40 @@ namespace Sage.SData.Client.Test
         [Test]
         public void verify_tostring_SDataTemplateResourceRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataTemplateResourceRequest(a);
-            b.ResourceKind = "employees";
+            var b = new SDataTemplateResourceRequest(a) {ResourceKind = "employees"};
 
-            string result = b.ToString();
+            var result = b.ToString();
 
-            Expect(result == "http://localhost:59213/sdata/aw/dynamic/-/employees/$template?format=atomentry");
+            Expect(result == "http://localhost:59213/sdata/aw/dynamic/-/employees/$template");
         }
 
         [Test]
         public void verify_canread_SDataTemplateResourceRequest()
         {
-            ISDataService a;
-            if (bUseTestSerivce)
-                a = new SDataServiceTest("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            else
-                a = new SDataService("http://localhost:59213/sdata/aw/dynamic/-/", "lee", "");
-            a.Initialize();
+            var a = GetService();
 
-            var b = new SDataTemplateResourceRequest(a);
-            b.ResourceKind = "employees";
+            var b = new SDataTemplateResourceRequest(a) {ResourceKind = "employees"};
 
             b.Read();
 
             Expect(b, Is.Not.Null);
+        }
+
+        [Test]
+        public void verify_tostring_SDataServiceOperationRequest()
+        {
+            var a = GetService();
+
+            var b = new SDataServiceOperationRequest(a)
+                    {
+                        ResourceKind = "employees",
+                        OperationName = "getStats"
+                    };
+
+            var url = b.ToString();
+            Expect(url == "http://localhost:59213/sdata/aw/dynamic/-/employees/$service/getStats");
         }
     }
 }

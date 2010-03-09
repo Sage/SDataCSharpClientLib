@@ -18,7 +18,11 @@ namespace Sage.SData.Client.Core
         /// the resources required by CRM integration (with schemas imposed by the CRM/ERP contract) 
         /// and a native or default contract which exposes all the resources of the ERP in their native format.
         /// </remarks>
-        public string ContractName { get; set; }
+        public string ContractName
+        {
+            get { return Uri.Contract; }
+            set { Uri.Contract = value; }
+        }
 
         /// <summary>
         /// Constructor
@@ -27,7 +31,7 @@ namespace Sage.SData.Client.Core
         public IntermediateDataSetsRequest(ISDataService service)
             : base(service)
         {
-            Application = service.ApplicationName;
+            ContractName = !string.IsNullOrEmpty(service.ContractName) ? service.ContractName : "-";
         }
 
         /// <summary>
@@ -45,18 +49,6 @@ namespace Sage.SData.Client.Core
         public override AtomFeed Read()
         {
             return Service.ReadFeed(this);
-        }
-
-        protected override void BuildUrl(UrlBuilder builder)
-        {
-            base.BuildUrl(builder);
-
-            if (string.IsNullOrEmpty(ContractName))
-            {
-                ContractName = Service.ContractName;
-            }
-
-            builder.PathSegments.Add(ContractName);
         }
     }
 }

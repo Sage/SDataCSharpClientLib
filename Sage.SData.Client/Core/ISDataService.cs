@@ -1,5 +1,5 @@
-﻿using System.Xml.Schema;
-using System.Xml.XPath;
+﻿using System.Net;
+using System.Xml.Schema;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
 
@@ -10,10 +10,34 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public interface ISDataService
     {
+        /// <remarks>
+        /// Creates the service with predefined values for the url
+        /// </remarks>
+        string Url { get; set; }
+
         /// <summary>
-        /// Flag set when service has been initialized
+        /// Accessor method for protocol, 
         /// </summary>
-        bool Initialized { get; }
+        /// <remarks>HTTP is the default but can be HTTPS</remarks>
+        string Protocol { get; set; }
+
+        /// <remarks>IP address is also allowed (192.168.1.1).
+        /// Can be followed by port number. For example www.example.com:5493. 
+        /// 5493 is the recommended port number for SData services that are not exposed on the Internet.
+        /// </remarks>
+        string ServerName { get; set; }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        int? Port { get; set; }
+
+        /// <summary>
+        /// Accessor method for virtual directory
+        /// </summary>
+        /// <remarks>Must be sdata, unless the technical framework imposes something different.
+        ///</remarks>
+        string VirtualDirectory { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the application.
@@ -28,28 +52,14 @@ namespace Sage.SData.Client.Core
         string ApplicationName { get; set; }
 
         /// <summary>
-        /// Accessor method for protocol, 
+        /// Accessor method for contractName
         /// </summary>
-        /// <remarks>HTTP is the default but can be HTTPS</remarks>
-        string Protocol { get; set; }
-
-        /// <remarks>
-        /// Creates the service with predefined values for the url
+        /// <remarks>An SData service can support several “integration contracts” side-by-side. 
+        /// For example, a typical Sage ERP service will support a crmErp contract which exposes 
+        /// the resources required by CRM integration (with schemas imposed by the CRM/ERP contract) 
+        /// and a native or default contract which exposes all the resources of the ERP in their native format.
         /// </remarks>
-        string Url { get; set; }
-
-        /// <remarks>IP address is also allowed (192.168.1.1).
-        /// Can be followed by port number. For example www.example.com:5493. 
-        /// 5493 is the recommended port number for SData services that are not exposed on the Internet.
-        /// </remarks>
-        string ServerName { get; set; }
-
-        /// <summary>
-        /// Accessor method for virtual directory
-        /// </summary>
-        /// <remarks>Must be sdata, unless the technical framework imposes something different.
-        ///</remarks>
-        string VirtualDirectory { get; set; }
+        string ContractName { get; set; }
 
         /// <summary>
         /// Accessor method for dataSet
@@ -65,16 +75,6 @@ namespace Sage.SData.Client.Core
         string DataSet { get; set; }
 
         /// <summary>
-        /// Accessor method for contractName
-        /// </summary>
-        /// <remarks>An SData service can support several “integration contracts” side-by-side. 
-        /// For example, a typical Sage ERP service will support a crmErp contract which exposes 
-        /// the resources required by CRM integration (with schemas imposed by the CRM/ERP contract) 
-        /// and a native or default contract which exposes all the resources of the ERP in their native format.
-        /// </remarks>
-        string ContractName { get; set; }
-
-        /// <summary>
         /// Get set for the user name to authenticate with
         /// </summary>
         string UserName { get; set; }
@@ -85,25 +85,41 @@ namespace Sage.SData.Client.Core
         string Password { get; set; }
 
         /// <summary>
+        /// TODO
+        /// </summary>
+        int Timeout { get; set; }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        CookieContainer Cookies { get; set; }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        string UserAgent { get; set; }
+
+        /// <summary>
         /// Adds a new syndication resource to the data source.
         /// </summary>
         /// <param name="request">The request that identifies the resource within the syndication data source.</param>
-        /// <param name="resource">The <see cref="ISyndicationResource"/> to be created within the data source.</param>
-        ISyndicationResource Create(SDataBaseRequest request, ISyndicationResource resource);
+        /// <param name="entry">The <see cref="ISyndicationResource"/> to be created within the data source.</param>
+        AtomEntry CreateEntry(SDataBaseRequest request, AtomEntry entry);
 
         /// <summary>
         /// Adds new sydication resource to the data source returning an AtomFeed
         /// </summary>
         /// <param name="request">The request that identifies the resource within the syndication data source.</param>
-        /// <param name="resource">The <see cref="ISyndicationResource"/> to be created within the data source.</param>
+        /// <param name="feed">The <see cref="ISyndicationResource"/> to be created within the data source.</param>
         /// <returns></returns>
-        ISyndicationResource CreateFeed(SDataBaseRequest request, XPathNavigator resource);
+        AtomFeed CreateFeed(SDataBaseRequest request, AtomFeed feed);
 
         /// <summary>
         /// Asynchronous PUT to the server
         /// </summary>
         /// <param name="request">The request that identifies the resource within the syndication data source.</param>
-        AsyncRequest CreateAsync(SDataBaseRequest request);
+        /// <param name="resource">TODO</param>
+        AsyncRequest CreateAsync(SDataBaseRequest request, ISyndicationResource resource);
 
         /// <summary>
         /// Generic delete from server
@@ -116,16 +132,16 @@ namespace Sage.SData.Client.Core
         /// Removes a resource from the syndication data source.
         /// </summary>
         /// <param name="request">The request from the syndication data source for the resource to be removed.</param>
-        /// <param name="resource">The resourc that is being deleted</param>
+        /// <param name="entry">The resourc that is being deleted</param>
         /// <returns><b>true</b> if the syndication resource was successfully deleted; otherwise, <b>false</b>.</returns>
-        bool Delete(SDataBaseRequest request, ISyndicationResource resource);
+        bool DeleteEntry(SDataBaseRequest request, AtomEntry entry);
 
         /// <summary>
         /// generic read from the specified url
         /// </summary>
         /// <param name="url">url to read from </param>
         /// <returns>string response from server</returns>
-        string Read(string url);
+        object Read(string url);
 
         /// <summary>
         /// Reads resource information from the data source based on the URL.
@@ -146,21 +162,15 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="request">url for the syndication resource to get information for.</param>
         /// <returns>XmlSchema </returns>
-        XmlSchema Read(SDataResourceSchemaRequest request);
+        XmlSchema ReadSchema(SDataResourceSchemaRequest request);
 
         /// <summary>
         /// Updates information about a syndication resource in the data source.
         /// </summary>
         /// <param name="request">The url from the syndication data source for the resource to be updated.</param>
-        /// <param name="resource">
+        /// <param name="entry">
         ///     An object that implements the <see cref="ISyndicationResource"/> interface that represents the updated information for the resource.
         /// </param>
-        ISyndicationResource Update(SDataBaseRequest request, ISyndicationResource resource);
-
-        /// <summary>
-        /// Initializes the <see cref="SDataService"/> 
-        /// </summary>
-        /// <remarks>Set the User Name and Password to authenticate with and build the url</remarks>
-        void Initialize();
+        AtomEntry UpdateEntry(SDataBaseRequest request, AtomEntry entry);
     }
 }

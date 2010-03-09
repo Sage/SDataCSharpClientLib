@@ -14,7 +14,9 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
         public SDataSystemRequest(ISDataService service)
-            : base(service) {}
+            : base(service)
+        {
+        }
 
         /// <summary>
         /// Sends a PUT request to the server based on the URL for the request

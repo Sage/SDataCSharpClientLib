@@ -14,14 +14,21 @@ namespace Sage.SData.Client.Core
         /// Accessor method for application
         /// </summary>
         /// <remarks>the application name</remarks>
-        public string Application { get; set; }
+        public string ApplicationName
+        {
+            get { return Uri.Product; }
+            set { Uri.Product = value; }
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
         public IntermediateContractsRequest(ISDataService service)
-            : base(service) {}
+            : base(service)
+        {
+            ApplicationName = !string.IsNullOrEmpty(service.ApplicationName) ? service.ApplicationName : "-";
+        }
 
         /// <summary>
         /// Reads the AtomFeed for enumeration of contracts
@@ -38,18 +45,6 @@ namespace Sage.SData.Client.Core
         public override AtomFeed Read()
         {
             return Service.ReadFeed(this);
-        }
-
-        protected override void BuildUrl(UrlBuilder builder)
-        {
-            base.BuildUrl(builder);
-
-            if (string.IsNullOrEmpty(Application))
-            {
-                Application = Service.ApplicationName;
-            }
-
-            builder.PathSegments.Add(Application);
         }
     }
 }

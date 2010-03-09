@@ -1,4 +1,5 @@
 ﻿using Sage.SData.Client.Atom;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Core
 {
@@ -22,6 +23,9 @@ namespace Sage.SData.Client.Core
         /// </remarks>
         public string OperationName { get; set; }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
         public AtomEntry Entry { get; set; }
 
         /// <summary>
@@ -29,7 +33,9 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
         public SDataServiceOperationRequest(ISDataService service)
-            : base(service) {}
+            : base(service)
+        {
+        }
 
         /// <summary>
         /// Creates POST to the server
@@ -45,17 +51,26 @@ namespace Sage.SData.Client.Core
         /// </example>
         public AtomEntry Create()
         {
-            return Service.Create(this, Entry) as AtomEntry;
+            return Service.CreateEntry(this, Entry);
         }
 
-        protected override void BuildUrl(UrlBuilder builder)
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <returns></returns>
+        public AsyncRequest CreateAsync()
         {
-            base.BuildUrl(builder);
-            builder.PathSegments.Add(ServiceTerm);
+            return Service.CreateAsync(this, Entry);
+        }
+
+        protected override void BuildUrl(SDataUri uri)
+        {
+            base.BuildUrl(uri);
+            uri.AppendPath(ServiceTerm);
 
             if (!string.IsNullOrEmpty(OperationName))
             {
-                builder.PathSegments.Add(OperationName);
+                uri.AppendPath(OperationName);
             }
         }
     }

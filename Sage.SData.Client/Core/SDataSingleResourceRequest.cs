@@ -1,4 +1,5 @@
 ﻿using Sage.SData.Client.Atom;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Core
 {
@@ -28,7 +29,14 @@ namespace Sage.SData.Client.Core
         /// </remarks>
         public string ResourceSelector { get; set; }
 
-        public string Include { get; set; }
+        /// <summary>
+        /// TODO
+        /// </summary>
+        public string Include
+        {
+            get { return Uri.Include; }
+            set { Uri.Include = value; }
+        }
 
         /// <summary>
         /// constructor
@@ -37,7 +45,6 @@ namespace Sage.SData.Client.Core
         public SDataSingleResourceRequest(ISDataService service)
             : base(service)
         {
-            Include = string.Empty;
         }
 
         /// <summary>
@@ -84,8 +91,7 @@ namespace Sage.SData.Client.Core
         /// </example>
         public AtomEntry Create()
         {
-            var result = Service.Create(this, Entry);
-            return result as AtomEntry;
+            return Service.CreateEntry(this, Entry);
         }
 
         /// <summary>
@@ -102,8 +108,7 @@ namespace Sage.SData.Client.Core
         /// </example>
         public AtomEntry Update()
         {
-            var result = Service.Update(this, Entry);
-            return result as AtomEntry;
+            return Service.UpdateEntry(this, Entry);
         }
 
         /// <summary>
@@ -120,22 +125,18 @@ namespace Sage.SData.Client.Core
         /// </example>
         public bool Delete()
         {
-            return Service.Delete(this, Entry);
+            return Service.DeleteEntry(this, Entry);
         }
 
-        protected override void BuildUrl(UrlBuilder builder)
+        protected override void BuildUrl(SDataUri uri)
         {
-            base.BuildUrl(builder);
+            base.BuildUrl(uri);
 
             if (!string.IsNullOrEmpty(ResourceSelector))
             {
-                var index = builder.PathSegments.Count - 1;
-                builder.PathSegments[index] = builder.PathSegments[index] + ResourceSelector;
-            }
-
-            if (!string.IsNullOrEmpty(Include))
-            {
-                builder.QueryParameters["include"] = Include;
+                uri.CollectionPredicate = ResourceSelector.StartsWith("(") && ResourceSelector.EndsWith(")")
+                                              ? ResourceSelector.Substring(1, ResourceSelector.Length - 2)
+                                              : ResourceSelector;
             }
         }
     }

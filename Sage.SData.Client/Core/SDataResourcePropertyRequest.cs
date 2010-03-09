@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Sage.SData.Client.Atom;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Core
 {
@@ -8,6 +9,8 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataResourcePropertyRequest : SDataSingleResourceRequest
     {
+        private readonly IList<string> _properties;
+
         /// <summary>
         /// Dictionary containing the resource properties
         /// </summary>
@@ -26,15 +29,10 @@ namespace Sage.SData.Client.Core
         /// http://sdata.acme.com/sdata/sageApp/test/accounts('A001')/postalAddress/country
         /// http://sdata.acme.com/sdata/sageApp/test/accounts('A001')/addresses(type eq 'postal')/country
         /// </remarks>
-        public IDictionary<int, string> ResourceProperties { get; set; }
-
-        /// <summary>
-        ///  Dictionary of query name value pairs
-        /// </summary>
-        /// <example>where, salesorderamount lt 15.00
-        /// orderby, salesorderid
-        /// </example>
-        public IDictionary<string, string> QueryValues { get; set; }
+        public IList<string> Properties
+        {
+            get { return _properties; }
+        }
 
         /// <summary>
         /// Constructor
@@ -43,8 +41,7 @@ namespace Sage.SData.Client.Core
         public SDataResourcePropertyRequest(ISDataService service)
             : base(service)
         {
-            ResourceProperties = new Dictionary<int, string>();
-            QueryValues = new Dictionary<string, string>();
+            _properties = new List<string>();
         }
 
         /// <summary>
@@ -81,18 +78,13 @@ namespace Sage.SData.Client.Core
             return Service.ReadEntry(this);
         }
 
-        protected override void BuildUrl(UrlBuilder builder)
+        protected override void BuildUrl(SDataUri uri)
         {
-            base.BuildUrl(builder);
+            base.BuildUrl(uri);
 
-            foreach (var value in ResourceProperties.Values)
+            foreach (var value in Properties)
             {
-                builder.PathSegments.Add(value);
-            }
-
-            foreach (var pair in QueryValues)
-            {
-                builder.QueryParameters[pair.Key] = pair.Value;
+                uri.AppendPath(value);
             }
         }
     }

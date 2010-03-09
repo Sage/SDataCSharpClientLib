@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Sage.SData.Client.Atom;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Extensions
 {
@@ -14,7 +15,7 @@ namespace Sage.SData.Client.Extensions
         /// </summary>
         /// <param name="entry"></param>
         /// <returns></returns>
-        public static SDataHttpMethod? GetSDataHttpMethod(this AtomEntry entry)
+        public static HttpMethod? GetSDataHttpMethod(this AtomEntry entry)
         {
             var context = GetContext(entry, false);
             return context != null ? context.HttpMethod : null;
@@ -80,7 +81,7 @@ namespace Sage.SData.Client.Extensions
         /// </summary>
         /// <param name="entry"></param>
         /// <param name="value"></param>
-        public static void SetSDataHttpMethod(this AtomEntry entry, SDataHttpMethod? value)
+        public static void SetSDataHttpMethod(this AtomEntry entry, HttpMethod? value)
         {
             GetContext(entry, true).HttpMethod = value;
         }

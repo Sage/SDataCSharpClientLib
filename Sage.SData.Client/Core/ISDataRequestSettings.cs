@@ -19,6 +19,11 @@
         string ServerName { get; set; }
 
         /// <summary>
+        /// TODO
+        /// </summary>
+        int? Port { get; set; }
+
+        /// <summary>
         /// Accessor method for virtual directory
         /// </summary>
         /// <remarks>

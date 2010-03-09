@@ -1,4 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Sage.SData.Client.Common;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Core
 {
@@ -12,22 +16,19 @@ namespace Sage.SData.Client.Core
         /// </summary>
         public static readonly BatchProcess Instance = new BatchProcess();
 
-        private readonly Stack _stack;
+        private readonly IList<SDataBatchRequest> _requests;
+
+        private BatchProcess()
+        {
+            _requests = new List<SDataBatchRequest>();
+        }
 
         /// <summary>
         /// Current stack
         /// </summary>
-        public Stack CurrentStack
+        public IList<SDataBatchRequest> Requests
         {
-            get { return _stack; }
-        }
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        private BatchProcess()
-        {
-            _stack = new Stack();
+            get { return _requests; }
         }
 
         /// <summary>
@@ -36,8 +37,28 @@ namespace Sage.SData.Client.Core
         /// <param name="item">url for batch item</param>
         public void AddToBatch(SDataBatchRequestItem item)
         {
-            var batchRequest = (SDataBatchRequest) _stack.Peek();
-            batchRequest.Requests.Enqueue(item);
+            Guard.ArgumentNotNull(item, "item");
+
+            var uri = new SDataUri(item.Url)
+                      {
+                          CollectionPredicate = null,
+                          Query = null
+                      };
+
+            if (uri.PathSegments.Length > 3)
+            {
+                uri.PathSegments = uri.PathSegments.Take(3).ToArray();
+            }
+
+            var baseUri = uri.ToString();
+            var request = _requests.Reverse().FirstOrDefault(x => x.ToString() == baseUri);
+
+            if (request == null)
+            {
+                throw new InvalidOperationException("Unable to find an appropriate batch request in progress");
+            }
+
+            request.Requests.Add(item);
         }
     }
 }

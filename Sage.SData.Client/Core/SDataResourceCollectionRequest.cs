@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Sage.SData.Client.Atom;
+﻿using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Core
 {
@@ -9,39 +8,24 @@ namespace Sage.SData.Client.Core
     public class SDataResourceCollectionRequest : SDataApplicationRequest
     {
         /// <summary>
-        /// Accessor method for query can be null
-        /// </summary>
-        /// <remarks>
-        /// string used to filter data
-        /// </remarks>
-        /// <example>startIndex=21&amp;count=10
-        ///</example>
-        public string Query { get; set; }
-
-        /// <summary>
-        ///  Dictionary of query name value pairs
-        /// </summary>
-        /// <example>where, salesorderamount lt 15.00
-        /// orderby, salesorderid
-        /// </example>
-        public IDictionary<string, string> QueryValues { get; set; }
-
-        /// <summary>
         /// Indicates the index of the first resource returned by the query. This index is 1-based (not 0-based).
         /// </summary>
-        public int StartIndex { get; set; }
+        public long? StartIndex
+        {
+            get { return Uri.StartIndex; }
+            set { Uri.StartIndex = value; }
+        }
 
         /// <summary>
         /// Indicates the number of resources requested by the service consumer.
         /// The service may choose to return a different number of resources and it
         /// indicates this by setting the itemsPerPage element in the returned feed.
         /// </summary>
-        public int Count { get; set; }
-
-        /// <summary>
-        /// AtomFeed Reader for the request
-        /// </summary>
-        public AtomFeedReader Reader { get; set; }
+        public long? Count
+        {
+            get { return Uri.Count; }
+            set { Uri.Count = value; }
+        }
 
         /// <summary>
         /// Constructor
@@ -50,9 +34,6 @@ namespace Sage.SData.Client.Core
         public SDataResourceCollectionRequest(ISDataService service)
             : base(service)
         {
-            Count = -1;
-            StartIndex = -1;
-            QueryValues = new Dictionary<string, string>();
         }
 
         /// <summary>
@@ -75,40 +56,11 @@ namespace Sage.SData.Client.Core
         /// <summary>
         /// Performs initial read from AtomFeedReader
         /// </summary>
-        /// <param name="feed">the feed</param>
         /// <returns></returns>
-        public bool Read(AtomFeed feed)
+        public AtomFeedReader ExecuteReader()
         {
-            if (Reader == null)
-            {
-                Reader = new AtomFeedReader(Service, feed, this);
-            }
-            return Reader.Read();
-        }
-
-        protected override void BuildUrl(UrlBuilder builder)
-        {
-            base.BuildUrl(builder);
-
-            if (Query != null)
-            {
-                builder.Query = Query;
-            }
-
-            foreach (var pair in QueryValues)
-            {
-                builder.QueryParameters[pair.Key] = pair.Value;
-            }
-
-            if (Count > -1)
-            {
-                builder.QueryParameters["count"] = Count.ToString();
-            }
-
-            if (StartIndex > -1)
-            {
-                builder.QueryParameters["startIndex"] = StartIndex.ToString();
-            }
+            var reader = new AtomFeedReader(Service, this);
+            return reader.Read() ? reader : null;
         }
     }
 }

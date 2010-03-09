@@ -1,4 +1,8 @@
-﻿namespace Sage.SData.Client.Core
+﻿using System.Collections.Generic;
+using Sage.SData.Client.Common;
+using Sage.SData.Client.Framework;
+
+namespace Sage.SData.Client.Core
 {
     /// <summary>
     /// Base class for all SData Requests
@@ -16,11 +20,23 @@
         /// </summary>
         public const string Https = "https";
 
+        private readonly ISDataService _service;
+        private readonly SDataUri _uri;
+
+        protected SDataUri Uri
+        {
+            get { return _uri; }
+        }
+
         /// <summary>
         /// Accessor method for protocol, 
         /// </summary>
         /// <remarks>HTTP is the default but can be HTTPS</remarks>
-        public string Protocol { get; set; }
+        public string Protocol
+        {
+            get { return _uri.Scheme; }
+            set { _uri.Scheme = value; }
+        }
 
         /// <summary>
         /// Accessor method for Server
@@ -29,61 +45,82 @@
         /// Can be followed by port number. For example www.example.com:5493. 
         /// 5493 is the recommended port number for SData services that are not exposed on the Internet.
         /// </remarks>
-        public string ServerName { get; set; }
+        public string ServerName
+        {
+            get { return _uri.Host; }
+            set
+            {
+                if (_uri.Host != value)
+                {
+                    var pos = value.IndexOf(':');
+                    int port;
+
+                    if (pos >= 0 && int.TryParse(value.Substring(pos + 1), out port))
+                    {
+                        _uri.Host = value.Substring(0, pos);
+                        _uri.Port = port;
+                    }
+                    else
+                    {
+                        _uri.Host = value;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        public int? Port
+        {
+            get { return _uri.Port; }
+            set { _uri.Port = value ?? 80; }
+        }
 
         /// <summary>
         /// Accessor method for virtual directory
         /// </summary>
         /// <remarks>Must be sdata, unless the technical framework imposes something different.
         ///</remarks>
-        public string VirtualDirectory { get; set; }
+        public string VirtualDirectory
+        {
+            get { return _uri.Server; }
+            set { _uri.Server = value; }
+        }
+
+        /// <summary>
+        ///  Dictionary of query name value pairs
+        /// </summary>
+        /// <example>where, salesorderamount lt 15.00
+        /// orderby, salesorderid
+        /// </example>
+        public IDictionary<string, string> QueryValues
+        {
+            get { return _uri.QueryArgs; }
+        }
 
         /// <summary>
         /// the ISDataService to use for this request
         /// </summary>
-        public ISDataService Service { get; set; }
-
-        /// <summary>
-        /// gets or sets the user agent
-        /// </summary>
-        public string UserAgent { get; set; }
-
-        protected virtual void BuildUrl(UrlBuilder builder)
+        public ISDataService Service
         {
-            var server = ServerName;
-            var pos = server.IndexOf(':');
-
-            if (pos >= 0)
-            {
-                var port = int.Parse(server.Substring(pos + 1));
-                server = server.Substring(0, pos);
-                builder.Port = port;
-            }
-
-            builder.Scheme = Protocol;
-            builder.Host = server;
-            builder.PathSegments.Add(VirtualDirectory);
+            get { return _service; }
         }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="service">an ISDataService to use for thie request</param>
+        protected virtual void BuildUrl(SDataUri uri)
+        {
+        }
+
         protected SDataBaseRequest(ISDataService service)
         {
-            if (service == null)
-            {
-                throw new SDataClientException("SDataService is null");
-            }
-            if (!service.Initialized)
-            {
-                throw new SDataClientException("Service Not Initialized");
-            }
+            Guard.ArgumentNotNull(service, "service");
 
-            Service = service;
+            _service = service;
+            _uri = new SDataUri();
             Protocol = service.Protocol;
             ServerName = service.ServerName;
-            VirtualDirectory = service.VirtualDirectory;
+            Port = service.Port;
+            VirtualDirectory = !string.IsNullOrEmpty(service.VirtualDirectory) ? service.VirtualDirectory : "sdata";
         }
 
         /// <summary>
@@ -92,9 +129,9 @@
         /// <returns>formatted string</returns>
         public override string ToString()
         {
-            var builder = new UrlBuilder();
-            BuildUrl(builder);
-            return builder.ToString();
+            var uri = new SDataUri(Uri);
+            BuildUrl(uri);
+            return uri.ToString();
         }
     }
 }

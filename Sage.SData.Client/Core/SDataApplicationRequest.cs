@@ -1,4 +1,6 @@
-﻿namespace Sage.SData.Client.Core
+﻿using Sage.SData.Client.Framework;
+
+namespace Sage.SData.Client.Core
 {
     /// <summary>
     /// Base class for urls containing Application and Contract
@@ -9,7 +11,11 @@
         /// Accessor method for application
         /// </summary>
         /// <remarks>the application name</remarks>
-        public string Application { get; set; }
+        public string ApplicationName
+        {
+            get { return Uri.Product; }
+            set { Uri.Product = value; }
+        }
 
         /// <summary>
         /// Accessor method for contractName
@@ -19,7 +25,11 @@
         /// the resources required by CRM integration (with schemas imposed by the CRM/ERP contract) 
         /// and a native or default contract which exposes all the resources of the ERP in their native format.
         /// </remarks>
-        public string ContractName { get; set; }
+        public string ContractName
+        {
+            get { return Uri.Contract; }
+            set { Uri.Contract = value; }
+        }
 
         /// <summary>
         /// Accessor method for dataSet
@@ -32,7 +42,11 @@
         /// If several parameters are required to specify the dataset (for example database name and company id), 
         /// they should be formatted as a single segment in the URL. For example, sageApp/test/demodb;acme/accounts -- the semicolon separator is application specific, not imposed by SData.
         ///</remarks>
-        public string DataSet { get; set; }
+        public string DataSet
+        {
+            get { return Uri.CompanyDataset; }
+            set { Uri.CompanyDataset = value; }
+        }
 
         /// <summary>
         /// Accessor method for resourceKind
@@ -53,35 +67,18 @@
         protected SDataApplicationRequest(ISDataService service)
             : base(service)
         {
-            Application = service.ApplicationName;
-            ContractName = service.ContractName;
-            DataSet = service.DataSet;
+            ApplicationName = !string.IsNullOrEmpty(service.ApplicationName) ? service.ApplicationName : "-";
+            ContractName = !string.IsNullOrEmpty(service.ContractName) ? service.ContractName : "-";
+            DataSet = !string.IsNullOrEmpty(service.DataSet) ? service.DataSet : "-";
         }
 
-        protected override void BuildUrl(UrlBuilder builder)
+        protected override void BuildUrl(SDataUri uri)
         {
-            base.BuildUrl(builder);
-
-            if (string.IsNullOrEmpty(Application))
-            {
-                Application = Service.ApplicationName;
-            }
-            if (string.IsNullOrEmpty(ContractName))
-            {
-                ContractName = Service.ContractName;
-            }
-            if (string.IsNullOrEmpty(DataSet))
-            {
-                DataSet = Service.DataSet;
-            }
-
-            builder.PathSegments.Add(Application);
-            builder.PathSegments.Add(ContractName);
-            builder.PathSegments.Add(DataSet);
+            base.BuildUrl(uri);
 
             if (!string.IsNullOrEmpty(ResourceKind))
             {
-                builder.PathSegments.Add(ResourceKind);
+                uri.AppendPath(ResourceKind);
             }
         }
     }

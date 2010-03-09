@@ -10,6 +10,8 @@
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
         protected SDataOperationalRequest(ISDataService service)
-            : base(service) {}
+            : base(service)
+        {
+        }
     }
 }

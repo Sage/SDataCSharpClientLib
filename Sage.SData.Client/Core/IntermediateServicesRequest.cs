@@ -1,4 +1,6 @@
-﻿namespace Sage.SData.Client.Core
+﻿using Sage.SData.Client.Framework;
+
+namespace Sage.SData.Client.Core
 {
     /// <summary>
     /// Intermediate URL to retrieve enumeration of services
@@ -26,19 +28,25 @@
         /// </remarks>
         public string ResourceKind { get; set; }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="service"></param>
         public IntermediateServicesRequest(ISDataService service)
-            : base(service) {}
-
-        protected override void BuildUrl(UrlBuilder builder)
+            : base(service)
         {
-            base.BuildUrl(builder);
+        }
+
+        protected override void BuildUrl(SDataUri uri)
+        {
+            base.BuildUrl(uri);
 
             if (!string.IsNullOrEmpty(ResourceKind))
             {
-                builder.PathSegments.Add(ResourceKind);
+                uri.AppendPath(ResourceKind);
             }
 
-            builder.PathSegments.Add(ServiceTerm);
+            uri.AppendPath(ServiceTerm);
         }
     }
 }

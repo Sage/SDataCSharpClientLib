@@ -1,4 +1,5 @@
 ﻿using System.Xml.Schema;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Core
 {
@@ -21,14 +22,20 @@ namespace Sage.SData.Client.Core
         /// without resource kind http://sdata.acme.com/sdata/sageApp/test/$schema 
         /// with resource kind and version http://sdata.acme.com/sdata/sageApp/test/accounts/$schema?version=5
         /// </example>
-        public string Version { get; set; }
+        public string Version
+        {
+            get { return Uri.QueryArgs["version"]; }
+            set { Uri.QueryArgs["version"] = value; }
+        }
 
         /// <summary>
         /// Construtor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
         public SDataResourceSchemaRequest(ISDataService service)
-            : base(service) {}
+            : base(service)
+        {
+        }
 
         /// <summary>
         /// Reads the Xml Schema for a resource
@@ -44,18 +51,13 @@ namespace Sage.SData.Client.Core
         /// </example>
         public XmlSchema Read()
         {
-            return Service.Read(this);
+            return Service.ReadSchema(this);
         }
 
-        protected override void BuildUrl(UrlBuilder builder)
+        protected override void BuildUrl(SDataUri uri)
         {
-            base.BuildUrl(builder);
-            builder.PathSegments.Add(SchemaTerm);
-
-            if (!string.IsNullOrEmpty(Version))
-            {
-                builder.QueryParameters["version"] = Version;
-            }
+            base.BuildUrl(uri);
+            uri.AppendPath(SchemaTerm);
         }
     }
 }

@@ -1,24 +1,22 @@
 ﻿using System.IO;
+using System.Net;
 using System.Text;
-using System.Xml;
 using System.Xml.Schema;
-using System.Xml.XPath;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
 using Sage.SData.Client.Core;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Test
 {
     /// <summary>
     /// Service class used for unit test
     /// </summary>
-    public class SDataServiceTest : ISDataService, ISDataRequestSettings
+    public class MockSDataService : ISDataService, ISDataRequestSettings
     {
-        //============================================================
-        //	PUBLIC/PRIVATE/PROTECTED MEMBERS
-        //============================================================
+        #region Constants
 
-        private static string atomfeed_string =
+        private const string AtomFeedString =
             "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
             "<feed xmlns:sme=\"http://schemas.sage.com/sdata/sme/2007\" xmlns:sdata=\"http://schemas.sage.com/sdata/2008/1\" xmlns:cf=\"http://www.microsoft.com/schemas/rss/core/2005\" xmlns=\"http://www.w3.org/2005/Atom\">" +
             "  <author>" +
@@ -148,55 +146,53 @@ namespace Sage.SData.Client.Test
             "</entry>" +
             "</feed>";
 
+        private const string AtomEntryString = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                                                "  <entry xmlns:sme=\"http://schemas.sage.com/sdata/sme/2007\" xmlns:sdata=\"http://schemas.sage.com/sdata/2008/1\" xmlns:cf=\"http://www.microsoft.com/schemas/rss/core/2005\" xmlns=\"http://www.w3.org/2005/Atom\"><content type=\"html\"><![CDATA[" +
+                                                "  <html>" +
+                                                "  <head>" +
+                                                "    <META http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
+                                                "  </head>" +
+                                                "  <body style=\"font-family: Verdana;\">" +
+                                                "    <table cellpadding=\"4\" cellspacing=\"0\" style=\"background-color: white; font-family: Arial;border: 1px solid darkgray;font-size: x-small;\">" +
+                                                "      <tr>" +
+                                                "        <td nowrap colspan=\"3\" valign=\"middle\" style=\"font-size: x-small;font-weight: bold;color: black;border-bottom-style: solid;border-bottom-width: 1px;border-bottom-color: darkgray;vertical-align: middle;\">Employee Details - Production Technician - WC60</td>" +
+                                                "        <td colspan=\"31\" valign=\"middle\" style=\"font-size: x-small;font-weight: bold;color: black;border-bottom-style: solid;border-bottom-width: 1px;border-bottom-color: darkgray;vertical-align: middle;\">&#x00A0;</td>" +
+                                                "      </tr>" +
+                                                "     <tr style=\"background-color: lavender;\">" +
+                                                "        <td colspan=\"32\">&#x00A0;</td>" +
+                                                "      </tr>" +
+                                                "    </table>" +
+                                                "  </body>" +
+                                                "</html>]]>" +
+                                                "</content>" +
+                                                "  <id>http://localhost:8001/sdata/aw/dynamic/-/employees(1)</id>" +
+                                                "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)?format=html\" rel=\"alternate\" type=\"text/html\" title=\"\" />" +
+                                                "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)\" rel=\"self\" type=\"application/atom+xml\" title=\"\" />" +
+                                                "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)\" rel=\"edit\" type=\"application/atom+xml\" title=\"\" />" +
+                                                "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)?format=atomentry\" rel=\"via\" type=\"application/atom+xml\" title=\"\" />" +
+                                                "  <published>0001-01-01T00:00:00+00:00</published>" +
+                                                "  <sdata:payload>" +
+                                                "    <Employee xmlns=\"http://schemas.sage.com/dynamic/2007\">" +
+                                                "      <Title>Production Technician - WC60</Title>" +
+                                                "      <NationalIdNumber>14417807</NationalIdNumber>" +
+                                                "      <ContactId>1209</ContactId>" +
+                                                "      <LoginId>adventure-works\\guy1</LoginId>" +
+                                                "      <ManagerId>16</ManagerId>" +
+                                                "      <BirthDate>1972-05-15T00:00:00+00:00</BirthDate>" +
+                                                "      <MaritalStatus>False</MaritalStatus>" +
+                                                "      <Gender>False</Gender>" +
+                                                "      <HireDate>1996-07-31T00:00:00+00:00</HireDate>" +
+                                                "      <SalariedFlag>False</SalariedFlag>" +
+                                                "      <VacationHours>21</VacationHours>" +
+                                                "      <SickleaveHours>30</SickleaveHours>" +
+                                                "      <CurrentFlag>True</CurrentFlag>" +
+                                                "      <RowGuid>aae1d04a-c237-4974-b4d5-935247737718</RowGuid>" +
+                                                "      <ModifiedDate>2004-07-31T00:00:00+00:00</ModifiedDate>" +
+                                                "    </Employee>" +
+                                                "  </sdata:payload>" +
+                                                "</entry>";
 
-        private static string atomentry_string = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-                                                 "  <entry xmlns:sme=\"http://schemas.sage.com/sdata/sme/2007\" xmlns:sdata=\"http://schemas.sage.com/sdata/2008/1\" xmlns:cf=\"http://www.microsoft.com/schemas/rss/core/2005\" xmlns=\"http://www.w3.org/2005/Atom\"><content type=\"html\"><![CDATA[" +
-                                                 "  <html>" +
-                                                 "  <head>" +
-                                                 "    <META http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
-                                                 "  </head>" +
-                                                 "  <body style=\"font-family: Verdana;\">" +
-                                                 "    <table cellpadding=\"4\" cellspacing=\"0\" style=\"background-color: white; font-family: Arial;border: 1px solid darkgray;font-size: x-small;\">" +
-                                                 "      <tr>" +
-                                                 "        <td nowrap colspan=\"3\" valign=\"middle\" style=\"font-size: x-small;font-weight: bold;color: black;border-bottom-style: solid;border-bottom-width: 1px;border-bottom-color: darkgray;vertical-align: middle;\">Employee Details - Production Technician - WC60</td>" +
-                                                 "        <td colspan=\"31\" valign=\"middle\" style=\"font-size: x-small;font-weight: bold;color: black;border-bottom-style: solid;border-bottom-width: 1px;border-bottom-color: darkgray;vertical-align: middle;\">&#x00A0;</td>" +
-                                                 "      </tr>" +
-                                                 "     <tr style=\"background-color: lavender;\">" +
-                                                 "        <td colspan=\"32\">&#x00A0;</td>" +
-                                                 "      </tr>" +
-                                                 "    </table>" +
-                                                 "  </body>" +
-                                                 "</html>]]>" +
-                                                 "</content>" +
-                                                 "  <id>http://localhost:8001/sdata/aw/dynamic/-/employees(1)</id>" +
-                                                 "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)?format=html\" rel=\"alternate\" type=\"text/html\" title=\"\" />" +
-                                                 "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)\" rel=\"self\" type=\"application/atom+xml\" title=\"\" />" +
-                                                 "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)\" rel=\"edit\" type=\"application/atom+xml\" title=\"\" />" +
-                                                 "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)?format=atomentry\" rel=\"via\" type=\"application/atom+xml\" title=\"\" />" +
-                                                 "  <published>0001-01-01T00:00:00+00:00</published>" +
-                                                 "  <sdata:payload>" +
-                                                 "    <Employee xmlns=\"http://schemas.sage.com/dynamic/2007\">" +
-                                                 "      <Title>Production Technician - WC60</Title>" +
-                                                 "      <NationalIdNumber>14417807</NationalIdNumber>" +
-                                                 "      <ContactId>1209</ContactId>" +
-                                                 "      <LoginId>adventure-works\\guy1</LoginId>" +
-                                                 "      <ManagerId>16</ManagerId>" +
-                                                 "      <BirthDate>1972-05-15T00:00:00+00:00</BirthDate>" +
-                                                 "      <MaritalStatus>False</MaritalStatus>" +
-                                                 "      <Gender>False</Gender>" +
-                                                 "      <HireDate>1996-07-31T00:00:00+00:00</HireDate>" +
-                                                 "      <SalariedFlag>False</SalariedFlag>" +
-                                                 "      <VacationHours>21</VacationHours>" +
-                                                 "      <SickleaveHours>30</SickleaveHours>" +
-                                                 "      <CurrentFlag>True</CurrentFlag>" +
-                                                 "      <RowGuid>aae1d04a-c237-4974-b4d5-935247737718</RowGuid>" +
-                                                 "      <ModifiedDate>2004-07-31T00:00:00+00:00</ModifiedDate>" +
-                                                 "    </Employee>" +
-                                                 "  </sdata:payload>" +
-                                                 "</entry>";
-
-
-        private static string xsd_string =
+        private const string XsdString =
             "<?xml version=\"1.0\"?>" +
             "            <xs:schema xmlns:tns=\"http://schemas.sage.com/demoErp\" " +
             "           targetNamespace=\"http://schemas.sage.com/demoErp\" " +
@@ -392,406 +388,142 @@ namespace Sage.SData.Client.Test
             "  </xs:complexType>" +
             "</xs:schema>";
 
-
-        private string _applicationName;
-        private string _serverName;
-        private string _protocol;
-        private string _virtualDirectory;
-        private string _dataSet;
-        private string _contractName;
-        private string _url;
-
-
-        private string _userName;
-        private string _passWord;
-
-        private bool _initialized;
-        //============================================================
-        //	PUBLIC PROPERTIES
-        //============================================================
-        /// <summary>
-        /// Accessor method to determine if service has been initialized
-        /// </summary>
-        public bool Initialized
-        {
-            get { return _initialized; }
-            set { _initialized = value; }
-        }
-
-        #region ApplicationName
-
-        /// <summary>
-        /// Gets or sets the name of the application.
-        /// </summary>
-        /// <value>The name of the application.</value>
-        /// <remarks>
-        ///     The <see cref="ApplicationName"/> is used to identify users specific to an application. That is, the same syndication resource can exist in the data store 
-        ///     for multiple applications that specify a different <see cref="ApplicationName"/>. This enables multiple applications to use the same data store to store resource 
-        ///     information without running into duplicate syndication resource conflicts. Alternatively, multiple applications can use the same syndication resource data store 
-        ///     by specifying the same <see cref="ApplicationName"/>. The <see cref="ApplicationName"/> can be set programmatically or declaratively in the configuration for the application.
-        /// </remarks>
-        public string ApplicationName
-        {
-            get { return _applicationName; }
-            set { _applicationName = value; }
-        }
-
         #endregion
 
-        /// <summary>
-        /// Accessor method for protocol, 
-        /// </summary>
-        /// <remarks>HTTP is the default but can be HTTPS</remarks>
-        public string Protocol
+        public string Url { get; set; }
+        public string Protocol { get; set; }
+        public string ServerName { get; set; }
+        public int? Port { get; set; }
+        public string VirtualDirectory { get; set; }
+        public string ApplicationName { get; set; }
+        public string ContractName { get; set; }
+        public string DataSet { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public int Timeout { get; set; }
+        public CookieContainer Cookies { get; set; }
+        public string UserAgent { get; set; }
+
+        public AtomFeed CreateFeed(SDataBaseRequest request, AtomFeed feed)
         {
-            get { return _protocol; }
-            set { _protocol = value; }
+            var createdFeed = new AtomFeed();
+
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(AtomFeedString)))
+            {
+                createdFeed.Load(stream);
+            }
+
+            return createdFeed;
         }
 
-
-        /// <remarks>
-        /// Creates the service with predefined values for the url
-        /// </remarks>
-        public string Url
+        public AtomEntry CreateEntry(SDataBaseRequest request, AtomEntry entry)
         {
-            get { return _url; }
-            set { _url = value; }
+            var createdEntry = new AtomEntry();
+
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(AtomEntryString)))
+            {
+                createdEntry.Load(stream);
+            }
+
+            return createdEntry;
         }
 
-
-        /// <remarks>IP address is also allowed (192.168.1.1).
-        /// Can be followed by port number. For example www.example.com:5493. 
-        /// 5493 is the recommended port number for SData services that are not exposed on the Internet.
-        /// </remarks>
-        public string ServerName
+        public AsyncRequest CreateAsync(SDataBaseRequest request, ISyndicationResource resource)
         {
-            get { return _serverName; }
-            set { _serverName = value; }
+            const string trackingUrl = "http://www.example.com/sdata/sageApp/test/-/products/$service/computeSimplePrice";
+            var tracking = new SDataTracking
+            {
+                Phase = "Initializing",
+                PhaseDetail = "StartingThread",
+                Progress = 0.0,
+                ElapsedSeconds = 0,
+                RemainingSeconds = 10,
+                PollingMillis = 500
+            };
+            return new AsyncRequest(this, trackingUrl, tracking);
         }
 
-
-        /// <summary>
-        /// Accessor method for virtual directory
-        /// </summary>
-        /// <remarks>Must be sdata, unless the technical framework imposes something different.
-        ///</remarks>
-        public string VirtualDirectory
-        {
-            get { return _virtualDirectory; }
-            set { _virtualDirectory = value; }
-        }
-
-
-        /// <summary>
-        /// Accessor method for dataSet
-        /// </summary>
-        /// <remarks>Identifies the dataset when the application gives access to several datasets, such as several companies and production/test datasets.
-        /// If the application can only handle a single dataset, or if it can be configured with a default dataset, 
-        /// a hyphen can be used as a placeholder for the default dataset. 
-        /// For example, if prod is the default dataset in the example above, the URL could be shortened as:
-        /// http://www.example.com/sdata/sageApp/test/-/accounts?startIndex=21&amp;count=10 
-        /// If several parameters are required to specify the dataset (for example database name and company id), 
-        /// they should be formatted as a single segment in the URL. For example, sageApp/test/demodb;acme/accounts -- the semicolon separator is application specific, not imposed by SData.
-        ///</remarks>
-        public string DataSet
-        {
-            get { return _dataSet; }
-            set { _dataSet = value; }
-        }
-
-
-        /// <summary>
-        /// Accessor method for contractName
-        /// </summary>
-        /// <remarks>An SData service can support several “integration contracts” side-by-side. 
-        /// For example, a typical Sage ERP service will support a crmErp contract which exposes 
-        /// the resources required by CRM integration (with schemas imposed by the CRM/ERP contract) 
-        /// and a native or default contract which exposes all the resources of the ERP in their native format.
-        /// </remarks>
-        public string ContractName
-        {
-            get { return _contractName; }
-            set { _contractName = value; }
-        }
-
-
-        /// <summary>
-        /// Get set for the user name to authenticate with
-        /// </summary>
-        public string UserName
-        {
-            get { return _userName; }
-            set { _userName = value; }
-        }
-
-        /// <summary>
-        /// Get/set for the password to authenticate with
-        /// </summary>
-        public string Password
-        {
-            get { return _passWord; }
-            set { _passWord = value; }
-        }
-
-
-        //============================================================
-        //	PUBLIC METHODS
-        //============================================================
-
-        #region Create(SDataBaseURL, ISyndicationResource resource)
-
-        /// <summary>
-        /// Adds a new syndication resource to the data source.
-        /// </summary>
-        /// <param name="request">The request that identifies the resource within the syndication data source.</param>
-        /// <param name="resource">The <see cref="ISyndicationResource"/> to be created within the data source.</param>
-        public ISyndicationResource CreateFeed(SDataBaseRequest request, XPathNavigator resource)
-        {
-            AtomFeed feed = new AtomFeed();
-            feed.Load(new MemoryStream(Encoding.UTF8.GetBytes(atomfeed_string)));
-
-            return feed;
-        }
-
-        #endregion
-
-        #region Create(SDataBaseURL, ISyndicationResource resource)
-
-        /// <summary>
-        /// Adds a new syndication resource to the data source.
-        /// </summary>
-        /// <param name="request">The request that identifies the resource within the syndication data source.</param>
-        /// <param name="resource">The <see cref="ISyndicationResource"/> to be created within the data source.</param>
-        public ISyndicationResource Create(SDataBaseRequest request, ISyndicationResource resource)
-        {
-            AtomEntry entry = new AtomEntry();
-            entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(atomentry_string)));
-
-            return entry;
-        }
-
-        #endregion
-
-        #region CreateAsync(SDataBaseURL, ISyndicationResource resource, string trackingId)
-
-        /// <summary>
-        /// Asynchronous PUT to the server
-        /// </summary>
-        /// <param name="request">The request that identifies the resource within the syndication data source.</param>
-        public AsyncRequest CreateAsync(SDataBaseRequest request)
-        {
-            AsyncRequest asyncRequest = new AsyncRequest();
-
-            asyncRequest.Phase = "Initializing";
-            asyncRequest.PhaseDetail = "StartingThread";
-            asyncRequest.Progress = (decimal) 0.0;
-            asyncRequest.ElapsedSeconds = 0;
-            asyncRequest.RemainingSeconds = 10;
-            asyncRequest.PollingMilliseconds = 500;
-            //asyncRequest.XmlDoc = document;
-            asyncRequest.TrackingUrl = "http://www.example.com/sdata/sageApp/test/-/products/$service/computeSimplePrice";
-
-            return asyncRequest;
-        }
-
-        #endregion
-
-        #region Delete(string url)
-
-        /// <summary>
-        /// a delete method NOTE: not used
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
         public bool Delete(string url)
         {
             return true;
         }
 
-
-        /// <summary>
-        /// Generic delete from server
-        /// </summary>
-        /// <param name="request">the url for the operation</param>
-        /// <param name="resource">the rersource being deleted</param>
-        /// <returns><b>true</b> returns true if the operation was successful</returns>
-        public bool Delete(SDataBaseRequest request, ISyndicationResource resource)
+        public bool DeleteEntry(SDataBaseRequest request, AtomEntry entry)
         {
             return true;
         }
 
-        #endregion
-
-        #region Read(string url)
-
-        /// <summary>
-        /// generic read from the specified url
-        /// </summary>
-        /// <param name="url">url to read from </param>
-        /// <returns>string response from server</returns>
-        public string Read(string url)
+        public object Read(string url)
         {
-            string result =
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-                "<tracking xmlns=\"http://schemas.sage.com/sdata/2008/1\">" +
-                "<phase>Initialization</phase>" +
-                "<phaseDetail>Starting thread</phaseDetail>" +
-                "<progress>0.0</progress>" +
-                "<elapsedSeconds>0</elapsedSeconds>" +
-                "<remainingSeconds>7</remainingSeconds>" +
-                "<pollingMillis>500</pollingMillis>" +
-                "</tracking>";
-
-            return result;
+            return "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                   "<tracking xmlns=\"http://schemas.sage.com/sdata/2008/1\">" +
+                   "<phase>Initialization</phase>" +
+                   "<phaseDetail>Starting thread</phaseDetail>" +
+                   "<progress>0.0</progress>" +
+                   "<elapsedSeconds>0</elapsedSeconds>" +
+                   "<remainingSeconds>7</remainingSeconds>" +
+                   "<pollingMillis>500</pollingMillis>" +
+                   "</tracking>";
         }
 
-        #endregion
-
-        #region Read(SDataBaseURL)
-
-        /// <summary>
-        /// Reads resource information from the data source based on the URL.
-        /// </summary>
-        /// <param name="request">request for the syndication resource to get information for.</param>
-        /// <returns>AtomFeed <see cref="AtomFeed"/> populated with the specified resources's information from the data source.</returns>
         public AtomFeed ReadFeed(SDataBaseRequest request)
         {
-            AtomFeed feed = new AtomFeed();
-            feed.Load(new MemoryStream(Encoding.UTF8.GetBytes(atomfeed_string)));
+            var feed = new AtomFeed();
+            
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(AtomFeedString)))
+            {
+                feed.Load(stream);
+            }
+
             return feed;
         }
 
-        /// <summary>
-        /// Reads resource information from the data source based on the URL.
-        /// </summary>
-        /// <param name="request">request for the syndication resource to get information for.</param>
-        /// <returns>An AtomEntry <see cref="AtomEntry"/> populated with the specified resources's information from the data source.</returns>
         public AtomEntry ReadEntry(SDataBaseRequest request)
         {
-            AtomEntry entry = new AtomEntry();
-            entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(atomentry_string)));
+            var entry = new AtomEntry();
+            
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(AtomEntryString)))
+            {
+                entry.Load(stream);
+            }
+
             return entry;
         }
 
-        #endregion
-
-        #region Read(SDataBaseURL)
-
-        /// <summary>
-        /// Reads xsd from a $schema request
-        /// </summary>
-        /// <param name="request">url for the syndication resource to get information for.</param>
-        /// <returns>XmlSchema </returns>
-        public XmlSchema Read(SDataResourceSchemaRequest request)
+        public XmlSchema ReadSchema(SDataResourceSchemaRequest request)
         {
-            XmlTextReader reader = new XmlTextReader(new MemoryStream(Encoding.UTF8.GetBytes(xsd_string)));
-
-            XmlSchema schema = XmlSchema.Read(reader, null);
-            return schema;
-        }
-
-        #endregion
-
-        #region Update(SDataBaseURL url, ISyndicationResource resource)
-
-        /// <summary>
-        /// Updates information about a syndication resource in the data source.
-        /// </summary>
-        /// <param name="request">The url from the syndication data source for the resource to be updated.</param>
-        /// <param name="resource">
-        ///     An object that implements the <see cref="ISyndicationResource"/> interface that represents the updated information for the resource.
-        /// </param>
-        public ISyndicationResource Update(SDataBaseRequest request, ISyndicationResource resource)
-        {
-            AtomEntry entry = new AtomEntry();
-            entry.Load(new MemoryStream(Encoding.UTF8.GetBytes(atomentry_string)));
-            return entry;
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Default Constructor
-        /// </summary>
-        public SDataServiceTest() {}
-
-        /// <summary>
-        /// Constructor with pre-set url
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="userName">the user name to initialize with</param>
-        /// <param name="password">password for the specified user</param>
-        public SDataServiceTest(string url, string userName, string password)
-        {
-            _url = url;
-            _userName = userName;
-            _passWord = password;
-
-            var builder = new UrlBuilder(url);
-            Protocol = builder.Scheme;
-            ServerName = string.Format("{0}:{1}", builder.Host, builder.Port);
-
-            var segmentCount = builder.PathSegments.Count;
-
-            if (segmentCount > 0)
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(XsdString)))
             {
-                VirtualDirectory = builder.PathSegments[0];
-            }
-            if (segmentCount > 1)
-            {
-                ApplicationName = builder.PathSegments[1];
-            }
-            if (segmentCount > 2)
-            {
-                ContractName = builder.PathSegments[2];
-            }
-            if (segmentCount > 3)
-            {
-                DataSet = builder.PathSegments[3];
+                return XmlSchema.Read(stream, null);
             }
         }
 
-
-        //============================================================
-        //	PRIVATE METHODS
-        //============================================================
-
-        #region Initialize()
-
-        /// <summary>
-        /// Initializes the <see cref="SDataService"/> 
-        /// </summary>
-        /// <remarks>sett the User Name and Password to authenticate with and build the url</remarks>
-        public void Initialize()
+        public AtomEntry UpdateEntry(SDataBaseRequest request, AtomEntry entry)
         {
-            if (_url == null)
+            var updatedEntry = new AtomEntry();
+            
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(AtomEntryString)))
             {
-                var server = ServerName;
-                var pos = server.IndexOf(':');
-                UrlBuilder builder;
-
-                if (pos >= 0)
-                {
-                    var port = int.Parse(server.Substring(pos + 1));
-                    server = server.Substring(0, pos);
-                    builder = new UrlBuilder(Protocol, server, port);
-                }
-                else
-                {
-                    builder = new UrlBuilder(Protocol, server);
-                }
-
-                builder.PathSegments.Add(VirtualDirectory);
-                builder.PathSegments.Add(ApplicationName);
-                builder.PathSegments.Add(ContractName);
-                builder.PathSegments.Add(DataSet);
-
-                _url = builder.ToString();
+                updatedEntry.Load(stream);
             }
 
-            Initialized = true;
+            return updatedEntry;
         }
 
-        #endregion
+        public MockSDataService(string url, string userName, string password)
+        {
+            Url = url;
+            UserName = userName;
+            Password = password;
+
+            var uri = new SDataUri(url);
+            Protocol = uri.Scheme;
+            ServerName = uri.Host;
+            Port = uri.Port;
+            VirtualDirectory = uri.Server;
+            ApplicationName = uri.Product;
+            ContractName = uri.Contract;
+            DataSet = uri.CompanyDataset;
+        }
     }
 }

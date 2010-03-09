@@ -11,14 +11,18 @@ namespace Sage.SData.Client.Core
         /// <summary>
         /// constructor
         /// </summary>
-        public SDataClientException() {}
+        public SDataClientException()
+        {
+        }
 
         /// <summary>
         /// costructor
         /// </summary>
         /// <param name="message"></param>
         public SDataClientException(string message)
-            : base(message) {}
+            : base(message)
+        {
+        }
 
         /// <summary>
         /// constructor
@@ -26,6 +30,8 @@ namespace Sage.SData.Client.Core
         /// <param name="message"></param>
         /// <param name="innerException"></param>
         public SDataClientException(string message, Exception innerException)
-            : base(message, innerException) {}
+            : base(message, innerException)
+        {
+        }
     }
 }

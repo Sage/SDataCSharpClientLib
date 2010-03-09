@@ -1,4 +1,5 @@
 using Sage.SData.Client.Atom;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Core
 {
@@ -12,7 +13,9 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
         public SDataEndPointCollectionRequest(ISDataService service)
-            : base(service) {}
+            : base(service)
+        {
+        }
 
         /// <summary>
         /// Reads the AtomFeed for a resource collection
@@ -23,13 +26,12 @@ namespace Sage.SData.Client.Core
             return Service.ReadFeed(this);
         }
 
-        protected override void BuildUrl(UrlBuilder builder)
+        protected override void BuildUrl(SDataUri uri)
         {
-            base.BuildUrl(builder);
-
-            builder.PathSegments.Add("$system");
-            builder.PathSegments.Add("registry");
-            builder.PathSegments.Add("endpoints");
+            base.BuildUrl(uri);
+            uri.AppendPath("$system");
+            uri.AppendPath("registry");
+            uri.AppendPath("endpoints");
         }
     }
 }

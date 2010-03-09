@@ -14,7 +14,9 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
         public IntermediateApplicationsRequest(ISDataService service)
-            : base(service) {}
+            : base(service)
+        {
+        }
 
         /// <summary>
         /// Reads the AtomFeed for enumeration of applications

@@ -24,7 +24,11 @@ namespace Sage.SData.Client.Core
         /// If several parameters are required to specify the dataset (for example database name and company id), 
         /// they should be formatted as a single segment in the URL. For example, sageApp/test/demodb;acme/accounts -- the semicolon separator is application specific, not imposed by SData.
         ///</remarks>
-        public string DataSet { get; set; }
+        public string DataSet
+        {
+            get { return Uri.CompanyDataset; }
+            set { Uri.CompanyDataset = value; }
+        }
 
         /// <summary>
         /// Constructor
@@ -33,7 +37,7 @@ namespace Sage.SData.Client.Core
         public IntermediateResourceCollectionsRequest(ISDataService service)
             : base(service)
         {
-            ContractName = service.ContractName;
+            DataSet = !string.IsNullOrEmpty(service.DataSet) ? service.DataSet : "-";
         }
 
         /// <summary>
@@ -51,18 +55,6 @@ namespace Sage.SData.Client.Core
         public override AtomFeed Read()
         {
             return Service.ReadFeed(this);
-        }
-
-        protected override void BuildUrl(UrlBuilder builder)
-        {
-            base.BuildUrl(builder);
-
-            if (string.IsNullOrEmpty(DataSet))
-            {
-                DataSet = Service.DataSet;
-            }
-
-            builder.PathSegments.Add(DataSet);
         }
     }
 }
