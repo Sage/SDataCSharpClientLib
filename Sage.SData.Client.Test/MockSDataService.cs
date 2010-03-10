@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Xml.Schema;
@@ -147,50 +148,50 @@ namespace Sage.SData.Client.Test
             "</feed>";
 
         private const string AtomEntryString = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-                                                "  <entry xmlns:sme=\"http://schemas.sage.com/sdata/sme/2007\" xmlns:sdata=\"http://schemas.sage.com/sdata/2008/1\" xmlns:cf=\"http://www.microsoft.com/schemas/rss/core/2005\" xmlns=\"http://www.w3.org/2005/Atom\"><content type=\"html\"><![CDATA[" +
-                                                "  <html>" +
-                                                "  <head>" +
-                                                "    <META http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
-                                                "  </head>" +
-                                                "  <body style=\"font-family: Verdana;\">" +
-                                                "    <table cellpadding=\"4\" cellspacing=\"0\" style=\"background-color: white; font-family: Arial;border: 1px solid darkgray;font-size: x-small;\">" +
-                                                "      <tr>" +
-                                                "        <td nowrap colspan=\"3\" valign=\"middle\" style=\"font-size: x-small;font-weight: bold;color: black;border-bottom-style: solid;border-bottom-width: 1px;border-bottom-color: darkgray;vertical-align: middle;\">Employee Details - Production Technician - WC60</td>" +
-                                                "        <td colspan=\"31\" valign=\"middle\" style=\"font-size: x-small;font-weight: bold;color: black;border-bottom-style: solid;border-bottom-width: 1px;border-bottom-color: darkgray;vertical-align: middle;\">&#x00A0;</td>" +
-                                                "      </tr>" +
-                                                "     <tr style=\"background-color: lavender;\">" +
-                                                "        <td colspan=\"32\">&#x00A0;</td>" +
-                                                "      </tr>" +
-                                                "    </table>" +
-                                                "  </body>" +
-                                                "</html>]]>" +
-                                                "</content>" +
-                                                "  <id>http://localhost:8001/sdata/aw/dynamic/-/employees(1)</id>" +
-                                                "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)?format=html\" rel=\"alternate\" type=\"text/html\" title=\"\" />" +
-                                                "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)\" rel=\"self\" type=\"application/atom+xml\" title=\"\" />" +
-                                                "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)\" rel=\"edit\" type=\"application/atom+xml\" title=\"\" />" +
-                                                "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)?format=atomentry\" rel=\"via\" type=\"application/atom+xml\" title=\"\" />" +
-                                                "  <published>0001-01-01T00:00:00+00:00</published>" +
-                                                "  <sdata:payload>" +
-                                                "    <Employee xmlns=\"http://schemas.sage.com/dynamic/2007\">" +
-                                                "      <Title>Production Technician - WC60</Title>" +
-                                                "      <NationalIdNumber>14417807</NationalIdNumber>" +
-                                                "      <ContactId>1209</ContactId>" +
-                                                "      <LoginId>adventure-works\\guy1</LoginId>" +
-                                                "      <ManagerId>16</ManagerId>" +
-                                                "      <BirthDate>1972-05-15T00:00:00+00:00</BirthDate>" +
-                                                "      <MaritalStatus>False</MaritalStatus>" +
-                                                "      <Gender>False</Gender>" +
-                                                "      <HireDate>1996-07-31T00:00:00+00:00</HireDate>" +
-                                                "      <SalariedFlag>False</SalariedFlag>" +
-                                                "      <VacationHours>21</VacationHours>" +
-                                                "      <SickleaveHours>30</SickleaveHours>" +
-                                                "      <CurrentFlag>True</CurrentFlag>" +
-                                                "      <RowGuid>aae1d04a-c237-4974-b4d5-935247737718</RowGuid>" +
-                                                "      <ModifiedDate>2004-07-31T00:00:00+00:00</ModifiedDate>" +
-                                                "    </Employee>" +
-                                                "  </sdata:payload>" +
-                                                "</entry>";
+                                               "  <entry xmlns:sme=\"http://schemas.sage.com/sdata/sme/2007\" xmlns:sdata=\"http://schemas.sage.com/sdata/2008/1\" xmlns:cf=\"http://www.microsoft.com/schemas/rss/core/2005\" xmlns=\"http://www.w3.org/2005/Atom\"><content type=\"html\"><![CDATA[" +
+                                               "  <html>" +
+                                               "  <head>" +
+                                               "    <META http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
+                                               "  </head>" +
+                                               "  <body style=\"font-family: Verdana;\">" +
+                                               "    <table cellpadding=\"4\" cellspacing=\"0\" style=\"background-color: white; font-family: Arial;border: 1px solid darkgray;font-size: x-small;\">" +
+                                               "      <tr>" +
+                                               "        <td nowrap colspan=\"3\" valign=\"middle\" style=\"font-size: x-small;font-weight: bold;color: black;border-bottom-style: solid;border-bottom-width: 1px;border-bottom-color: darkgray;vertical-align: middle;\">Employee Details - Production Technician - WC60</td>" +
+                                               "        <td colspan=\"31\" valign=\"middle\" style=\"font-size: x-small;font-weight: bold;color: black;border-bottom-style: solid;border-bottom-width: 1px;border-bottom-color: darkgray;vertical-align: middle;\">&#x00A0;</td>" +
+                                               "      </tr>" +
+                                               "     <tr style=\"background-color: lavender;\">" +
+                                               "        <td colspan=\"32\">&#x00A0;</td>" +
+                                               "      </tr>" +
+                                               "    </table>" +
+                                               "  </body>" +
+                                               "</html>]]>" +
+                                               "</content>" +
+                                               "  <id>http://localhost:8001/sdata/aw/dynamic/-/employees(1)</id>" +
+                                               "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)?format=html\" rel=\"alternate\" type=\"text/html\" title=\"\" />" +
+                                               "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)\" rel=\"self\" type=\"application/atom+xml\" title=\"\" />" +
+                                               "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)\" rel=\"edit\" type=\"application/atom+xml\" title=\"\" />" +
+                                               "  <link href=\"http://localhost:8001/sdata/aw/dynamic/-/employees(1)?format=atomentry\" rel=\"via\" type=\"application/atom+xml\" title=\"\" />" +
+                                               "  <published>0001-01-01T00:00:00+00:00</published>" +
+                                               "  <sdata:payload>" +
+                                               "    <Employee xmlns=\"http://schemas.sage.com/dynamic/2007\">" +
+                                               "      <Title>Production Technician - WC60</Title>" +
+                                               "      <NationalIdNumber>14417807</NationalIdNumber>" +
+                                               "      <ContactId>1209</ContactId>" +
+                                               "      <LoginId>adventure-works\\guy1</LoginId>" +
+                                               "      <ManagerId>16</ManagerId>" +
+                                               "      <BirthDate>1972-05-15T00:00:00+00:00</BirthDate>" +
+                                               "      <MaritalStatus>False</MaritalStatus>" +
+                                               "      <Gender>False</Gender>" +
+                                               "      <HireDate>1996-07-31T00:00:00+00:00</HireDate>" +
+                                               "      <SalariedFlag>False</SalariedFlag>" +
+                                               "      <VacationHours>21</VacationHours>" +
+                                               "      <SickleaveHours>30</SickleaveHours>" +
+                                               "      <CurrentFlag>True</CurrentFlag>" +
+                                               "      <RowGuid>aae1d04a-c237-4974-b4d5-935247737718</RowGuid>" +
+                                               "      <ModifiedDate>2004-07-31T00:00:00+00:00</ModifiedDate>" +
+                                               "    </Employee>" +
+                                               "  </sdata:payload>" +
+                                               "</entry>";
 
         private const string XsdString =
             "<?xml version=\"1.0\"?>" +
@@ -390,6 +391,7 @@ namespace Sage.SData.Client.Test
 
         #endregion
 
+        public bool Initialized { get; set; }
         public string Url { get; set; }
         public string Protocol { get; set; }
         public string ServerName { get; set; }
@@ -416,6 +418,11 @@ namespace Sage.SData.Client.Test
             return createdFeed;
         }
 
+        public AtomFeed CreateFeed(SDataBaseRequest request, AtomFeed feed, out string eTag)
+        {
+            throw new NotImplementedException();
+        }
+
         public AtomEntry CreateEntry(SDataBaseRequest request, AtomEntry entry)
         {
             var createdEntry = new AtomEntry();
@@ -432,20 +439,25 @@ namespace Sage.SData.Client.Test
         {
             const string trackingUrl = "http://www.example.com/sdata/sageApp/test/-/products/$service/computeSimplePrice";
             var tracking = new SDataTracking
-            {
-                Phase = "Initializing",
-                PhaseDetail = "StartingThread",
-                Progress = 0.0,
-                ElapsedSeconds = 0,
-                RemainingSeconds = 10,
-                PollingMillis = 500
-            };
+                           {
+                               Phase = "Initializing",
+                               PhaseDetail = "StartingThread",
+                               Progress = 0.0,
+                               ElapsedSeconds = 0,
+                               RemainingSeconds = 10,
+                               PollingMillis = 500
+                           };
             return new AsyncRequest(this, trackingUrl, tracking);
         }
 
         public bool Delete(string url)
         {
             return true;
+        }
+
+        public bool DeleteEntry(SDataBaseRequest request)
+        {
+            throw new NotImplementedException();
         }
 
         public bool DeleteEntry(SDataBaseRequest request, AtomEntry entry)
@@ -469,7 +481,7 @@ namespace Sage.SData.Client.Test
         public AtomFeed ReadFeed(SDataBaseRequest request)
         {
             var feed = new AtomFeed();
-            
+
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(AtomFeedString)))
             {
                 feed.Load(stream);
@@ -478,16 +490,26 @@ namespace Sage.SData.Client.Test
             return feed;
         }
 
+        public AtomFeed ReadFeed(SDataBaseRequest request, ref string eTag)
+        {
+            throw new NotImplementedException();
+        }
+
         public AtomEntry ReadEntry(SDataBaseRequest request)
         {
             var entry = new AtomEntry();
-            
+
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(AtomEntryString)))
             {
                 entry.Load(stream);
             }
 
             return entry;
+        }
+
+        public AtomEntry ReadEntry(SDataBaseRequest request, AtomEntry entry)
+        {
+            throw new NotImplementedException();
         }
 
         public XmlSchema ReadSchema(SDataResourceSchemaRequest request)
@@ -501,13 +523,17 @@ namespace Sage.SData.Client.Test
         public AtomEntry UpdateEntry(SDataBaseRequest request, AtomEntry entry)
         {
             var updatedEntry = new AtomEntry();
-            
+
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(AtomEntryString)))
             {
                 updatedEntry.Load(stream);
             }
 
             return updatedEntry;
+        }
+
+        public void Initialize()
+        {
         }
 
         public MockSDataService(string url, string userName, string password)

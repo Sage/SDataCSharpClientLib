@@ -1,4 +1,5 @@
-﻿using Sage.SData.Client.Framework;
+﻿using System;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Core
 {
@@ -15,6 +16,17 @@ namespace Sage.SData.Client.Core
         {
             get { return Uri.Product; }
             set { Uri.Product = value; }
+        }
+
+        /// <summary>
+        /// Accessor method for application
+        /// </summary>
+        /// <remarks>the application name</remarks>
+        [Obsolete("Use the ApplicationName property instead.")]
+        public string Application
+        {
+            get { return ApplicationName; }
+            set { ApplicationName = value; }
         }
 
         /// <summary>

@@ -1114,7 +1114,7 @@ namespace Sage.SData.Client.Common
         /// </summary>
         /// <param name="content">The HTML markup to parse.</param>
         /// <returns>
-        ///     A <see cref="HtmlAnchor"/> that represents the pingback auto-discovery link extracted from the <paramref name="html"/>. 
+        ///     A <see cref="HtmlAnchor"/> that represents the pingback auto-discovery link extracted from the <paramref name="content"/>. 
         ///     If no pingback auto-discovery link was found, returns <b>null</b>.
         /// </returns>
         /// <remarks>

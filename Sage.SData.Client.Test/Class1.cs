@@ -556,7 +556,7 @@ namespace Sage.SData.Client.Test
                     {
                         ResourceKind = "employees",
                         ResourceSelector = "(1)",
-                        Properties = {"LoginID"}
+                        ResourceProperties = {"LoginID"}
                     };
 
             var result = b.ToString();
@@ -573,7 +573,7 @@ namespace Sage.SData.Client.Test
                     {
                         ResourceKind = "employees",
                         ResourceSelector = "(1)",
-                        Properties = {"Address", "City"}
+                        ResourceProperties = {"Address", "City"}
                     };
 
             var result = b.ToString();
@@ -590,7 +590,7 @@ namespace Sage.SData.Client.Test
                     {
                         ResourceKind = "employee",
                         ResourceSelector = "(1)",
-                        Properties = {"Contacts"}
+                        ResourceProperties = {"Contacts"}
                     };
 
             var feed = b.ReadFeed();
@@ -607,7 +607,7 @@ namespace Sage.SData.Client.Test
                     {
                         ResourceKind = "employees",
                         ResourceSelector = "(1)",
-                        Properties = {"LoginID"}
+                        ResourceProperties = {"LoginID"}
                     };
 
             var entry = b.Read();
@@ -624,7 +624,7 @@ namespace Sage.SData.Client.Test
                     {
                         ResourceKind = "employees",
                         ResourceSelector = "(id = '1234')",
-                        Properties = {"Address", "City"}
+                        ResourceProperties = {"Address", "City"}
                     };
 
             var entry = b.Create();
@@ -641,7 +641,7 @@ namespace Sage.SData.Client.Test
                     {
                         ResourceKind = "employees",
                         ResourceSelector = "(id = '1234')",
-                        Properties = {"Address", "City"}
+                        ResourceProperties = {"Address", "City"}
                     };
 
             var entry = b.Update();
@@ -658,7 +658,7 @@ namespace Sage.SData.Client.Test
                     {
                         ResourceKind = "employees",
                         ResourceSelector = "(1)",
-                        Properties = {"Address", "City"}
+                        ResourceProperties = {"Address", "City"}
                     };
 
             var result = b.Delete();

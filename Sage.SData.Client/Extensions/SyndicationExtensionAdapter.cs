@@ -201,7 +201,7 @@ namespace Sage.SData.Client.Extensions
         /// <param name="types">A <see cref="Collection{T}"/> collection of <see cref="Type"/> objects that represent user-defined syndication extensions to be instantiated.</param>
         /// <param name="namespaces">A collection of XML nameapces that are used to filter the available native framework syndication extensions.</param>
         /// <returns>
-        ///     A <see cref="Collection{T}"/> collection of <see cref="ISyndicationExtension"/> objects instantiated using the supplied <paramref name="types"/> and <paramref name="manager"/>.
+        ///     A <see cref="Collection{T}"/> collection of <see cref="ISyndicationExtension"/> objects instantiated using the supplied <paramref name="types"/> and <paramref name="namespaces"/>.
         /// </returns>
         /// <remarks>
         ///     This method instantiates all of the available native framework syndication extensions, and then filters them based on the XML namespaces and prefixes contained in the supplied <paramref name="namespaces"/>. 

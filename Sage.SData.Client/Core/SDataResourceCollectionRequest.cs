@@ -1,4 +1,5 @@
-﻿using Sage.SData.Client.Atom;
+﻿using System;
+using Sage.SData.Client.Atom;
 
 namespace Sage.SData.Client.Core
 {
@@ -61,6 +62,17 @@ namespace Sage.SData.Client.Core
         {
             var reader = new AtomFeedReader(Service, this);
             return reader.Read() ? reader : null;
+        }
+
+        /// <summary>
+        /// Performs initial read from AtomFeedReader
+        /// </summary>
+        /// <param name="feed">the feed</param>
+        /// <returns></returns>
+        [Obsolete("Use the ExecuteReader method instead, which automatically fetches the feed's first page.")]
+        public bool Read(AtomFeed feed)
+        {
+            return ExecuteReader() != null;
         }
     }
 }

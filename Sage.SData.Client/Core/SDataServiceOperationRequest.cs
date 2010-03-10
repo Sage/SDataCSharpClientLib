@@ -1,4 +1,5 @@
-﻿using Sage.SData.Client.Atom;
+﻿using System;
+using Sage.SData.Client.Atom;
 using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Core
@@ -51,6 +52,11 @@ namespace Sage.SData.Client.Core
         /// </example>
         public AtomEntry Create()
         {
+            if (Entry == null)
+            {
+                throw new InvalidOperationException("Request entry must be specified");
+            }
+
             return Service.CreateEntry(this, Entry);
         }
 

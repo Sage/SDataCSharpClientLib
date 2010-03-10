@@ -229,7 +229,7 @@ namespace Sage.SData.Client.Framework
         /// <returns><see cref="Array"/> of <see cref="UriPathSegment"/> objects.</returns>
         public static IEnumerable<UriPathSegment> FromStrings(IEnumerable<string> segments)
         {
-            return segments.SelectMany(UriPathParser.Parse).ToArray();
+            return segments.SelectMany(segment => UriPathParser.Parse(segment)).ToArray();
         }
 
         /// <summary>

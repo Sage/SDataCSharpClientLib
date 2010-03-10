@@ -174,9 +174,9 @@ namespace Sage.SData.Client.Framework
 
                 entry.SetSDataHttpMethod(op.Method);
 
-                if (!string.IsNullOrEmpty(op.IfMatch))
+                if (!string.IsNullOrEmpty(op.ETag))
                 {
-                    entry.SetSDataHttpIfMatch(op.IfMatch);
+                    entry.SetSDataHttpIfMatch(op.ETag);
                 }
 
                 feed.AddEntry(entry);
@@ -227,9 +227,12 @@ namespace Sage.SData.Client.Framework
                                       };
             }
 
-            if (!string.IsNullOrEmpty(op.IfMatch))
+            if (!string.IsNullOrEmpty(op.ETag))
             {
-                request.Headers[HttpRequestHeader.IfMatch] = op.IfMatch;
+                var header = op.Method == HttpMethod.Get
+                                 ? HttpRequestHeader.IfNoneMatch
+                                 : HttpRequestHeader.IfMatch;
+                request.Headers[header] = op.ETag;
             }
 
             if (op.Resource != null)

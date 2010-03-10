@@ -20,6 +20,12 @@ namespace Sage.SData.Client.Core
         private readonly string _trackingUrl;
         private SDataTracking _tracking;
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="trackingUrl"></param>
+        /// <param name="tracking"></param>
         public AsyncRequest(ISDataService service, string trackingUrl, SDataTracking tracking)
         {
             Guard.ArgumentNotNull(service, "service");
@@ -100,7 +106,7 @@ namespace Sage.SData.Client.Core
 
         /// <summary>
         /// refreshes the object, if the repsponse has been received
-        /// <see cref="Resource"/> it will be non null
+        /// <see cref="ISyndicationResource"/> it will be non null
         /// </summary>
         public ISyndicationResource Refresh()
         {

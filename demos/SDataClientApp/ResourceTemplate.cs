@@ -3,8 +3,6 @@ using System.Windows.Forms;
 using Sage.SData.Client.Core;
 using Sage.SData.Client.Extensions;
 
-// ReSharper disable InconsistentNaming
-
 namespace SDataClientApp
 {
     public partial class ResourceTemplate : BaseControl

@@ -81,7 +81,7 @@ namespace Sage.SData.Client.Framework
         /// Gets or sets the ETag value for the request.
         /// </summary>
         /// <value>The ETag value for the request.</value>
-        public string IfMatch { get; set; }
+        public string ETag { get; set; }
 
         #endregion
     }

@@ -29,7 +29,7 @@ namespace Sage.SData.Client.Core
         /// http://sdata.acme.com/sdata/sageApp/test/accounts('A001')/postalAddress/country
         /// http://sdata.acme.com/sdata/sageApp/test/accounts('A001')/addresses(type eq 'postal')/country
         /// </remarks>
-        public IList<string> Properties
+        public IList<string> ResourceProperties
         {
             get { return _properties; }
         }
@@ -82,7 +82,7 @@ namespace Sage.SData.Client.Core
         {
             base.BuildUrl(uri);
 
-            foreach (var value in Properties)
+            foreach (var value in ResourceProperties)
             {
                 uri.AppendPath(value);
             }

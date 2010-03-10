@@ -4,8 +4,6 @@ using System.Windows.Forms;
 using Sage.SData.Client.Core;
 using Sage.SData.Client.Extensions;
 
-// ReSharper disable InconsistentNaming
-
 namespace SDataClientApp
 {
     public partial class ResourceProperties : BaseControl
@@ -40,7 +38,7 @@ namespace SDataClientApp
             {
                 if (tbResourceProperty.Text != string.Empty)
                 {
-                    _sdataResourcePropertyRequest.Properties.Add(tbResourceProperty.Text);
+                    _sdataResourcePropertyRequest.ResourceProperties.Add(tbResourceProperty.Text);
                     lbProperties.Items.Add(tbResourceProperty.Text);
                     tbResourcePropertiesURL.Text = _sdataResourcePropertyRequest.ToString();
                     tbResourceProperty.Text = "";
@@ -81,7 +79,7 @@ namespace SDataClientApp
         private void btnClearProperties_Click(object sender, EventArgs e)
         {
             lbProperties.Items.Clear();
-            _sdataResourcePropertyRequest.Properties.Clear();
+            _sdataResourcePropertyRequest.ResourceProperties.Clear();
             tbResourcePropertiesURL.Text = "";
         }
 

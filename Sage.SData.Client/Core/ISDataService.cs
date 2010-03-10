@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Xml.Schema;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
@@ -10,6 +11,12 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public interface ISDataService
     {
+        /// <summary>
+        /// Flag set when service has been initialized
+        /// </summary>
+        [Obsolete("Explicit initialization is no longer required.")]
+        bool Initialized { get; }
+
         /// <remarks>
         /// Creates the service with predefined values for the url
         /// </remarks>
@@ -115,6 +122,15 @@ namespace Sage.SData.Client.Core
         AtomFeed CreateFeed(SDataBaseRequest request, AtomFeed feed);
 
         /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="feed"></param>
+        /// <param name="eTag"></param>
+        /// <returns></returns>
+        AtomFeed CreateFeed(SDataBaseRequest request, AtomFeed feed, out string eTag);
+
+        /// <summary>
         /// Asynchronous PUT to the server
         /// </summary>
         /// <param name="request">The request that identifies the resource within the syndication data source.</param>
@@ -127,6 +143,13 @@ namespace Sage.SData.Client.Core
         /// <param name="url">the url for the operation</param>
         /// <returns><b>true</b> returns true if the operation was successful</returns>
         bool Delete(string url);
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        bool DeleteEntry(SDataBaseRequest request);
 
         /// <summary>
         /// Removes a resource from the syndication data source.
@@ -151,11 +174,27 @@ namespace Sage.SData.Client.Core
         AtomFeed ReadFeed(SDataBaseRequest request);
 
         /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="eTag"></param>
+        /// <returns></returns>
+        AtomFeed ReadFeed(SDataBaseRequest request, ref string eTag);
+
+        /// <summary>
         /// Reads resource information from the data source based on the URL.
         /// </summary>
         /// <param name="request">request for the syndication resource to get information for.</param>
         /// <returns>An AtomEntry <see cref="AtomEntry"/> populated with the specified resources's information from the data source.</returns>
         AtomEntry ReadEntry(SDataBaseRequest request);
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="entry"></param>
+        /// <returns></returns>
+        AtomEntry ReadEntry(SDataBaseRequest request, AtomEntry entry);
 
         /// <summary>
         /// Reads xsd from a $schema request
@@ -172,5 +211,12 @@ namespace Sage.SData.Client.Core
         ///     An object that implements the <see cref="ISyndicationResource"/> interface that represents the updated information for the resource.
         /// </param>
         AtomEntry UpdateEntry(SDataBaseRequest request, AtomEntry entry);
+
+        /// <summary>
+        /// Initializes the <see cref="SDataService"/> 
+        /// </summary>
+        /// <remarks>Set the User Name and Password to authenticate with and build the url</remarks>
+        [Obsolete("Explicit initialization is no longer required.")]
+        void Initialize();
     }
 }

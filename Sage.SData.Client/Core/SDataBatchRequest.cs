@@ -53,6 +53,25 @@ namespace Sage.SData.Client.Core
             return Service.CreateAsync(this, feed);
         }
 
+        /// <summary>
+        /// Processes the request asynchronously
+        /// </summary>
+        /// <param name="trackingId">unique identifier for the async transaction</param>
+        /// <returns>AsyncRequest object to manage the transaction</returns>
+        /// <example>
+        ///     <code lang="cs" title="The following code example demonstrates the usage of the SDataBatchRequest class.">
+        ///         <code 
+        ///             source=".\Example.cs" 
+        ///             region="CREATE a BATCH Operation (Asynchronous)" 
+        ///         />
+        ///     </code>
+        /// </example>
+        [Obsolete("Use the parameterless CreateAsync method instead, which automatically handles the tracking ID internally.")]
+        public AsyncRequest CreateAsync(string trackingId)
+        {
+            return CreateAsync();
+        }
+
         protected override void BuildUrl(SDataUri uri)
         {
             base.BuildUrl(uri);
@@ -88,7 +107,7 @@ namespace Sage.SData.Client.Core
             {
                 var entry = request.Entry ?? new AtomEntry {Id = new AtomId(new Uri(request.Url))};
                 entry.SetSDataHttpMethod(request.Method);
-                entry.SetSDataHttpIfMatch(request.IfMatch);
+                entry.SetSDataHttpIfMatch(request.ETag);
                 feed.AddEntry(entry);
             }
 
@@ -119,6 +138,6 @@ namespace Sage.SData.Client.Core
         /// <summary>
         /// TODO
         /// </summary>
-        public string IfMatch { get; set; }
+        public string ETag { get; set; }
     }
 }

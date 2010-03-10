@@ -2,8 +2,6 @@
 using Sage.SData.Client.Framework;
 using SDataClientApp.Properties;
 
-// ReSharper disable InconsistentNaming
-
 namespace SDataClientApp
 {
     public partial class ServiceConfig : BaseControl

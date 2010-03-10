@@ -168,16 +168,16 @@ namespace Examples
             rpu.ContractName = "test";
             rpu.ResourceKind = "accounts";
             rpu.ResourceSelector = "('A001')";
-            rpu.Properties.Add("postalAddress");
-            rpu.Properties.Add("country");
+            rpu.ResourceProperties.Add("postalAddress");
+            rpu.ResourceProperties.Add("country");
             // the above configuration generates http://sdata.acme.com/sdata/sageApp/test/accounts('A001')/postalAddress/country
 
             // read the entry from the server
             entry = service.ReadEntry(rpu);
 
             // now reconfigure and read property as a feed
-            rpu.Properties.Add("salesOrders('0023')");
-            rpu.Properties.Add("orderLines");
+            rpu.ResourceProperties.Add("salesOrders('0023')");
+            rpu.ResourceProperties.Add("orderLines");
             // the above configuration generates http://sdata.acme.com/sdata/sageApp/test/-/accounts('A001')/salesOrders('0023')/orderLines
 
             // read the feed from the server

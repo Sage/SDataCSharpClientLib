@@ -8,7 +8,7 @@ namespace SDataClientApp
         public ISDataService Service { get; set; }
         public ToolStripItem StatusLabel { get; set; }
 
-        public virtual void Refresh()
+        public new virtual void Refresh()
         {
         }
     }

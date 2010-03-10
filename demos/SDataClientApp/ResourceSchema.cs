@@ -5,8 +5,6 @@ using System.Xml.Schema;
 using Sage.SData.Client.Core;
 using SDataClientApp.Properties;
 
-// ReSharper disable InconsistentNaming
-
 namespace SDataClientApp
 {
     public partial class ResourceSchema : BaseControl

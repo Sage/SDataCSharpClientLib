@@ -24,6 +24,15 @@ namespace Sage.SData.Client.Core
     {
         private readonly SDataUri _uri;
 
+        /// <summary>
+        /// Flag set when Service is initialzed
+        /// </summary>
+        [Obsolete("Explicit initialization is no longer required.")]
+        public bool Initialized
+        {
+            get { return true; }
+        }
+
         /// <remarks>
         /// Creates the service with predefined values for the url
         /// </remarks>
@@ -170,6 +179,19 @@ namespace Sage.SData.Client.Core
         /// <param name="feed"></param>
         public AtomFeed CreateFeed(SDataBaseRequest request, AtomFeed feed)
         {
+            string eTag;
+            return CreateFeed(request, feed, out eTag);
+        }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="feed"></param>
+        /// <param name="eTag"></param>
+        /// <returns></returns>
+        public AtomFeed CreateFeed(SDataBaseRequest request, AtomFeed feed, out string eTag)
+        {
             Guard.ArgumentNotNull(request, "request");
             Guard.ArgumentNotNull(feed, "feed");
 
@@ -178,6 +200,7 @@ namespace Sage.SData.Client.Core
                 var requestUrl = request.ToString();
                 var operation = new RequestOperation(HttpMethod.Post, feed);
                 var response = ExecuteRequest(requestUrl, operation, MediaType.Atom);
+                eTag = response.ETag;
                 return (AtomFeed) response.Content;
             }
             catch (WebException ex)
@@ -218,7 +241,14 @@ namespace Sage.SData.Client.Core
 
                 var operation = new RequestOperation(HttpMethod.Post, entry);
                 var response = ExecuteRequest(requestUrl, operation, MediaType.AtomEntry);
-                return (AtomEntry) response.Content;
+                entry = (AtomEntry) response.Content;
+
+                if (!string.IsNullOrEmpty(response.ETag))
+                {
+                    entry.SetSDataHttpETag(response.ETag);
+                }
+
+                return entry;
             }
             catch (WebException ex)
             {
@@ -284,6 +314,16 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public bool DeleteEntry(SDataBaseRequest request)
+        {
+            return DeleteEntry(request, null);
+        }
+
+        /// <summary>
         /// Removes a resource from the syndication data source.
         /// </summary>
         /// <param name="request">The request from the syndication data source for the resource to be removed.</param>
@@ -292,12 +332,11 @@ namespace Sage.SData.Client.Core
         public bool DeleteEntry(SDataBaseRequest request, AtomEntry entry)
         {
             Guard.ArgumentNotNull(request, "request");
-            Guard.ArgumentNotNull(entry, "entry");
 
             try
             {
                 var requestUrl = request.ToString();
-                var ifMatch = entry.GetSDataHttpETag();
+                var eTag = entry != null ? entry.GetSDataHttpETag() : null;
 
                 if (BatchProcess.Instance.Requests.Count > 0)
                 {
@@ -305,13 +344,13 @@ namespace Sage.SData.Client.Core
                                        {
                                            Url = requestUrl,
                                            Method = HttpMethod.Delete,
-                                           IfMatch = ifMatch
+                                           ETag = eTag
                                        };
                     BatchProcess.Instance.AddToBatch(batchRequest);
                     return true;
                 }
 
-                var operation = new RequestOperation(HttpMethod.Delete) {IfMatch = ifMatch};
+                var operation = new RequestOperation(HttpMethod.Delete) {ETag = eTag};
                 var response = ExecuteRequest(requestUrl, operation, null);
                 return response.StatusCode == HttpStatusCode.OK;
             }
@@ -336,7 +375,8 @@ namespace Sage.SData.Client.Core
 
             try
             {
-                var response = ExecuteRequest(url, null);
+                var operation = new RequestOperation(HttpMethod.Get);
+                var response = ExecuteRequest(url, operation, null);
                 return response.Content;
             }
             catch (WebException ex)
@@ -356,12 +396,26 @@ namespace Sage.SData.Client.Core
         /// <returns>AtomFeed <see cref="AtomFeed"/> populated with the specified resources's information from the data source.</returns>
         public AtomFeed ReadFeed(SDataBaseRequest request)
         {
+            string eTag = null;
+            return ReadFeed(request, ref eTag);
+        }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="eTag"></param>
+        /// <returns></returns>
+        public AtomFeed ReadFeed(SDataBaseRequest request, ref string eTag)
+        {
             Guard.ArgumentNotNull(request, "request");
 
             try
             {
                 var requestUrl = request.ToString();
-                var response = ExecuteRequest(requestUrl, MediaType.Atom);
+                var operation = new RequestOperation(HttpMethod.Get) {ETag = eTag};
+                var response = ExecuteRequest(requestUrl, operation, MediaType.Atom);
+                eTag = response.ETag;
                 return (AtomFeed) response.Content;
             }
             catch (WebException ex)
@@ -381,25 +435,46 @@ namespace Sage.SData.Client.Core
         /// <returns>An <see cref="AtomEntry"/> populated with the specified resources' information from the data source.</returns>
         public AtomEntry ReadEntry(SDataBaseRequest request)
         {
+            return ReadEntry(request, null);
+        }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="entry"></param>
+        /// <returns></returns>
+        public AtomEntry ReadEntry(SDataBaseRequest request, AtomEntry entry)
+        {
             Guard.ArgumentNotNull(request, "request");
 
             try
             {
                 var requestUrl = request.ToString();
+                var eTag = entry != null ? entry.GetSDataHttpETag() : null;
 
                 if (BatchProcess.Instance.Requests.Count > 0)
                 {
                     var batchRequest = new SDataBatchRequestItem
                                        {
                                            Url = requestUrl,
-                                           Method = HttpMethod.Get
+                                           Method = HttpMethod.Get,
+                                           ETag = eTag
                                        };
                     BatchProcess.Instance.AddToBatch(batchRequest);
                     return null;
                 }
 
-                var response = ExecuteRequest(requestUrl, MediaType.AtomEntry);
-                return (AtomEntry) response.Content;
+                var operation = new RequestOperation(HttpMethod.Get) {ETag = eTag};
+                var response = ExecuteRequest(requestUrl, operation, MediaType.AtomEntry);
+                entry = (AtomEntry) response.Content;
+
+                if (!string.IsNullOrEmpty(response.ETag))
+                {
+                    entry.SetSDataHttpETag(response.ETag);
+                }
+
+                return entry;
             }
             catch (WebException ex)
             {
@@ -423,7 +498,8 @@ namespace Sage.SData.Client.Core
             try
             {
                 var requestUrl = request.ToString();
-                var response = ExecuteRequest(requestUrl, MediaType.Xml);
+                var operation = new RequestOperation(HttpMethod.Get);
+                var response = ExecuteRequest(requestUrl, operation, MediaType.Xml);
 
                 using (var reader = new StringReader((string) response.Content))
                 {
@@ -455,7 +531,7 @@ namespace Sage.SData.Client.Core
             try
             {
                 var requestUrl = request.ToString();
-                var ifMatch = entry.GetSDataHttpETag();
+                var eTag = entry.GetSDataHttpETag();
 
                 if (BatchProcess.Instance.Requests.Count > 0)
                 {
@@ -464,15 +540,22 @@ namespace Sage.SData.Client.Core
                                            Url = requestUrl,
                                            Method = HttpMethod.Put,
                                            Entry = entry,
-                                           IfMatch = ifMatch
+                                           ETag = eTag
                                        };
                     BatchProcess.Instance.AddToBatch(batchRequest);
                     return null;
                 }
 
-                var operation = new RequestOperation(HttpMethod.Put, entry) {IfMatch = ifMatch};
+                var operation = new RequestOperation(HttpMethod.Put, entry) {ETag = eTag};
                 var response = ExecuteRequest(requestUrl, operation, MediaType.AtomEntry);
-                return (AtomEntry) response.Content;
+                entry = (AtomEntry) response.Content;
+
+                if (!string.IsNullOrEmpty(response.ETag))
+                {
+                    entry.SetSDataHttpETag(response.ETag);
+                }
+
+                return entry;
             }
             catch (WebException ex)
             {
@@ -524,10 +607,13 @@ namespace Sage.SData.Client.Core
             UserAgent = "Sage";
         }
 
-        private SDataResponse ExecuteRequest(string url, MediaType? accept)
+        /// <summary>
+        /// Initializes the <see cref="SDataService"/> 
+        /// </summary>
+        /// <remarks>Set the User Name and Password to authenticate with and build the url</remarks>
+        [Obsolete("Explicit initialization is no longer required.")]
+        public void Initialize()
         {
-            var operation = new RequestOperation(HttpMethod.Get);
-            return ExecuteRequest(url, operation, accept);
         }
 
         private SDataResponse ExecuteRequest(string url, RequestOperation operation, MediaType? accept)

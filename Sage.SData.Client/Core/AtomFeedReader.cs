@@ -29,11 +29,38 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
+        /// The total items available in the reader
+        /// </summary>
+        [Obsolete("Use the Count property instead.")]
+        public int ItemsAvailable
+        {
+            get { return Count; }
+        }
+
+        /// <summary>
+        /// Accessor method for the current entry index
+        /// </summary>
+        [Obsolete("Use the CurrentIndex property instead.")]
+        public int EntryIndex
+        {
+            get { return (int) CurrentIndex; }
+        }
+
+        /// <summary>
         /// The parent request 
         /// </summary>
         public SDataResourceCollectionRequest Request
         {
             get { return _request; }
+        }
+
+        /// <summary>
+        /// The parent request 
+        /// </summary>
+        [Obsolete("Use the Request property instead.")]
+        public SDataResourceCollectionRequest Parent
+        {
+            get { return Request; }
         }
 
         /// <summary>
@@ -119,7 +146,7 @@ namespace Sage.SData.Client.Core
 
             if (index + _itemsAvailable > entries.Length)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Target array is not large enought", "entries");
             }
 
             foreach (var entry in this)
@@ -227,6 +254,16 @@ namespace Sage.SData.Client.Core
                 _currentIndex++;
             }
             return hasMore;
+        }
+
+        /// <summary>
+        /// Moves the next AtomEntry in the reader. If the the reader has no more AtomEntrys the next page will be retrieved
+        /// </summary>
+        /// <returns>bool</returns>
+        [Obsolete("Use the Next method instead.")]
+        public bool MoveNext()
+        {
+            return Next();
         }
 
         /// <summary>
