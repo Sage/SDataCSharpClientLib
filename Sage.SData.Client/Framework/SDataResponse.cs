@@ -4,6 +4,7 @@
 // code. Please contact Sage (UK) if you do not have such a licence. Sage will take
 // appropriate legal action against those who make unauthorised use of this code.
 
+using System;
 using System.IO;
 using System.Net;
 using System.Xml;
@@ -23,58 +24,19 @@ namespace Sage.SData.Client.Framework
         private readonly string _location;
         private readonly object _content;
 
-        internal SDataResponse(WebResponse response)
+        internal SDataResponse(WebResponse response, string redirectLocation)
         {
             var httpResponse = response as HttpWebResponse;
             _statusCode = httpResponse != null ? httpResponse.StatusCode : 0;
             _contentType = MediaTypeNames.GetMediaType(response.ContentType);
             _eTag = response.Headers[HttpResponseHeader.ETag];
-            _location = response.Headers[HttpResponseHeader.Location];
+            _location = response.Headers[HttpResponseHeader.Location] ?? redirectLocation;
 
             if (_statusCode != HttpStatusCode.NoContent)
             {
                 using (var stream = response.GetResponseStream())
                 {
-                    switch (_contentType)
-                    {
-                        case MediaType.Atom:
-                        {
-                            var feed = new AtomFeed();
-                            feed.Load(stream);
-                            _content = feed;
-                            break;
-                        }
-                        case MediaType.AtomEntry:
-                        {
-                            var entry = new AtomEntry();
-                            entry.Load(stream);
-                            _content = entry;
-                            break;
-                        }
-                        default:
-                        {
-                            if (_contentType == MediaType.Xml)
-                            {
-                                var serializer = new XmlSerializer(typeof (SDataTracking));
-
-                                try
-                                {
-                                    _content = serializer.Deserialize(stream);
-                                    break;
-                                }
-                                catch (XmlException)
-                                {
-                                }
-                            }
-
-                            using (var reader = new StreamReader(stream))
-                            {
-                                _content = reader.ReadToEnd();
-                            }
-
-                            break;
-                        }
-                    }
+                    _content = LoadContent(stream, _contentType);
                 }
             }
         }
@@ -117,6 +79,89 @@ namespace Sage.SData.Client.Framework
         public object Content
         {
             get { return _content; }
+        }
+
+        private static object LoadContent(Stream stream, MediaType contentType)
+        {
+            switch (contentType)
+            {
+                case MediaType.Atom:
+                    return LoadFeedContent(stream);
+                case MediaType.AtomEntry:
+                    return LoadEntryContent(stream);
+                default:
+                    return LoadOtherContent(stream, contentType);
+            }
+        }
+
+        private static AtomFeed LoadFeedContent(Stream stream)
+        {
+            var feed = new AtomFeed();
+            feed.Load(stream);
+            return feed;
+        }
+
+        private static AtomEntry LoadEntryContent(Stream stream)
+        {
+            var entry = new AtomEntry();
+            entry.Load(stream);
+            return entry;
+        }
+
+        private static object LoadOtherContent(Stream stream, MediaType contentType)
+        {
+            if (contentType == MediaType.Xml)
+            {
+                using (var memory = new MemoryStream())
+                {
+                    int num;
+                    var buffer = new byte[0x1000];
+
+                    while ((num = stream.Read(buffer, 0, buffer.Length)) != 0)
+                    {
+                        memory.Write(buffer, 0, num);
+                    }
+
+                    memory.Seek(0, SeekOrigin.Begin);
+                    var content = LoadTrackingContent(memory);
+
+                    if (content != null)
+                    {
+                        return content;
+                    }
+
+                    memory.Seek(0, SeekOrigin.Begin);
+                    return LoadStringContent(memory);
+                }
+            }
+
+            return LoadStringContent(stream);
+        }
+
+        private static SDataTracking LoadTrackingContent(Stream stream)
+        {
+            var serializer = new XmlSerializer(typeof (SDataTracking));
+
+            try
+            {
+                return (SDataTracking) serializer.Deserialize(stream);
+            }
+            catch (XmlException)
+            {
+            }
+            catch (InvalidOperationException)
+            {
+            }
+
+            return null;
+        }
+
+        private static string LoadStringContent(Stream stream)
+        {
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
         }
     }
 }

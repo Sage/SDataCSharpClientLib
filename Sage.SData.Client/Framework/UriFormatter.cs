@@ -62,6 +62,11 @@ namespace Sage.SData.Client.Framework
         public const string PathSegmentPrefix = "/";
 
         /// <summary>
+        /// TODO
+        /// </summary>
+        public const string FragmentPrefix = "#";
+
+        /// <summary>
         /// Returns the Http scheme.
         /// </summary>
         /// <value>A <see cref="string"/> containing the Http scheme.</value>
@@ -104,6 +109,8 @@ namespace Sage.SData.Client.Framework
         private List<UriPathSegment> _pathSegments;
 
         private IDictionary<string, string> _queryArgs;
+
+        private string _fragment;
 
         #endregion
 
@@ -193,6 +200,11 @@ namespace Sage.SData.Client.Framework
 
             if (uri._queryArgs != null)
                 _queryArgs = new Dictionary<string, string>(uri._queryArgs, StringComparer.InvariantCultureIgnoreCase);
+
+            if (!string.IsNullOrEmpty(uri._fragment))
+            {
+                _fragment = uri._fragment.Substring(1);
+            }
         }
 
         #region Properties
@@ -560,6 +572,21 @@ namespace Sage.SData.Client.Framework
             }
         }
 
+        public string Fragment
+        {
+            get
+            {
+                CheckParseUri();
+                return _fragment;
+            }
+            set
+            {
+                CheckParseUri();
+                _fragment = value;
+                _requiresRebuildUri = true;
+            }
+        }
+
         /// <summary>
         /// Gets or sets a value indicating if the <see cref="Path"/> needs to be rebuilt.
         /// </summary>
@@ -911,6 +938,12 @@ namespace Sage.SData.Client.Framework
                 uri.Append(query);
             }
 
+            if (!string.IsNullOrEmpty(_fragment))
+            {
+                uri.Append(FragmentPrefix);
+                uri.Append(_fragment);
+            }
+
             _uri = new Uri(uri.ToString());
         }
 
@@ -944,6 +977,7 @@ namespace Sage.SData.Client.Framework
                 _server = string.Empty;
                 PathInternal = string.Empty;
                 _queryArgs = null;
+                _fragment = string.Empty;
             }
             else
             {
@@ -976,6 +1010,11 @@ namespace Sage.SData.Client.Framework
                     _queryArgs = UriQueryParser.Parse(_uri.Query.Substring(QueryPrefix.Length));
                 else
                     _queryArgs = UriQueryParser.Parse(_uri.Query);
+
+                if (!string.IsNullOrEmpty(_uri.Fragment))
+                {
+                    _fragment = _uri.Fragment.Substring(1);
+                }
             }
         }
 

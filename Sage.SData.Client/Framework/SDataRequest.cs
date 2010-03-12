@@ -51,6 +51,8 @@ namespace Sage.SData.Client.Framework
         public SDataRequest(string uri, params RequestOperation[] operations)
         {
             Uri = uri;
+            UserAgent = "Sage";
+            Timeout = 120000;
             _operations = new List<RequestOperation>(operations);
         }
 
@@ -107,37 +109,27 @@ namespace Sage.SData.Client.Framework
         /// </summary>
         public SDataResponse GetResponse()
         {
-            var request = CreateRequest();
-            return GetResponse(request);
+            var uri = Uri;
+            var operation = _operations.Count == 1
+                           ? _operations[0]
+                           : CreateBatchOperation();
+            string location = null;
+
+            while (true)
+            {
+                var request = CreateRequest(uri, operation);
+                var response = request.GetResponse();
+                var httpResponse = response as HttpWebResponse;
+                var statusCode = httpResponse != null ? httpResponse.StatusCode : 0;
+
+                if (statusCode != HttpStatusCode.Found)
+                    return new SDataResponse(response, location);
+
+                uri = location = response.Headers[HttpResponseHeader.Location];
+            }
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
-        public IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
-        {
-            var request = CreateRequest();
-            return new AsyncResult(request, request.BeginGetResponse(callback, state));
-        }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        public SDataResponse EndGetResponse(IAsyncResult asyncResult)
-        {
-            var request = ((AsyncResult) asyncResult).Request;
-            var response = request.EndGetResponse(asyncResult);
-            return new SDataResponse(response);
-        }
-
-        private WebRequest CreateRequest()
-        {
-            return _operations.Count == 1
-                       ? CreateRequest(Uri, _operations[0])
-                       : CreateRequestBatch();
-        }
-
-        private WebRequest CreateRequestBatch()
+        private RequestOperation CreateBatchOperation()
         {
             var uri = new SDataUri(Uri);
 
@@ -183,7 +175,7 @@ namespace Sage.SData.Client.Framework
             }
 
             uri.AppendPath("$batch");
-            return CreateRequest(uri.ToString(), new RequestOperation(HttpMethod.Post, feed));
+            return new RequestOperation(HttpMethod.Post, feed);
         }
 
         private WebRequest CreateRequest(string uri, RequestOperation op)
@@ -197,6 +189,7 @@ namespace Sage.SData.Client.Framework
             var httpRequest = request as HttpWebRequest;
             if (httpRequest != null)
             {
+                httpRequest.AllowAutoRedirect = false;
                 httpRequest.ReadWriteTimeout = Timeout;
                 httpRequest.KeepAlive = false;
                 httpRequest.ProtocolVersion = HttpVersion.Version10;
@@ -248,12 +241,6 @@ namespace Sage.SData.Client.Framework
             }
 
             return request;
-        }
-
-        private static SDataResponse GetResponse(WebRequest request)
-        {
-            var response = request.GetResponse();
-            return new SDataResponse(response);
         }
 
         private class AsyncResult : IAsyncResult
