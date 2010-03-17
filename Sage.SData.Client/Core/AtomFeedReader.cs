@@ -225,7 +225,17 @@ namespace Sage.SData.Client.Core
         /// Sets the current AtomEntry to the first item in the reader
         /// </summary>
         /// <returns>bool</returns>
+        [Obsolete("Use the MoveFirst method instead")]
         public bool First()
+        {
+            return MoveFirst();
+        }
+
+        /// <summary>
+        /// Sets the current AtomEntry to the first item in the reader
+        /// </summary>
+        /// <returns>bool</returns>
+        public bool MoveFirst()
         {
             _currentIndex = 1;
             return true;
@@ -236,7 +246,18 @@ namespace Sage.SData.Client.Core
         /// NOTE: this does not retrieve the last page of data for the feed
         /// </summary>
         /// <returns></returns>
+        [Obsolete("Use the MoveLast method instead")]
         public bool Last()
+        {
+            return MoveLast();
+        }
+
+        /// <summary>
+        /// Gets the last AtomEntry contained in the reader
+        /// NOTE: this does not retrieve the last page of data for the feed
+        /// </summary>
+        /// <returns></returns>
+        public bool MoveLast()
         {
             _currentIndex = _itemsAvailable;
             return true;
@@ -246,7 +267,7 @@ namespace Sage.SData.Client.Core
         /// Moves the next AtomEntry in the reader. If the the reader has no more AtomEntrys the next page will be retrieved
         /// </summary>
         /// <returns>bool</returns>
-        public bool Next()
+        public bool MoveNext()
         {
             var hasMore = _currentIndex < _itemsAvailable;
             if (hasMore)
@@ -257,20 +278,20 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Moves the next AtomEntry in the reader. If the the reader has no more AtomEntrys the next page will be retrieved
+        /// Sets the current AtomEntry to the previous item in the reader.
         /// </summary>
-        /// <returns>bool</returns>
-        [Obsolete("Use the Next method instead.")]
-        public bool MoveNext()
+        /// <returns></returns>
+        [Obsolete("Use the MovePrevious method instead")]
+        public bool Previous()
         {
-            return Next();
+            return MovePrevious();
         }
 
         /// <summary>
         /// Sets the current AtomEntry to the previous item in the reader.
         /// </summary>
         /// <returns></returns>
-        public bool Previous()
+        public bool MovePrevious()
         {
             var hasMore = _currentIndex > 1;
             if (hasMore)
