@@ -47,10 +47,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
-    <Compile Include="EndPointsCollectionRequestTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Core\AtomFeedReaderTests.cs" />
+    <Compile Include="Core\IntermediateApplicationsRequestTests.cs" />
+    <Compile Include="Core\IntermediateContractsRequestTests.cs" />
+    <Compile Include="Core\IntermediateDataSetsRequestTests.cs" />
+    <Compile Include="Core\IntermediateResourceCollectionsRequestTests.cs" />
+    <Compile Include="Core\IntermediateServicesRequestTests.cs" />
+    <Compile Include="Core\SDataEndPointCollectionRequestTests.cs" />
+    <Compile Include="Core\SDataResourceCollectionRequestTests.cs" />
+    <Compile Include="Core\SDataResourcePropertyRequestTests.cs" />
+    <Compile Include="Core\SDataResourceSchemaRequestTests.cs" />
+    <Compile Include="Core\SDataServiceOperationRequestTests.cs" />
+    <Compile Include="Core\SDataServiceTests.cs" />
+    <Compile Include="Core\SDataSingleResourceRequestTests.cs" />
+    <Compile Include="Core\SDataTemplateResourceRequestTests.cs" />
     <Compile Include="MockSDataService.cs" />
+    <None Include="TestEntry.xml" />
+    <None Include="TestFeed.xml" />
+    <None Include="TestSchema.xsd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sage.SData.Client\Sage.SData.Client_3_5.csproj">

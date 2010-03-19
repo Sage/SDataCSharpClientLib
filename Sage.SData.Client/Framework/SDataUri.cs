@@ -745,7 +745,7 @@ namespace Sage.SData.Client.Framework
             {
                 var value = this[QueryArgNames.RunStamp];
                 W3CDateTime dateTime;
-                return value != null && W3CDateTime.TryParse(value, out dateTime) ? dateTime.DateTime : (DateTime?)null;
+                return value != null && W3CDateTime.TryParse(value, out dateTime) ? dateTime.DateTime : (DateTime?) null;
             }
             set { this[QueryArgNames.RunStamp] = value != null ? new W3CDateTime(value.Value).ToString() : null; }
         }

@@ -111,8 +111,8 @@ namespace Sage.SData.Client.Framework
         {
             var uri = Uri;
             var operation = _operations.Count == 1
-                           ? _operations[0]
-                           : CreateBatchOperation();
+                                ? _operations[0]
+                                : CreateBatchOperation();
             string location = null;
 
             while (true)

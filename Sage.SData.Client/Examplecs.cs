@@ -154,7 +154,7 @@ namespace Examples
             var sru = new SDataSingleResourceRequest(service);
             sru.ContractName = "test";
             sru.ResourceKind = "accounts";
-            sru.ResourceSelector = "('A001')";
+            sru.ResourceSelector = "'A001'";
             // the above configuration generates  http://sdata.acme.com/sdata/sageApp/test/-/accounts('A001') 
 
             // read the entry from the server
@@ -167,7 +167,7 @@ namespace Examples
             var rpu = new SDataResourcePropertyRequest(service);
             rpu.ContractName = "test";
             rpu.ResourceKind = "accounts";
-            rpu.ResourceSelector = "('A001')";
+            rpu.ResourceSelector = "'A001'";
             rpu.ResourceProperties.Add("postalAddress");
             rpu.ResourceProperties.Add("country");
             // the above configuration generates http://sdata.acme.com/sdata/sageApp/test/accounts('A001')/postalAddress/country
@@ -296,7 +296,7 @@ namespace Examples
             var sru2 = new SDataSingleResourceRequest(service);
             sru2.ContractName = "test";
             sru2.ResourceKind = "accounts";
-            sru2.ResourceSelector = "('A001')";
+            sru2.ResourceSelector = "'A001'";
             // the above configuration generates  http://sdata.acme.com/sdata/sageApp/test/accounts('A001') 
 
             // TODO: Make changes to the entry payload

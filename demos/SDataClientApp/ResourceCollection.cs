@@ -106,7 +106,7 @@ namespace SDataClientApp
         {
             if (_reader != null)
             {
-                if (_reader.Next())
+                if (_reader.MoveNext())
                 {
                     UpdateReaderGrid();
                 }

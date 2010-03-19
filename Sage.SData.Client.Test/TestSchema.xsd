@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.sage.com/demoErp" targetNamespace="http://schemas.sage.com/demoErp" xmlns:sme="http://schemas.sage.com/sdata/sme/2007" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <!-- Resource Kind Definition -->
+  <xs:element name="product" type="tns:product--type" sme:role="resourceKind" sme:pluralName="products" sme:label="Product" sme:canGet="true" sme:canPost="true" sme:canPut="true" sme:canDelete="true" sme:canPageNext="true" sme:canPagePrevious="true" sme:canPageIndex="true" sme:supportsETag="true" sme:batchingMode="syncOrAsync" />
+  <xs:complexType name="product--type">
+    <xs:all>
+      <xs:element name="productNumber" type="xs:string" sme:label="#" sme:canSort="true" sme:canFilter="true" sme:precedence="1" />
+      <xs:element name="productID" type="xs:integer" sme:label="ID" sme:isIdentifier="true" sme:isReadOnly="true" />
+      <xs:element name="name" type="xs:string" sme:isDescriptor="true" sme:label="Name" sme:canSort="true" sme:canFilter="true" sme:precedence="1" />
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="product--list">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="product" type="tns:product--type" />
+    </xs:sequence>
+  </xs:complexType>
+  <!-- Resource Kind Definition -->
+  <xs:element name="salesOrder" type="tns:salesOrder--type" sme:role="resourceKind" sme:pluralName="salesOrders" sme:label="Sales Order" sme:canGet="true" sme:canPost="true" sme:canPut="true" sme:canDelete="true" sme:canPageNext="true" sme:canPagePrevious="true" sme:canPageIndex="true" sme:supportsETag="true" sme:batchingMode="syncOrAsync" />
+  <xs:complexType name="salesOrder--type">
+    <xs:all>
+      <xs:element name="uuid" type="xs:string" minOccurs="0" sme:label="UUID" sme:isGlobalId="true" />
+      <xs:element name="salesOrderID" type="xs:integer" minOccurs="0" sme:label="ID" sme:canSort="true" sme:canFilter="true" sme:precedence="1" sme:isIdentifier="true" sme:isReadOnly="true" />
+      <xs:element name="orderDate" type="xs:date" minOccurs="0" sme:label="Date" sme:canSort="true" sme:canFilter="true" sme:precedence="2" />
+      <xs:element name="shipDate" type="xs:date" minOccurs="0" nillable="true" sme:label="Shipping Date" sme:canSort="true" sme:canFilter="true" sme:precedence="3" />
+      <xs:element name="contactID" type="xs:integer" minOccurs="0" sme:copiedFrom="contact/contactID" />
+      <xs:element name="subTotal" type="xs:decimal" minOccurs="0" sme:label="Sub-total" sme:canSort="true" sme:canFilter="true" sme:precedence="2" sme:isReadOnly="true" />
+      <xs:element name="billAddress" type="tns:address--type" minOccurs="0" sme:relationship="child" sme:isCollection="false" sme:label="Billing Address" sme:canGet="true" sme:canPut="true" />
+      <xs:element name="shipAddress" type="tns:address--type" minOccurs="0" sme:relationship="child" sme:isCollection="false" sme:label="Shipping Address" sme:canGet="true" sme:canPut="true" />
+      <xs:element name="orderLines" type="tns:salesOrderLine--list" minOccurs="0" sme:relationship="child" sme:isCollection="true" sme:label="Order Lines" sme:canGet="true" sme:canPost="true" />
+      <xs:element name="contact" type="tns:contact--type" minOccurs="0" sme:relationship="reference" sme:label="Contact" sme:canGet="true" />
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="salesOrder--list">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="salesOrder" type="tns:salesOrder--type" />
+    </xs:sequence>
+  </xs:complexType>
+  <!-- Resource Kind Definition -->
+  <xs:element name="salesOrderLine" type="tns:salesOrderLine--type" sme:role="resourceKind" sme:pluralName="salesOrderLines" sme:label="Sales Order Line" sme:canGet="true" sme:canPost="true" sme:canPut="true" sme:canDelete="true" sme:canPageNext="true" sme:canPagePrevious="true" sme:canPageIndex="true" sme:supportsETag="true" sme:batchingMode="syncOrAsync" />
+  <xs:complexType name="salesOrderLine--type">
+    <xs:all>
+      <xs:element name="uuid" type="xs:string" minOccurs="0" sme:label="UUID" sme:isGlobalId="true" />
+      <xs:element name="salesOrderID" type="xs:integer" minOccurs="0" sme:label="Order ID" sme:canSort="true" sme:canFilter="true" sme:precedence="1" sme:isReadOnly="true" />
+      <xs:element name="salesOrderDetailID" type="xs:integer" minOccurs="0" sme:label="ID" sme:isIdentifier="true" sme:isReadOnly="true" />
+      <xs:element name="productID" type="xs:integer" minOccurs="0" sme:label="Product ID" sme:copiedFrom="product/productID" />
+      <xs:element name="orderQty" type="xs:decimal" minOccurs="0" sme:label="Qty" />
+      <xs:element name="unitPrice" type="xs:decimal" minOccurs="0" sme:label="Unit Price" />
+      <xs:element name="order" type="tns:salesOrder--type" minOccurs="0" sme:relationship="parent" sme:label="Order" />
+      <xs:element name="product" type="tns:product--type" minOccurs="0" sme:relationship="reference" sme:label="Product" />
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="salesOrderLine--list">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="salesOrderLine" type="tns:salesOrderLine--type" />
+    </xs:sequence>
+  </xs:complexType>
+  <!-- Resource Kind Definition -->
+  <xs:element name="contact" type="tns:contact--type" sme:role="resourceKind" sme:pluralName="contacts" sme:label="Contact" sme:canGet="true" sme:canPost="true" sme:canPut="true" sme:canDelete="true" sme:canPageNext="true" sme:canPagePrevious="true" sme:canPageIndex="true" sme:supportsETag="true" sme:batchingMode="syncOrAsync" />
+  <xs:complexType name="contact--type">
+    <xs:all>
+      <xs:element name="uuid" type="xs:string" minOccurs="0" sme:label="UUID" sme:isGlobalId="true" />
+      <xs:element name="contactID" type="xs:integer" minOccurs="0" sme:label="ID" sme:isIdentifier="true" sme:isReadOnly="true" />
+      <xs:element name="civility" type="tns:civility--type" minOccurs="0" sme:label="Civility" />
+      <xs:element name="firstName" type="xs:string" minOccurs="0" sme:label="First Name" sme:canSort="true" sme:canFilter="true" sme:precedence="1" />
+      <xs:element name="lastName" type="xs:string" minOccurs="0" sme:label="Last Name" sme:canSort="true" sme:canFilter="true" sme:precedence="1" sme:isDescriptor="true" />
+      <xs:element name="address" type="tns:address--type" minOccurs="0" sme:relationship="child" sme:isCollection="false" sme:label="Address" />
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="contact--list">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="contact" type="tns:contact--type" />
+    </xs:sequence>
+  </xs:complexType>
+  <!-- Resource Kind Definition -->
+  <xs:element name="address" type="tns:address--type" sme:role="resourceKind" sme:pluralName="addresses" sme:label="Address" sme:canGet="true" sme:canPost="true" sme:canPut="true" sme:canDelete="true" sme:canPageNext="true" sme:canPagePrevious="true" sme:canPageIndex="true" sme:supportsETag="true" sme:batchingMode="syncOrAsync" />
+  <xs:complexType name="address--type">
+    <xs:all>
+      <xs:element name="uuid" type="xs:string" minOccurs="0" sme:label="UUID" sme:isGlobalId="true" />
+      <xs:element name="street" type="xs:string" minOccurs="0" sme:label="Street" />
+      <xs:element name="city" type="xs:string" minOccurs="0" sme:label="City" />
+      <xs:element name="postalCode" type="xs:string" minOccurs="0" sme:label="Postal Code" />
+      <xs:element name="countryCode" type="xs:string" minOccurs="0" sme:label="County Code" />
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="address--list">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="product" type="tns:address--type" />
+    </xs:sequence>
+  </xs:complexType>
+  <!-- Auxiliary Type Definition -->
+  <xs:simpleType name="civility--type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Mr" />
+      <xs:enumeration value="Mrs" />
+      <xs:enumeration value="Ms" />
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- Service Operation Definition -->
+  <xs:element name="productComputeSimplePrice" type="tns:productComputeSimplePrice--type" sme:role="serviceOperation" sme:path="products/$service/computeSimplePrice" sme:invocationMode="sync" />
+  <xs:complexType name="productComputeSimplePrice--type">
+    <xs:all>
+      <xs:element name="request" type="tns:simplePriceRequest--type" minOccurs="0" sme:envelope="entry" />
+      <xs:element name="response" type="tns:simplePriceResponse--type" minOccurs="0" sme:envelope="entry" />
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="simplePriceRequest--type">
+    <xs:all>
+      <xs:element name="productID" type="xs:string" sme:label="Product ID" />
+      <xs:element name="customerID" type="xs:string" sme:label="Customer ID" />
+      <xs:element name="quantity" type="xs:decimal" sme:label="Quantity" />
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="simplePriceResponse--type">
+    <xs:all>
+      <xs:element name="unitPrice" type="xs:decimal" sme:label="Unit Price" />
+      <xs:element name="quantityPrice" type="xs:decimal" sme:label="Quantity Price" />
+      <xs:element name="discount" type="xs:decimal" sme:label="Discount" />
+      <xs:element name="tax" type="xs:decimal" sme:label="Tax" />
+    </xs:all>
+  </xs:complexType>
+</xs:schema>

@@ -13,20 +13,11 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class AtomFeedReader : IList<AtomEntry>
     {
-        private readonly ISDataService _service;
         private readonly SDataResourceCollectionRequest _request;
         private int _itemsAvailable;
         private int _itemsPerPage;
         private IList<IList<AtomEntry>> _listPages;
         private int _currentIndex;
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        public ISDataService Service
-        {
-            get { return _service; }
-        }
 
         /// <summary>
         /// The total items available in the reader
@@ -43,7 +34,7 @@ namespace Sage.SData.Client.Core
         [Obsolete("Use the CurrentIndex property instead.")]
         public int EntryIndex
         {
-            get { return (int) CurrentIndex; }
+            get { return (int) CurrentIndex + 1; }
         }
 
         /// <summary>
@@ -66,14 +57,11 @@ namespace Sage.SData.Client.Core
         /// <summary>
         /// Create the reader for the specified AtomFeed
         /// </summary>
-        /// <param name="service">the ISDataService used by the reader</param>
         /// <param name="request">the SDataResourceCollectionRequest that specifies the reader</param>
-        internal AtomFeedReader(ISDataService service, SDataResourceCollectionRequest request)
+        internal AtomFeedReader(SDataResourceCollectionRequest request)
         {
-            Guard.ArgumentNotNull(service, "service");
             Guard.ArgumentNotNull(request, "request");
 
-            _service = service;
             _request = request;
         }
 
@@ -199,17 +187,17 @@ namespace Sage.SData.Client.Core
         public bool Read()
         {
             _request.StartIndex = 1;
-            var firstFeed = _service.ReadFeed(_request);
+            var firstFeed = _request.Read();
             _itemsAvailable = firstFeed.GetOpenSearchTotalResults() ?? 0;
             _itemsPerPage = firstFeed.GetOpenSearchItemsPerPage() ?? 0;
 
             if (_itemsAvailable == 0 || _itemsPerPage == 0)
             {
-                _currentIndex = 0;
+                _currentIndex = -1;
                 return false;
             }
 
-            var pageCount = _itemsAvailable/_itemsPerPage + (_itemsAvailable%_itemsPerPage > 0 ? 1 : 0);
+            var pageCount = (_itemsAvailable + _itemsPerPage - 1)/_itemsPerPage;
             _listPages = new List<IList<AtomEntry>>(pageCount);
 
             for (var i = 0; i < pageCount; i++)
@@ -217,7 +205,7 @@ namespace Sage.SData.Client.Core
                 _listPages.Add(i == 0 ? new List<AtomEntry>(firstFeed.Entries) : null);
             }
 
-            _currentIndex = 1;
+            _currentIndex = 0;
             return true;
         }
 
@@ -225,7 +213,7 @@ namespace Sage.SData.Client.Core
         /// Sets the current AtomEntry to the first item in the reader
         /// </summary>
         /// <returns>bool</returns>
-        [Obsolete("Use the MoveFirst method instead")]
+        [Obsolete("Use the MoveFirst method instead.")]
         public bool First()
         {
             return MoveFirst();
@@ -237,7 +225,7 @@ namespace Sage.SData.Client.Core
         /// <returns>bool</returns>
         public bool MoveFirst()
         {
-            _currentIndex = 1;
+            _currentIndex = 0;
             return true;
         }
 
@@ -246,7 +234,7 @@ namespace Sage.SData.Client.Core
         /// NOTE: this does not retrieve the last page of data for the feed
         /// </summary>
         /// <returns></returns>
-        [Obsolete("Use the MoveLast method instead")]
+        [Obsolete("Use the MoveLast method instead.")]
         public bool Last()
         {
             return MoveLast();
@@ -259,7 +247,7 @@ namespace Sage.SData.Client.Core
         /// <returns></returns>
         public bool MoveLast()
         {
-            _currentIndex = _itemsAvailable;
+            _currentIndex = _itemsAvailable - 1;
             return true;
         }
 
@@ -269,7 +257,7 @@ namespace Sage.SData.Client.Core
         /// <returns>bool</returns>
         public bool MoveNext()
         {
-            var hasMore = _currentIndex < _itemsAvailable;
+            var hasMore = _currentIndex + 1 < _itemsAvailable;
             if (hasMore)
             {
                 _currentIndex++;
@@ -281,7 +269,7 @@ namespace Sage.SData.Client.Core
         /// Sets the current AtomEntry to the previous item in the reader.
         /// </summary>
         /// <returns></returns>
-        [Obsolete("Use the MovePrevious method instead")]
+        [Obsolete("Use the MovePrevious method instead.")]
         public bool Previous()
         {
             return MovePrevious();
@@ -293,7 +281,7 @@ namespace Sage.SData.Client.Core
         /// <returns></returns>
         public bool MovePrevious()
         {
-            var hasMore = _currentIndex > 1;
+            var hasMore = _currentIndex > 0;
             if (hasMore)
             {
                 _currentIndex--;
@@ -319,8 +307,8 @@ namespace Sage.SData.Client.Core
 
         private AtomEntry GetItem(int index)
         {
-            var pageIndex = (index - 1)/_itemsPerPage;
-            var entryIndex = (index - 1)%_itemsPerPage;
+            var pageIndex = index/_itemsPerPage;
+            var entryIndex = index%_itemsPerPage;
             return GetPage(pageIndex)[entryIndex];
         }
 
@@ -331,7 +319,7 @@ namespace Sage.SData.Client.Core
             if (page == null)
             {
                 _request.StartIndex = pageIndex*_itemsPerPage + 1;
-                var feed = _service.ReadFeed(_request);
+                var feed = _request.Read();
                 _listPages[pageIndex] = page = new List<AtomEntry>(feed.Entries);
             }
 

@@ -60,7 +60,7 @@ namespace Sage.SData.Client.Core
         /// <returns></returns>
         public AtomFeedReader ExecuteReader()
         {
-            var reader = new AtomFeedReader(Service, this);
+            var reader = new AtomFeedReader(this);
             return reader.Read() ? reader : null;
         }
 
