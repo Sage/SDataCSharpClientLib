@@ -19,7 +19,7 @@ namespace Sage.SData.Client.Extensions
         /// <summary>
         /// Invalid Query Parameter.
         /// </summary>
-        BadQueryParamater = 2,
+        BadQueryParameter = 2,
         /// <summary>
         /// Application does not exist.
         /// </summary>

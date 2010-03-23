@@ -83,7 +83,7 @@ namespace Sage.SData.Client.Test
                            {
                                Phase = "Initializing",
                                PhaseDetail = "StartingThread",
-                               Progress = 0.0,
+                               Progress = 0M,
                                ElapsedSeconds = 0,
                                RemainingSeconds = 10,
                                PollingMillis = 500

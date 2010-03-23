@@ -66,7 +66,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         public decimal Progress
         {
-            get { return (decimal) _tracking.Progress; }
+            get { return _tracking.Progress; }
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         public int ElapsedSeconds
         {
-            get { return (int) _tracking.ElapsedSeconds; }
+            get { return _tracking.ElapsedSeconds; }
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         public int RemainingSeconds
         {
-            get { return (int) _tracking.RemainingSeconds; }
+            get { return _tracking.RemainingSeconds; }
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         public int PollingMilliseconds
         {
-            get { return (int) _tracking.PollingMillis; }
+            get { return _tracking.PollingMillis; }
         }
 
         /// <summary>

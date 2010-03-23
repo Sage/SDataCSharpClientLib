@@ -31,25 +31,25 @@ namespace Sage.SData.Client.Framework
         /// Percentage of the operation which is completed.
         /// </summary>
         [XmlElement("progress")]
-        public double Progress { get; set; }
+        public decimal Progress { get; set; }
 
         /// <summary>
         /// Time elapsed since operation started, in seconds.
         /// </summary>
         [XmlElement("elapsedSeconds")]
-        public double ElapsedSeconds { get; set; }
+        public int ElapsedSeconds { get; set; }
 
         /// <summary>
         /// Expected remaining time, in seconds
         /// </summary>
         [XmlElement("remainingSeconds")]
-        public double RemainingSeconds { get; set; }
+        public int RemainingSeconds { get; set; }
 
         /// <summary>
         /// Delay (in milliseconds) that the consumer should use 
         /// before polling the service again.
         /// </summary>
         [XmlElement("pollingMillis")]
-        public double PollingMillis { get; set; }
+        public int PollingMillis { get; set; }
     }
 }
