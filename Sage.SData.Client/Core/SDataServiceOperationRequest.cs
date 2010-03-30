@@ -25,7 +25,7 @@ namespace Sage.SData.Client.Core
         public string OperationName { get; set; }
 
         /// <summary>
-        /// TODO
+        /// The input entry containing parameter values to be submitted to the service.
         /// </summary>
         public AtomEntry Entry { get; set; }
 
@@ -61,7 +61,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// TODO
+        /// Execute the service operation asynchronously.
         /// </summary>
         /// <returns></returns>
         public AsyncRequest CreateAsync()

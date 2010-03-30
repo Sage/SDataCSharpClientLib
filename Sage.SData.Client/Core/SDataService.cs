@@ -81,7 +81,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the port.
         /// </summary>
         public int? Port
         {
@@ -158,7 +158,7 @@ namespace Sage.SData.Client.Core
         public string Password { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the timeout in milliseconds used during requests.
         /// </summary>
         public int Timeout { get; set; }
 
@@ -168,7 +168,7 @@ namespace Sage.SData.Client.Core
         public CookieContainer Cookies { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the user agent passed during requests.
         /// </summary>
         public string UserAgent { get; set; }
 
@@ -184,7 +184,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// TODO
+        /// Adds a new syndication resource to the data source.
         /// </summary>
         /// <param name="request"></param>
         /// <param name="feed"></param>
@@ -217,7 +217,7 @@ namespace Sage.SData.Client.Core
         /// Adds a new syndication resource to the data source.
         /// </summary>
         /// <param name="request">The request that identifies the resource within the syndication data source.</param>
-        /// <param name="entry">TODO</param>
+        /// <param name="entry">The entry that should be created.</param>
         public AtomEntry CreateEntry(SDataBaseRequest request, AtomEntry entry)
         {
             Guard.ArgumentNotNull(request, "request");
@@ -264,7 +264,7 @@ namespace Sage.SData.Client.Core
         /// Asynchronous PUT to the server
         /// </summary>
         /// <param name="request">The request that identifies the resource within the syndication data source.</param>
-        /// <param name="resource">TODO</param>
+        /// <param name="resource">The resource that should be created asynchronously.</param>
         public AsyncRequest CreateAsync(SDataBaseRequest request, ISyndicationResource resource)
         {
             Guard.ArgumentNotNull(request, "request");
@@ -314,7 +314,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// TODO
+        /// Removes a resource from the syndication data source.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -401,7 +401,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// TODO
+        /// Reads resource information from the data source based on the URL and the specified ETag.
         /// </summary>
         /// <param name="request"></param>
         /// <param name="eTag"></param>
@@ -439,7 +439,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// TODO
+        /// Reads resource information from the data source based on the URL and the ETag of the specified entry.
         /// </summary>
         /// <param name="request"></param>
         /// <param name="entry"></param>
@@ -568,7 +568,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Default Constructor
+        /// Initialises a new instance of the <see cref="SDataService"/> class.
         /// </summary>
         public SDataService()
             : this(null)
@@ -576,7 +576,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// TODO
+        /// Initialises a new instance of the <see cref="SDataService"/> class, initialized with a target url.
         /// </summary>
         /// <param name="url"></param>
         public SDataService(string url)
@@ -585,7 +585,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Constructor with pre-set url
+        /// Initialises a new instance of the <see cref="SDataService"/> class, initialized with a target url, user name and password.
         /// </summary>
         /// <param name="url"></param>
         /// <param name="userName">user name used for credentials</param>

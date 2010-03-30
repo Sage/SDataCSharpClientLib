@@ -4,7 +4,7 @@ using Sage.SData.Client.Framework;
 namespace Sage.SData.Client.Core
 {
     /// <summary>
-    /// Represents the return value from a an asychronous call for a service operation or batch operation
+    /// Encapsulates the return value of an asychronous call to a service operation or a batch operation.
     /// </summary>
     /// <example>
     ///     <code lang="cs" title="The following code example demonstrates the usage of the AsyncRequest class.">
@@ -21,11 +21,11 @@ namespace Sage.SData.Client.Core
         private SDataTracking _tracking;
 
         /// <summary>
-        /// TODO
+        /// Initialises a new instance of the <see cref="AsyncRequest"/> class.
         /// </summary>
-        /// <param name="service"></param>
-        /// <param name="trackingUrl"></param>
-        /// <param name="tracking"></param>
+        /// <param name="service">The service that performs requests.</param>
+        /// <param name="trackingUrl">The url used to make progress requests.</param>
+        /// <param name="tracking">The tracking information from the initial request.</param>
         public AsyncRequest(ISDataService service, string trackingUrl, SDataTracking tracking)
         {
             Guard.ArgumentNotNull(service, "service");
@@ -38,7 +38,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// the service 
+        /// The service that performs requests.
         /// </summary>
         public ISDataService Service
         {
@@ -46,7 +46,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Current phase of the process
+        /// The current phase of the process.
         /// </summary>
         public string Phase
         {
@@ -54,7 +54,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Description of the phase
+        /// The description of the current phase.
         /// </summary>
         public string PhaseDetail
         {
@@ -62,7 +62,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// the amount of the process completed
+        /// The percentage of the process that has been completed so far.
         /// </summary>
         public decimal Progress
         {
@@ -70,8 +70,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// The amount of time in seconds that the process
-        /// has been executing
+        /// The amount of time in seconds that the process has been running.
         /// </summary>
         public int ElapsedSeconds
         {
@@ -79,8 +78,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// the amountof time in seconds remaining for the 
-        /// process to complete
+        /// The amount of time in seconds that the process has remaining.
         /// </summary>
         public int RemainingSeconds
         {
@@ -88,8 +86,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// the amount of time in milli secs to poll the server
-        /// for a response
+        /// The amount of time in milliseconds that clients should wait between progress requests.
         /// </summary>
         public int PollingMilliseconds
         {
@@ -97,7 +94,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// string representing the url for the location header
+        /// A url representing the location where progress requests can be made.
         /// </summary>
         public string TrackingUrl
         {
@@ -105,8 +102,9 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// refreshes the object, if the repsponse has been received
-        /// <see cref="ISyndicationResource"/> it will be non null
+        /// Makes a progress update request and refreshes the various progress properties.
+        /// If the process has completed on the server then a <see cref="ISyndicationResource"/>
+        /// result will be returned. Otherwise a null reference is returned.
         /// </summary>
         public ISyndicationResource Refresh()
         {
@@ -119,7 +117,6 @@ namespace Sage.SData.Client.Core
                 return null;
             }
 
-            // now we have to delete this thing, the clean up from the SData Spec
             Service.Delete(_trackingUrl);
 
             return (ISyndicationResource) content;

@@ -13,7 +13,7 @@ namespace Sage.SData.Client.Core
         private readonly SDataDiagnosis _diagnosis;
 
         /// <summary>
-        /// TODO
+        /// An object containing additional diagnostic information about the error.
         /// </summary>
         public SDataDiagnosis Diagnosis
         {

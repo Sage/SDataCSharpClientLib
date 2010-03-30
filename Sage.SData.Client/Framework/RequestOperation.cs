@@ -24,7 +24,7 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// TODO
+        /// Initialises a new instance of the <see cref="RequestOperation"/> class.
         /// </summary>
         /// <param name="method"></param>
         public RequestOperation(HttpMethod method)
@@ -34,10 +34,10 @@ namespace Sage.SData.Client.Framework
 
         /// <summary>
         /// Initialises a new instance of the <see cref="RequestOperation"/> class with
-        /// the specified <see cref="AtomEntry"/> and verb.
+        /// the specified <see cref="AtomEntry"/> and method.
         /// </summary>
         /// <param name="method">One of the <see cref="HttpMethod"/> values</param>
-        /// <param name="resource">TODO</param>
+        /// <param name="resource">The input resource involved in the operation.</param>
         public RequestOperation(HttpMethod method, ISyndicationResource resource)
         {
             if (resource == null)
@@ -62,18 +62,18 @@ namespace Sage.SData.Client.Framework
         #region Properties
 
         /// <summary>
-        /// Gets or sets the verb for the request.
+        /// Gets or sets the method for the request.
         /// </summary>
         /// <value>One of the <see cref="HttpMethod"/> values.</value>
         public HttpMethod Method { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the predicate for the request.
         /// </summary>
         public string Predicate { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the input resource for the request.
         /// </summary>
         public ISyndicationResource Resource { get; set; }
 

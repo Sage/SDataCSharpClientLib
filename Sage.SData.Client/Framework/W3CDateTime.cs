@@ -379,10 +379,10 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// TODO
+        /// Returns a value indicating whether the specified date represents a null date.
         /// </summary>
-        /// <param name="dateTime"></param>
-        /// <returns></returns>
+        /// <param name="dateTime">The <see cref="W3CDateTime"/> that needs to be checked.</param>
+        /// <returns><b>true</b> if the value represents a null date, otherwise returns false.</returns>
         public static bool IsNull(W3CDateTime dateTime)
         {
             return dateTime == null || dateTime.DateTime == DateTime.MinValue;

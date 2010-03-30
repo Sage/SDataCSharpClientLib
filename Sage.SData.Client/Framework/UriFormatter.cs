@@ -21,7 +21,7 @@ namespace Sage.SData.Client.Framework
         #region Constants
 
         /// <summary>
-        /// TODO
+        /// Returns the <see cref="string"/> used as the name of the uri property during serialization.
         /// </summary>
         public const string UriName = "uri";
 
@@ -62,7 +62,7 @@ namespace Sage.SData.Client.Framework
         public const string PathSegmentPrefix = "/";
 
         /// <summary>
-        /// TODO
+        /// Returns the <see cref="string"/> used as the fragment prefix.
         /// </summary>
         public const string FragmentPrefix = "#";
 

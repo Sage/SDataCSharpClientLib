@@ -89,7 +89,7 @@ namespace Sage.SData.Client.Test.Properties {
         ///    &lt;email /&gt;
         ///  &lt;/author&gt;
         ///  &lt;category term=&quot;&quot; scheme=&quot;&quot; label=&quot;&quot; /&gt;
-        ///  &lt;generator uri=&quot;&quot; version=&quot;1.0&quot;&gt;Sage Dynamic Integration Adapter [rest of string was truncated]&quot;;.
+        ///  &lt;generator uri=&quot;&quot; version=&quot;1.0&quot;&gt;Sage Dynamic Integration Adapter&lt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TestFeed {
             get {

@@ -338,13 +338,9 @@ namespace Examples
         private AtomEntry CreateServiceOperationAsync(SDataService service)
         {
             var request = new SDataServiceOperationRequest(service);
+            request.ApplicationName = "sageApp";
             request.ContractName = "test";
-            request.ResourceKind = "products";
             request.OperationName = "computePrice";
-            // the above configuration generates http://sdata.acme.com/sdata/sageApp/test/-/products/$service/computePrice
-
-            // now reconfigure and and generate for globally for the entire contract
-            request.ResourceKind = string.Empty;
             // the above configuration generates http://sdata.acme.com/sdata/sageApp/test/-/$service/computePrice
 
             // read the entry from the server
@@ -355,6 +351,7 @@ namespace Examples
             do
             {
                 var progress = asyncRequest.Progress;
+                // report progress to the user
             } while ((result = asyncRequest.Refresh()) == null);
 
             return result as AtomEntry;

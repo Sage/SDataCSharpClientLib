@@ -10,13 +10,13 @@ namespace Sage.SData.Client.Core
     public abstract class SDataBaseRequest : ISDataRequestSettings
     {
         /// <summary>
-        /// protocol value for http
+        /// Protocol value for http
         /// </summary>
         /// <remarks>the default</remarks>
         public const string Http = "http";
 
         /// <summary>
-        /// protocl value for https
+        /// Protocol value for https
         /// </summary>
         public const string Https = "https";
 
@@ -29,7 +29,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Accessor method for protocol, 
+        /// Accessor method for protocol
         /// </summary>
         /// <remarks>HTTP is the default but can be HTTPS</remarks>
         public string Protocol
@@ -39,7 +39,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Accessor method for Server
+        /// Accessor method for server
         /// </summary>
         /// <remarks>IP address is also allowed (192.168.1.1).
         /// Can be followed by port number. For example www.example.com:5493. 
@@ -69,7 +69,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// TODO
+        /// Accessor method for port
         /// </summary>
         public int? Port
         {
@@ -89,7 +89,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        ///  Dictionary of query name value pairs
+        /// Dictionary of query name-value pairs
         /// </summary>
         /// <example>where, salesorderamount lt 15.00
         /// orderby, salesorderid

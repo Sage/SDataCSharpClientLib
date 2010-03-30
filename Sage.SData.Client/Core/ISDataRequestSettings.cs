@@ -7,7 +7,7 @@
     public interface ISDataRequestSettings
     {
         /// <summary>
-        /// Accessor method for protocol, 
+        /// Accessor method for protocol
         /// </summary>
         /// <remarks>HTTP is the default but can be HTTPS</remarks>
         string Protocol { get; set; }
@@ -19,7 +19,7 @@
         string ServerName { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Accessor method for port
         /// </summary>
         int? Port { get; set; }
 

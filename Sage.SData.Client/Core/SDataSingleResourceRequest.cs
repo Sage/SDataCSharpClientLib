@@ -31,7 +31,7 @@ namespace Sage.SData.Client.Core
         public string ResourceSelector { get; set; }
 
         /// <summary>
-        /// TODO
+        /// A comma separated list of properties whose payloads should be nested.
         /// </summary>
         public string Include
         {

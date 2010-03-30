@@ -15,14 +15,15 @@ using Sage.SData.Client.Extensions;
 namespace Sage.SData.Client.Framework
 {
     /// <summary>
-    /// TODO
+    /// The request class which is responsible for sending and
+    /// receiving data over HTTP with the server.
     /// </summary>
     public class SDataRequest
     {
         private readonly IList<RequestOperation> _operations;
 
         /// <summary>
-        /// TODO
+        /// Initializes a new instance of the <see cref="SDataRequest"/> class.
         /// </summary>
         public SDataRequest(string uri)
             : this(uri, new RequestOperation())
@@ -30,7 +31,7 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// TODO
+        /// Initializes a new instance of the <see cref="SDataRequest"/> class.
         /// </summary>
         public SDataRequest(string uri, HttpMethod method)
             : this(uri, new RequestOperation(method, null))
@@ -38,7 +39,7 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// TODO
+        /// Initializes a new instance of the <see cref="SDataRequest"/> class.
         /// </summary>
         public SDataRequest(string uri, HttpMethod method, ISyndicationResource resource)
             : this(uri, new RequestOperation(method, resource))
@@ -46,7 +47,7 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// TODO
+        /// Initializes a new instance of the <see cref="SDataRequest"/> class.
         /// </summary>
         public SDataRequest(string uri, params RequestOperation[] operations)
         {
@@ -57,47 +58,47 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the target uri used by requests.
         /// </summary>
         public string Uri { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the user name used by requests.
         /// </summary>
         public string UserName { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the password used by requests.
         /// </summary>
         public string Password { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the user agent passed during requests.
         /// </summary>
         public string UserAgent { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the timeout in milliseconds used during requests.
         /// </summary>
         public int Timeout { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the proxy used by requests.
         /// </summary>
         public IWebProxy Proxy { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the accept media type used by requests.
         /// </summary>
         public MediaType? Accept { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the cookies associated with this request.
         /// </summary>
         public CookieContainer Cookies { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Lists the operations associated with this request.
         /// </summary>
         public IList<RequestOperation> Operations
         {
@@ -105,7 +106,7 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// TODO
+        /// Execute the request and return a response object.
         /// </summary>
         public SDataResponse GetResponse()
         {

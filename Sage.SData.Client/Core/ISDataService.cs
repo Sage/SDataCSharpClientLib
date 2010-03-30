@@ -35,7 +35,7 @@ namespace Sage.SData.Client.Core
         string ServerName { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Accessor method for port
         /// </summary>
         int? Port { get; set; }
 
@@ -92,17 +92,17 @@ namespace Sage.SData.Client.Core
         string Password { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the timeout in milliseconds used during requests.
         /// </summary>
         int Timeout { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the cookies passed during requests.
         /// </summary>
         CookieContainer Cookies { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Gets or sets the user agent passed during requests.
         /// </summary>
         string UserAgent { get; set; }
 
@@ -122,7 +122,7 @@ namespace Sage.SData.Client.Core
         AtomFeed CreateFeed(SDataBaseRequest request, AtomFeed feed);
 
         /// <summary>
-        /// TODO
+        /// Adds new sydication resource to the data source returning an AtomFeed
         /// </summary>
         /// <param name="request"></param>
         /// <param name="feed"></param>
@@ -134,7 +134,7 @@ namespace Sage.SData.Client.Core
         /// Asynchronous PUT to the server
         /// </summary>
         /// <param name="request">The request that identifies the resource within the syndication data source.</param>
-        /// <param name="resource">TODO</param>
+        /// <param name="resource">The resource that should be created asynchronously.</param>
         AsyncRequest CreateAsync(SDataBaseRequest request, ISyndicationResource resource);
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace Sage.SData.Client.Core
         bool Delete(string url);
 
         /// <summary>
-        /// TODO
+        /// Removes a resource from the syndication data source.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -174,7 +174,7 @@ namespace Sage.SData.Client.Core
         AtomFeed ReadFeed(SDataBaseRequest request);
 
         /// <summary>
-        /// TODO
+        /// Reads resource information from the data source based on the URL and the specified ETag.
         /// </summary>
         /// <param name="request"></param>
         /// <param name="eTag"></param>
@@ -189,7 +189,7 @@ namespace Sage.SData.Client.Core
         AtomEntry ReadEntry(SDataBaseRequest request);
 
         /// <summary>
-        /// TODO
+        /// Reads resource information from the data source based on the URL and the ETag of the specified entry.
         /// </summary>
         /// <param name="request"></param>
         /// <param name="entry"></param>

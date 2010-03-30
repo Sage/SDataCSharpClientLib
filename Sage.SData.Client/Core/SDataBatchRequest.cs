@@ -116,27 +116,27 @@ namespace Sage.SData.Client.Core
     }
 
     /// <summary>
-    /// TODO
+    /// SData batch request item class.
     /// </summary>
     public class SDataBatchRequestItem
     {
         /// <summary>
-        /// TODO
+        /// The url of the request item.
         /// </summary>
         public string Url { get; set; }
 
         /// <summary>
-        /// TODO
+        /// The HTTP method of the request item.
         /// </summary>
         public HttpMethod Method { get; set; }
 
         /// <summary>
-        /// TODO
+        /// The input entry of the request item.
         /// </summary>
         public AtomEntry Entry { get; set; }
 
         /// <summary>
-        /// TODO
+        /// The ETag of the request item.
         /// </summary>
         public string ETag { get; set; }
     }

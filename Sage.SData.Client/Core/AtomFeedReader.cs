@@ -9,7 +9,8 @@ using Sage.SData.Client.Extensions;
 namespace Sage.SData.Client.Core
 {
     /// <summary>
-    /// reader that returns an AtomEntry for AtomEntries within an AtomFeed.  The AtomFeedReader automatically handles paging 
+    /// A standard list that fetches pages of feed entries as the user
+    /// iterates over, indexes into or navigates through it.
     /// </summary>
     public class AtomFeedReader : IList<AtomEntry>
     {
@@ -20,7 +21,7 @@ namespace Sage.SData.Client.Core
         private int _currentIndex;
 
         /// <summary>
-        /// The total items available in the reader
+        /// The total number of items available.
         /// </summary>
         [Obsolete("Use the Count property instead.")]
         public int ItemsAvailable
@@ -29,7 +30,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Accessor method for the current entry index
+        /// The current index of the current entry. This value is 1-based.
         /// </summary>
         [Obsolete("Use the CurrentIndex property instead.")]
         public int EntryIndex
@@ -38,7 +39,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// The parent request 
+        /// The request used to fetch pages of feed entries.
         /// </summary>
         public SDataResourceCollectionRequest Request
         {
@@ -46,7 +47,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// The parent request 
+        /// The request used to fetch pages of feed entries.
         /// </summary>
         [Obsolete("Use the Request property instead.")]
         public SDataResourceCollectionRequest Parent
@@ -55,9 +56,9 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Create the reader for the specified AtomFeed
+        /// Initialises a new instance of the <see cref="AtomFeedReader"/> class.
         /// </summary>
-        /// <param name="request">the SDataResourceCollectionRequest that specifies the reader</param>
+        /// <param name="request">The request used to fetch pages of feed entries.</param>
         internal AtomFeedReader(SDataResourceCollectionRequest request)
         {
             Guard.ArgumentNotNull(request, "request");
@@ -173,9 +174,9 @@ namespace Sage.SData.Client.Core
         #endregion
 
         /// <summary>
-        /// Initial load of the reader
+        /// Loads the reader and configures the internal pages.
         /// </summary>
-        /// <returns>bool</returns>
+        /// <returns>A value indicating whether the reader was successfully configured.</returns>
         /// <example>
         ///     <code lang="cs" title="The following code example demonstrates the usage of the AtomFeedReader class.">
         ///         <code 
@@ -210,9 +211,9 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Sets the current AtomEntry to the first item in the reader
+        /// Sets the current entry to the first item in the reader.
         /// </summary>
-        /// <returns>bool</returns>
+        /// <returns>A value indicating whether the navigation was successful.</returns>
         [Obsolete("Use the MoveFirst method instead.")]
         public bool First()
         {
@@ -220,9 +221,9 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Sets the current AtomEntry to the first item in the reader
+        /// Sets the current entry to the first item in the reader.
         /// </summary>
-        /// <returns>bool</returns>
+        /// <returns>A value indicating whether the navigation was successful.</returns>
         public bool MoveFirst()
         {
             _currentIndex = 0;
@@ -230,10 +231,9 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Gets the last AtomEntry contained in the reader
-        /// NOTE: this does not retrieve the last page of data for the feed
+        /// Sets the current entry to the last item in the reader.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A value indicating whether the navigation was successful.</returns>
         [Obsolete("Use the MoveLast method instead.")]
         public bool Last()
         {
@@ -241,10 +241,9 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Gets the last AtomEntry contained in the reader
-        /// NOTE: this does not retrieve the last page of data for the feed
+        /// Sets the current entry to the last item in the reader.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A value indicating whether the navigation was successful.</returns>
         public bool MoveLast()
         {
             _currentIndex = _itemsAvailable - 1;
@@ -252,9 +251,10 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Moves the next AtomEntry in the reader. If the the reader has no more AtomEntrys the next page will be retrieved
+        /// Sets the current entry to the next item in the reader.
+        /// If the end of the current page is reached then the next page will be retrieved.
         /// </summary>
-        /// <returns>bool</returns>
+        /// <returns>A value indicating whether the navigation was successful.</returns>
         public bool MoveNext()
         {
             var hasMore = _currentIndex + 1 < _itemsAvailable;
@@ -266,9 +266,9 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Sets the current AtomEntry to the previous item in the reader.
+        /// Sets the current entry to the previous item in the reader.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A value indicating whether the navigation was successful.</returns>
         [Obsolete("Use the MovePrevious method instead.")]
         public bool Previous()
         {
@@ -276,9 +276,9 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Sets the current AtomEntry to the previous item in the reader.
+        /// Sets the current entry to the previous item in the reader.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A value indicating whether the navigation was successful.</returns>
         public bool MovePrevious()
         {
             var hasMore = _currentIndex > 0;
@@ -290,7 +290,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// The current AtomEntry for the reader
+        /// The current entry.
         /// </summary>
         public AtomEntry Current
         {
@@ -298,7 +298,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// TODO
+        /// The current index of the current entry. This value is 0-based.
         /// </summary>
         public long CurrentIndex
         {

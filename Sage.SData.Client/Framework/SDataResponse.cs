@@ -14,7 +14,8 @@ using Sage.SData.Client.Atom;
 namespace Sage.SData.Client.Framework
 {
     /// <summary>
-    /// TODO
+    /// The response class which encapsulates interesting information returned
+    /// from a request.
     /// </summary>
     public class SDataResponse
     {
@@ -42,7 +43,7 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// TODO
+        /// The response status code.
         /// </summary>
         public HttpStatusCode StatusCode
         {
@@ -50,7 +51,7 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// TODO
+        /// The response content type.
         /// </summary>
         public MediaType ContentType
         {
@@ -58,7 +59,7 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// TODO
+        /// The response ETag.
         /// </summary>
         public string ETag
         {
@@ -66,7 +67,7 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// TODO
+        /// The response location.
         /// </summary>
         public string Location
         {
@@ -74,7 +75,7 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// TODO
+        /// The response content.
         /// </summary>
         public object Content
         {
