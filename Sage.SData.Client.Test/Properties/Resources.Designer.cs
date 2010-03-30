@@ -84,7 +84,7 @@ namespace Sage.SData.Client.Test.Properties {
         ///      xmlns:opensearch=&quot;http://a9.com/-/spec/opensearch/1.1/&quot;
         ///      xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;
         ///  &lt;author&gt;
-        ///    &lt;name&gt;slx&lt;/name&gt;
+        ///    &lt;name&gt;aw&lt;/name&gt;
         ///    &lt;uri /&gt;
         ///    &lt;email /&gt;
         ///  &lt;/author&gt;

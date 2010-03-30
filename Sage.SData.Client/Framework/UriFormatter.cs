@@ -1119,6 +1119,7 @@ namespace Sage.SData.Client.Framework
             if (!string.IsNullOrEmpty(PathInternal))
             {
                 var segments = InternalPathSegments;
+                segments.Clear();
 
                 foreach (var segment in UriPathSegment.FromStrings(UriPathSegment.GetPathSegments(PathInternal)))
                 {

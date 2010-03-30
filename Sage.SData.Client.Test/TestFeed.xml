@@ -5,7 +5,7 @@
       xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/"
       xmlns="http://www.w3.org/2005/Atom">
   <author>
-    <name>slx</name>
+    <name>aw</name>
     <uri />
     <email />
   </author>
@@ -20,7 +20,7 @@
   <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
   <entry>
     <author>
-      <name>slx</name>
+      <name>aw</name>
       <uri />
       <email />
     </author>
@@ -59,7 +59,7 @@
   </entry>
   <entry>
     <author>
-      <name>slx</name>
+      <name>aw</name>
       <uri />
       <email />
     </author>

@@ -110,7 +110,7 @@ namespace Sage.SData.Client.Framework
             /// <summary>
             /// Specifies the name of the include content argument
             /// </summary>
-            public const string IncludeContent = "includeContent";
+            public const string IncludeContent = "_includeContent";
 
             /// <summary>
             /// Specifies the name of the return delta argument
