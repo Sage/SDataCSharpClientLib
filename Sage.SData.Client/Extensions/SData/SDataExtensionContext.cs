@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Xml;
 using System.Xml.XPath;
 using Sage.SData.Client.Common;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Extensions
 {
@@ -21,7 +22,7 @@ namespace Sage.SData.Client.Extensions
         /// <summary>
         /// Private member to hold information that allows the client to diagnose errors
         /// </summary>
-        private Collection<SDataDiagnosis> _diagnoses;
+        private Collection<Diagnosis> _diagnoses;
 
         #endregion
 
@@ -37,9 +38,9 @@ namespace Sage.SData.Client.Extensions
         /// <summary>
         /// Gets information that allows the client to diagnose errors
         /// </summary>
-        public Collection<SDataDiagnosis> Diagnoses
+        public Collection<Diagnosis> Diagnoses
         {
-            get { return _diagnoses ?? (_diagnoses = new Collection<SDataDiagnosis>()); }
+            get { return _diagnoses ?? (_diagnoses = new Collection<Diagnosis>()); }
         }
 
         /// <summary>
@@ -93,7 +94,7 @@ namespace Sage.SData.Client.Extensions
                 var diagnoses = source.Select("sdata:diagnoses", manager);
                 foreach (XPathNavigator item in diagnoses)
                 {
-                    var diagnosis = new SDataDiagnosis();
+                    var diagnosis = new Diagnosis();
                     if (diagnosis.Load(item, manager))
                     {
                         Diagnoses.Add(diagnosis);

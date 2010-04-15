@@ -1,6 +1,5 @@
 ﻿using System;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Test.Framework
@@ -16,11 +15,11 @@ namespace Sage.SData.Client.Test.Framework
         public void Assign_New_Uri_To_Existing_Test()
         {
             var uri = new UriFormatter("http://m6400/sdata/-/-/-/");
-            var expected = new[] { new UriPathSegment("-"), new UriPathSegment("-"), new UriPathSegment("-") };
+            var expected = new[] {new UriPathSegment("-"), new UriPathSegment("-"), new UriPathSegment("-")};
             CollectionAssert.AreEquivalent(uri.PathSegments, expected);
 
-            uri.Uri = new System.Uri("http://localhost:3333/sdata/aw/dynamic/-/");
-            expected = new[] { new UriPathSegment("aw"), new UriPathSegment("dynamic"), new UriPathSegment("-") };
+            uri.Uri = new Uri("http://localhost:3333/sdata/aw/dynamic/-/");
+            expected = new[] {new UriPathSegment("aw"), new UriPathSegment("dynamic"), new UriPathSegment("-")};
             CollectionAssert.AreEquivalent(uri.PathSegments, expected);
         }
     }

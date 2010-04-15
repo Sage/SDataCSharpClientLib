@@ -13,7 +13,7 @@ namespace Sage.SData.Client.Framework
     /// asynchronous operation.
     /// </summary>
     [XmlType(TypeName = "tracking", Namespace = "http://schemas.sage.com/sdata/2008/1")]
-    public class SDataTracking
+    public class Tracking
     {
         /// <summary>
         /// The current phase of the operation.

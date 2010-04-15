@@ -2,11 +2,11 @@
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Xml.Schema;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
 using Sage.SData.Client.Core;
 using Sage.SData.Client.Framework;
+using Sage.SData.Client.Metadata;
 using Sage.SData.Client.Test.Properties;
 
 namespace Sage.SData.Client.Test
@@ -79,7 +79,7 @@ namespace Sage.SData.Client.Test
         public AsyncRequest CreateAsync(SDataBaseRequest request, ISyndicationResource resource)
         {
             const string trackingUrl = "http://www.example.com/sdata/sageApp/test/-/products/$service/computeSimplePrice";
-            var tracking = new SDataTracking
+            var tracking = new Tracking
                            {
                                Phase = "Initializing",
                                PhaseDetail = "StartingThread",
@@ -153,11 +153,11 @@ namespace Sage.SData.Client.Test
             throw new NotImplementedException();
         }
 
-        public XmlSchema ReadSchema(SDataResourceSchemaRequest request)
+        public SDataSchema ReadSchema(SDataResourceSchemaRequest request)
         {
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(Resources.TestSchema)))
             {
-                return XmlSchema.Read(stream, null);
+                return SDataSchema.Read(stream);
             }
         }
 

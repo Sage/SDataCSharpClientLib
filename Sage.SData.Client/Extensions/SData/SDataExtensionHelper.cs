@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Sage.SData.Client.Atom;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Extensions
 {
@@ -25,7 +26,7 @@ namespace Sage.SData.Client.Extensions
         /// </summary>
         /// <param name="feed">the AtomFeed</param>
         /// <returns></returns>
-        public static Collection<SDataDiagnosis> GetSDataDiagnoses(this AtomFeed feed)
+        public static Collection<Diagnosis> GetSDataDiagnoses(this AtomFeed feed)
         {
             var context = GetContext(feed, true);
             return context != null ? context.Diagnoses : null;
@@ -36,7 +37,7 @@ namespace Sage.SData.Client.Extensions
         /// </summary>
         /// <param name="entry">the AtomEntry</param>
         /// <returns></returns>
-        public static Collection<SDataDiagnosis> GetSDataDiagnoses(this AtomEntry entry)
+        public static Collection<Diagnosis> GetSDataDiagnoses(this AtomEntry entry)
         {
             var context = GetContext(entry, true);
             return context != null ? context.Diagnoses : null;

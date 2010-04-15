@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using System.Xml.Schema;
 using Sage.SData.Client.Core;
+using Sage.SData.Client.Metadata;
 using SDataClientApp.Properties;
 
 namespace SDataClientApp
@@ -10,7 +10,7 @@ namespace SDataClientApp
     public partial class ResourceSchema : BaseControl
     {
         private SDataResourceSchemaRequest _sdataResourceSchemaRequest;
-        private XmlSchema _schema;
+        private SDataSchema _schema;
 
         public ResourceSchema()
         {

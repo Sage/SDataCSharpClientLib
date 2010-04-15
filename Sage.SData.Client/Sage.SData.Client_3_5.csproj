@@ -44,16 +44,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +105,8 @@
     <Compile Include="Core\SDataSystemRequest.cs" />
     <Compile Include="Core\SDataTemplateResourceRequest.cs" />
     <None Include="Examplecs.cs" />
+    <Compile Include="Framework\Common.cs" />
+    <Compile Include="Framework\Diagnosis.cs" />
     <Compile Include="Framework\HttpMethod.cs" />
     <Compile Include="Framework\MediaType.cs" />
     <Compile Include="Framework\MediaTypeNames.cs" />
@@ -121,7 +114,8 @@
     <Compile Include="Framework\SDataRequest.cs" />
     <Compile Include="Framework\SDataResponse.cs" />
     <Compile Include="Framework\SDataUri.cs" />
-    <Compile Include="Framework\SDataTracking.cs" />
+    <Compile Include="Framework\Severity.cs" />
+    <Compile Include="Framework\Tracking.cs" />
     <Compile Include="Framework\UriFormatter.cs" />
     <Compile Include="Framework\UriPathParser.cs" />
     <Compile Include="Framework\UriPathSegment.cs" />
@@ -133,9 +127,6 @@
     <Compile Include="Extensions\SDataHttp\SDataHttpExtension.cs" />
     <Compile Include="Extensions\SDataHttp\SDataHttpExtensionContext.cs" />
     <Compile Include="Extensions\SDataHttp\SDataHttpExtensionHelper.cs" />
-    <Compile Include="Extensions\SData\SDataDiagnosis.cs" />
-    <Compile Include="Extensions\SData\SDataDiagnosisCode.cs" />
-    <Compile Include="Extensions\SData\SDataDiagnosisSeverity.cs" />
     <Compile Include="Extensions\SData\SDataExtension.cs" />
     <Compile Include="Extensions\SData\SDataExtensionContext.cs" />
     <Compile Include="Extensions\SData\SDataExtensionHelper.cs" />
@@ -155,6 +146,41 @@
     <Compile Include="Extensions\ISyndicationExtension.cs" />
     <Compile Include="Common\Guard.cs" />
     <Compile Include="Extensions\SyndicationExtensionLoadedEventArgs.cs" />
+    <Compile Include="Metadata\SMEArrayProperty.cs" />
+    <Compile Include="Metadata\SMEBase64BinaryProperty.cs" />
+    <Compile Include="Metadata\SMEByteArrayProperty.cs" />
+    <Compile Include="Metadata\SMEHexBinaryProperty.cs" />
+    <Compile Include="Metadata\MetadataManager.cs" />
+    <Compile Include="Metadata\SMEBoolProperty.cs" />
+    <Compile Include="Metadata\SMEByteProperty.cs" />
+    <Compile Include="Metadata\SMECurrencyProperty.cs" />
+    <Compile Include="Metadata\SMEDateProperty.cs" />
+    <Compile Include="Metadata\SMEDateTimeProperty.cs" />
+    <Compile Include="Metadata\SMEDecimalProperty.cs" />
+    <Compile Include="Metadata\SMEDoubleProperty.cs" />
+    <Compile Include="Metadata\SMEEnumProperty.cs" />
+    <Compile Include="Metadata\SMEFloatProperty.cs" />
+    <Compile Include="Metadata\SMEGuidProperty.cs" />
+    <Compile Include="Metadata\SMEIntegerProperty.cs" />
+    <Compile Include="Metadata\SMELongProperty.cs" />
+    <Compile Include="Metadata\SMENormalizedStringProperty.cs" />
+    <Compile Include="Metadata\SMEObjectProperty.cs" />
+    <Compile Include="Metadata\SMEProperty.cs" />
+    <Compile Include="Metadata\SMERelationshipProperty.cs" />
+    <Compile Include="Metadata\SMEShortProperty.cs" />
+    <Compile Include="Metadata\SMEStringProperty.cs" />
+    <Compile Include="Metadata\SMETimeProperty.cs" />
+    <Compile Include="Metadata\SMETokenProperty.cs" />
+    <Compile Include="Metadata\SMEUnsignedByteProperty.cs" />
+    <Compile Include="Metadata\SMEUnsignedIntegerProperty.cs" />
+    <Compile Include="Metadata\SMEUnsignedLongProperty.cs" />
+    <Compile Include="Metadata\SMEUnsignedShortProperty.cs" />
+    <Compile Include="Metadata\SMEUriProperty.cs" />
+    <Compile Include="Metadata\SDataSchema.cs" />
+    <Compile Include="Metadata\SMEResource.cs" />
+    <Compile Include="Metadata\SDataResource.cs" />
+    <Compile Include="Metadata\TypeInfoHelper.cs" />
+    <Compile Include="Metadata\XDataTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\SyndicationResourceLoadSettings.cs" />
   </ItemGroup>

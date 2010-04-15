@@ -204,7 +204,7 @@ namespace Examples
             // the above configuration generates http://sdata.acme.com/sdata/sageApp/test/-/$schema
 
             // read the feed from the server
-            var xsd = service.ReadSchema(rsu);
+            var schema = service.ReadSchema(rsu);
 
             // now reconfigurate and set resource kind and version
             rsu.ResourceKind = "accounts";
@@ -212,7 +212,7 @@ namespace Examples
             // the above configuration generates http://sdata.acme.com/sdata/sageApp/test/-/accounts/$schema?version=5
 
             // read the entry from the server
-            xsd = service.ReadSchema(rsu);
+            schema = service.ReadSchema(rsu);
 
             #endregion
 

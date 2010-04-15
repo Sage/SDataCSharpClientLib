@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net;
-using System.Xml.Schema;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
+using Sage.SData.Client.Metadata;
 
 namespace Sage.SData.Client.Core
 {
@@ -201,7 +201,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="request">url for the syndication resource to get information for.</param>
         /// <returns>XmlSchema </returns>
-        XmlSchema ReadSchema(SDataResourceSchemaRequest request);
+        SDataSchema ReadSchema(SDataResourceSchemaRequest request);
 
         /// <summary>
         /// Updates information about a syndication resource in the data source.

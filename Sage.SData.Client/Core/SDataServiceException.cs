@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Xml;
-using System.Xml.XPath;
-using Sage.SData.Client.Extensions;
+using System.Xml.Serialization;
+using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Core
 {
@@ -10,12 +10,12 @@ namespace Sage.SData.Client.Core
     /// </summary>
     public class SDataServiceException : WebException
     {
-        private readonly SDataDiagnosis _diagnosis;
+        private readonly Diagnosis _diagnosis;
 
         /// <summary>
         /// An object containing additional diagnostic information about the error.
         /// </summary>
-        public SDataDiagnosis Diagnosis
+        public Diagnosis Diagnosis
         {
             get { return _diagnosis; }
         }
@@ -32,29 +32,18 @@ namespace Sage.SData.Client.Core
                 return;
             }
 
-            XPathNavigator nav;
+            var serializer = new XmlSerializer(typeof (Diagnosis));
 
             using (var stream = innerException.Response.GetResponseStream())
             {
                 try
                 {
-                    nav = new XPathDocument(stream).CreateNavigator();
+                    _diagnosis = (Diagnosis) serializer.Deserialize(stream);
                 }
                 catch (XmlException)
                 {
                     return;
                 }
-            }
-
-            var mgr = new XmlNamespaceManager(nav.NameTable);
-            mgr.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            mgr.AddNamespace("sdata", "http://schemas.sage.com/sdata/2008/1");
-            nav.MoveToChild(XPathNodeType.Element);
-            var diagnosis = new SDataDiagnosis();
-
-            if (diagnosis.Load(nav, mgr))
-            {
-                _diagnosis = diagnosis;
             }
         }
 

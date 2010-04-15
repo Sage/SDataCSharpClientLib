@@ -1,5 +1,5 @@
-﻿using System.Xml.Schema;
-using Sage.SData.Client.Framework;
+﻿using Sage.SData.Client.Framework;
+using Sage.SData.Client.Metadata;
 
 namespace Sage.SData.Client.Core
 {
@@ -49,7 +49,7 @@ namespace Sage.SData.Client.Core
         ///         />
         ///     </code>
         /// </example>
-        public XmlSchema Read()
+        public SDataSchema Read()
         {
             return Service.ReadSchema(this);
         }

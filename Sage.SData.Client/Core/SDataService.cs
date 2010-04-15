@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Xml.Schema;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
 using Sage.SData.Client.Extensions;
 using Sage.SData.Client.Framework;
+using Sage.SData.Client.Metadata;
 
 namespace Sage.SData.Client.Core
 {
@@ -275,7 +275,7 @@ namespace Sage.SData.Client.Core
                 var requestUrl = new SDataUri(request.ToString()) {TrackingId = Guid.NewGuid().ToString()}.ToString();
                 var operation = new RequestOperation(HttpMethod.Post, resource);
                 var response = ExecuteRequest(requestUrl, operation, MediaType.Xml);
-                var tracking = (SDataTracking) response.Content;
+                var tracking = (Tracking) response.Content;
                 return new AsyncRequest(this, response.Location, tracking);
             }
             catch (WebException ex)
@@ -490,8 +490,8 @@ namespace Sage.SData.Client.Core
         /// Reads xsd from a $schema request
         /// </summary>
         /// <param name="request">url for the syndication resource to get information for.</param>
-        /// <returns>XmlSchema </returns>
-        public XmlSchema ReadSchema(SDataResourceSchemaRequest request)
+        /// <returns>SDataSchema</returns>
+        public SDataSchema ReadSchema(SDataResourceSchemaRequest request)
         {
             Guard.ArgumentNotNull(request, "request");
 
@@ -503,7 +503,7 @@ namespace Sage.SData.Client.Core
 
                 using (var reader = new StringReader((string) response.Content))
                 {
-                    return XmlSchema.Read(reader, null);
+                    return SDataSchema.Read(reader);
                 }
             }
             catch (WebException ex)

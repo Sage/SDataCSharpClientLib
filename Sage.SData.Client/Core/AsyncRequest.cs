@@ -18,7 +18,7 @@ namespace Sage.SData.Client.Core
     {
         private readonly ISDataService _service;
         private readonly string _trackingUrl;
-        private SDataTracking _tracking;
+        private Tracking _tracking;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="AsyncRequest"/> class.
@@ -26,7 +26,7 @@ namespace Sage.SData.Client.Core
         /// <param name="service">The service that performs requests.</param>
         /// <param name="trackingUrl">The url used to make progress requests.</param>
         /// <param name="tracking">The tracking information from the initial request.</param>
-        public AsyncRequest(ISDataService service, string trackingUrl, SDataTracking tracking)
+        public AsyncRequest(ISDataService service, string trackingUrl, Tracking tracking)
         {
             Guard.ArgumentNotNull(service, "service");
             Guard.ArgumentNotNull(trackingUrl, "trackingUrl");
@@ -109,7 +109,7 @@ namespace Sage.SData.Client.Core
         public ISyndicationResource Refresh()
         {
             var content = Service.Read(_trackingUrl);
-            var tracking = content as SDataTracking;
+            var tracking = content as Tracking;
 
             if (tracking != null)
             {

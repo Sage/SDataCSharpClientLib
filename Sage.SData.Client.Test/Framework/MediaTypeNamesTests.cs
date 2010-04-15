@@ -13,7 +13,7 @@ namespace Sage.SData.Client.Test.Framework
         public void Content_Type_With_Extra_Spaces_Test()
         {
             const string contentType = "application/atom+xml;  type=entry  ";
-            MediaType result = MediaTypeNames.GetMediaType(contentType);
+            var result = MediaTypeNames.GetMediaType(contentType);
             Assert.AreEqual(MediaType.AtomEntry, result);
         }
 
@@ -24,7 +24,7 @@ namespace Sage.SData.Client.Test.Framework
         public void Content_Type_With_Unusual_Character_Casing_Test()
         {
             const string contentType = "APPLICATION/ATOM+XML; TYPE=ENTRY";
-            MediaType result = MediaTypeNames.GetMediaType(contentType);
+            var result = MediaTypeNames.GetMediaType(contentType);
             Assert.AreEqual(MediaType.AtomEntry, result);
         }
 
@@ -35,7 +35,7 @@ namespace Sage.SData.Client.Test.Framework
         public void Content_Type_With_Additional_Parameters_Test()
         {
             const string contentType = "application/atom+xml; charset=UTF-8; type=entry";
-            MediaType result = MediaTypeNames.GetMediaType(contentType);
+            var result = MediaTypeNames.GetMediaType(contentType);
             Assert.AreEqual(MediaType.AtomEntry, result);
         }
     }

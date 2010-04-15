@@ -139,13 +139,13 @@ namespace Sage.SData.Client.Framework
             return LoadStringContent(stream);
         }
 
-        private static SDataTracking LoadTrackingContent(Stream stream)
+        private static Tracking LoadTrackingContent(Stream stream)
         {
-            var serializer = new XmlSerializer(typeof (SDataTracking));
+            var serializer = new XmlSerializer(typeof (Tracking));
 
             try
             {
-                return (SDataTracking) serializer.Deserialize(stream);
+                return (Tracking) serializer.Deserialize(stream);
             }
             catch (XmlException)
             {

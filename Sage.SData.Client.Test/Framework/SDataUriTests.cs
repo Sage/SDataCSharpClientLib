@@ -13,7 +13,7 @@ namespace Sage.SData.Client.Test.Framework
         [Test]
         public void Appending_Segments_To_Specific_Service_Urls_Test()
         {
-            SDataUri uri = new SDataUri("http://test.com/sdata/-/-/-/resource/$service/name");
+            var uri = new SDataUri("http://test.com/sdata/-/-/-/resource/$service/name");
             uri.AppendPath("test");
             Assert.AreEqual("resource", uri.CollectionType);
             Assert.AreEqual("name", uri.ServiceMethod);
@@ -29,7 +29,7 @@ namespace Sage.SData.Client.Test.Framework
         [Test]
         public void Non_Standard_Parameters_Should_Have_Underscore_Prefix_Test()
         {
-            SDataUri uri = new SDataUri("http://test.com/sdata/-/-/-/resource?_includeContent=true");
+            var uri = new SDataUri("http://test.com/sdata/-/-/-/resource?_includeContent=true");
             Assert.IsTrue(uri.IncludeContent ?? false);
         }
     }

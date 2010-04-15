@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Threading;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
 using Sage.SData.Client.Extensions;
@@ -242,47 +241,6 @@ namespace Sage.SData.Client.Framework
             }
 
             return request;
-        }
-
-        private class AsyncResult : IAsyncResult
-        {
-            private readonly WebRequest _request;
-            private readonly IAsyncResult _inner;
-
-            public AsyncResult(WebRequest request, IAsyncResult inner)
-            {
-                _request = request;
-                _inner = inner;
-            }
-
-            public WebRequest Request
-            {
-                get { return _request; }
-            }
-
-            #region IAsyncResult Members
-
-            public bool IsCompleted
-            {
-                get { return _inner.IsCompleted; }
-            }
-
-            public WaitHandle AsyncWaitHandle
-            {
-                get { return _inner.AsyncWaitHandle; }
-            }
-
-            public object AsyncState
-            {
-                get { return _inner.AsyncState; }
-            }
-
-            public bool CompletedSynchronously
-            {
-                get { return _inner.CompletedSynchronously; }
-            }
-
-            #endregion
         }
     }
 }

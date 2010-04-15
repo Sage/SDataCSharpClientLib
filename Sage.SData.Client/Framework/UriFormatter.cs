@@ -821,7 +821,7 @@ namespace Sage.SData.Client.Framework
         /// <returns></returns>
         public override string ToString()
         {
-            return Uri.ToString();
+            return Uri != null ? Uri.ToString() : base.ToString();
         }
 
         /// <summary>
