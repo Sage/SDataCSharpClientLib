@@ -80,7 +80,7 @@ namespace SDataClientApp
         {
             if (_reader != null)
             {
-                _reader.First();
+                _reader.MoveFirst();
                 UpdateReaderGrid();
             }
             else
@@ -93,7 +93,7 @@ namespace SDataClientApp
         {
             if (_reader != null)
             {
-                _reader.Previous();
+                _reader.MovePrevious();
                 UpdateReaderGrid();
             }
             else
@@ -125,7 +125,7 @@ namespace SDataClientApp
         {
             if (_reader != null)
             {
-                if (_reader.Last())
+                if (_reader.MoveLast())
                 {
                     UpdateReaderGrid();
                 }
