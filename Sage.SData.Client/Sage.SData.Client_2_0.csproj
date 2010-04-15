@@ -41,16 +41,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -152,33 +143,28 @@
     <Compile Include="Extensions\ISyndicationExtension.cs" />
     <Compile Include="Common\Guard.cs" />
     <Compile Include="Extensions\SyndicationExtensionLoadedEventArgs.cs" />
+    <Compile Include="LinqBridge\Action.cs" />
+    <Compile Include="LinqBridge\Enumerable.cs" />
+    <Compile Include="LinqBridge\Enumerable.g.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Enumerable.g.tt</DependentUpon>
+    </Compile>
     <Compile Include="LinqBridge\ExtensionAttribute.cs" />
-    <Compile Include="LinqBridge\Func and Action delegates.cs" />
-    <Compile Include="LinqBridge\GroupedEnumerable.cs" />
-    <Compile Include="LinqBridge\Grouping.cs" />
+    <Compile Include="LinqBridge\Func.cs" />
     <Compile Include="LinqBridge\IGrouping.cs" />
     <Compile Include="LinqBridge\ILookup.cs" />
     <Compile Include="LinqBridge\IOrderedEnumerable.cs" />
     <Compile Include="LinqBridge\Lookup.cs" />
-    <Compile Include="LinqBridge\OrderByEnumerable.cs" />
-    <Compile Include="LinqBridge\Query Operators\Aggregation Operators - Average.cs" />
-    <Compile Include="LinqBridge\Query Operators\Aggregation Operators - Sum.cs" />
-    <Compile Include="LinqBridge\Query Operators\Aggregation Operators.cs" />
-    <Compile Include="LinqBridge\Query Operators\Conversion Operators.cs" />
-    <Compile Include="LinqBridge\Query Operators\Element Operators.cs" />
-    <Compile Include="LinqBridge\Query Operators\Enumerable Private.cs" />
-    <Compile Include="LinqBridge\Query Operators\Filtering Operators.cs" />
-    <Compile Include="LinqBridge\Query Operators\Generation Operators.cs" />
-    <Compile Include="LinqBridge\Query Operators\Grouping Operators.cs" />
-    <Compile Include="LinqBridge\Query Operators\Joining Operators.cs" />
-    <Compile Include="LinqBridge\Query Operators\Misc Operators.cs" />
-    <Compile Include="LinqBridge\Query Operators\Ordering Operators.cs" />
-    <Compile Include="LinqBridge\Query Operators\Projection Operators.cs" />
-    <Compile Include="LinqBridge\Query Operators\Quantifiers.cs" />
-    <Compile Include="LinqBridge\Query Operators\Set Operators.cs" />
-    <Compile Include="LinqBridge\ThenByEnumerable.cs" />
+    <Compile Include="LinqBridge\OrderedEnumerable.cs" />
+    <Compile Include="LinqBridge\Public.cs" />
+    <Compile Include="LinqBridge\Tuple.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\SyndicationResourceLoadSettings.cs" />
+    <None Include="LinqBridge\Enumerable.g.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Enumerable.g.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

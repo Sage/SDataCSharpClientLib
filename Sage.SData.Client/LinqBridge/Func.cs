@@ -25,26 +25,21 @@
 //
 #endregion
 
-// $Id: IGrouping.cs 225 2009-10-04 07:16:14Z azizatif $
+// $Id: Func.cs 224 2009-10-04 07:13:08Z azizatif $
 
-namespace System.Linq
+namespace System
 {
-    #region Imports
-
-    using System.Collections.Generic;
-
-    #endregion
-
-    /// <summary>
-    /// Represents a collection of objects that have a common key.
-    /// </summary>
-
-    partial interface IGrouping<TKey, TElement> : IEnumerable<TElement>
-    {
-        /// <summary>
-        /// Gets the key of the <see cref="IGrouping{TKey,TElement}" />.
-        /// </summary>
-
-        TKey Key { get; }
-    }
+#if LINQBRIDGE_LIB
+    public delegate TResult Func<TResult>();
+    public delegate TResult Func<T, TResult>(T a);
+    public delegate TResult Func<T1, T2, TResult>(T1 arg1, T2 arg2);
+    public delegate TResult Func<T1, T2, T3, TResult>(T1 arg1, T2 arg2, T3 arg3);
+    public delegate TResult Func<T1, T2, T3, T4, TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4);
+#else
+    delegate TResult Func<TResult>();
+    delegate TResult Func<T, TResult>(T a);
+    delegate TResult Func<T1, T2, TResult>(T1 arg1, T2 arg2);
+    delegate TResult Func<T1, T2, T3, TResult>(T1 arg1, T2 arg2, T3 arg3);
+    delegate TResult Func<T1, T2, T3, T4, TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4);
+#endif
 }

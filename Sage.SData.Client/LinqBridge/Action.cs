@@ -1,4 +1,4 @@
-#region License, Terms and Author(s)
+﻿#region License, Terms and Author(s)
 //
 // LINQBridge
 // Copyright (c) 2007-9 Atif Aziz, Joseph Albahari. All rights reserved.
@@ -25,26 +25,19 @@
 //
 #endregion
 
-// $Id: IGrouping.cs 225 2009-10-04 07:16:14Z azizatif $
+// $Id: Action.cs 239 2010-02-05 23:26:23Z azizatif $
 
-namespace System.Linq
+namespace System
 {
-    #region Imports
-
-    using System.Collections.Generic;
-
-    #endregion
-
-    /// <summary>
-    /// Represents a collection of objects that have a common key.
-    /// </summary>
-
-    partial interface IGrouping<TKey, TElement> : IEnumerable<TElement>
-    {
-        /// <summary>
-        /// Gets the key of the <see cref="IGrouping{TKey,TElement}" />.
-        /// </summary>
-
-        TKey Key { get; }
-    }
+#if LINQBRIDGE_LIB
+    public delegate void Action();
+    public delegate void Action<T1, T2>(T1 arg1, T2 arg2);
+    public delegate void Action<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3);
+    public delegate void Action<T1, T2, T3, T4>(T1 arg1, T2 arg2, T3 arg3, T4 arg4);
+#else
+    delegate void Action();
+    delegate void Action<T1, T2>(T1 arg1, T2 arg2);
+    delegate void Action<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3);
+    delegate void Action<T1, T2, T3, T4>(T1 arg1, T2 arg2, T3 arg3, T4 arg4);
+#endif
 }

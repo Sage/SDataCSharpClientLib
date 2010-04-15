@@ -25,26 +25,16 @@
 //
 #endregion
 
-// $Id: IGrouping.cs 225 2009-10-04 07:16:14Z azizatif $
+// $Id: Public.cs 224 2009-10-04 07:13:08Z azizatif $
 
 namespace System.Linq
 {
-    #region Imports
+#if LINQBRIDGE_LIB
 
-    using System.Collections.Generic;
+    public partial class Enumerable { }
+    public partial interface IGrouping<TKey, TElement> { }
+    public partial interface ILookup<TKey, TElement> { }
+    public partial interface IOrderedEnumerable<TElement> { }
 
-    #endregion
-
-    /// <summary>
-    /// Represents a collection of objects that have a common key.
-    /// </summary>
-
-    partial interface IGrouping<TKey, TElement> : IEnumerable<TElement>
-    {
-        /// <summary>
-        /// Gets the key of the <see cref="IGrouping{TKey,TElement}" />.
-        /// </summary>
-
-        TKey Key { get; }
-    }
+#endif
 }
