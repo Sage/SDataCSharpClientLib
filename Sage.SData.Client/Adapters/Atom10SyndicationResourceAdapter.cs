@@ -1,4 +1,11 @@
-﻿using System;
+﻿/****************************************************************************
+Modification History:
+*****************************************************************************
+Date		Author		Description
+*****************************************************************************
+12/06/2007	brian.kuhn	Created Atom10SyndicationResourceAdapter Class
+****************************************************************************/
+using System;
 using System.Collections.ObjectModel;
 using System.Xml;
 using System.Xml.XPath;
@@ -77,7 +84,6 @@ namespace Sage.SData.Client.Adapter
             //------------------------------------------------------------
             //	Attempt to fill syndication resource
             //------------------------------------------------------------
-            
             //BEGIN PATCH
             //Update from tracker #4797, but changed slightly from that patch.
             //Not all hosts are explicitly tagging the entry as "atom:entry".

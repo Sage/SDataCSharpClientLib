@@ -1,4 +1,11 @@
-﻿using System;
+﻿/****************************************************************************
+Modification History:
+*****************************************************************************
+Date		Author		Description
+*****************************************************************************
+01/23/2008	brian.kuhn	Created SimpleListSyndicationExtension Class
+****************************************************************************/
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml;

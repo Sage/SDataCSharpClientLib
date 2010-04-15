@@ -1,3 +1,10 @@
+﻿/****************************************************************************
+Modification History:
+*****************************************************************************
+Date		Author		Description
+*****************************************************************************
+01/18/2008	brian.kuhn	Created SyndicationExtension Class
+****************************************************************************/
 using System;
 using System.Collections.Generic;
 using System.Security.Permissions;

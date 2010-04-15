@@ -1,3 +1,12 @@
+﻿/****************************************************************************
+Modification History:
+*****************************************************************************
+Date		Author		Description
+*****************************************************************************
+11/26/2007	brian.kuhn	Created SyndicationEncodingUtility Class
+04/10/2008  brian.kuhn  Implemented fix for work item 9966.
+07/01/2008  brian.kuhn  Implemented fix for work item 10255.
+****************************************************************************/
 using System;
 using System.Globalization;
 using System.IO;
@@ -45,7 +54,6 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             //	Encode XML data to convert invalid XML hexadecimal values
             //------------------------------------------------------------
-
             //BEGIN PATCH
             //string safeXml  = SyndicationEncodingUtility.RemoveInvalidXmlHexadecimalCharacters(xml);
             string safeXml = xml;
@@ -361,7 +369,6 @@ namespace Sage.SData.Client.Common
             Guard.ArgumentNotNull(source, "source");
 
             request             = WebRequest.Create(source);
-            if (options != null) options.ApplyOptions(request);
 
             if(source.IsAbsoluteUri)
             {
@@ -374,6 +381,7 @@ namespace Sage.SData.Client.Common
                 }
             }
 
+            if (options != null) options.ApplyOptions(request);
             return request;
         }
         #endregion
@@ -743,7 +751,7 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             //	Local members
             //------------------------------------------------------------
-            Regex invalidXmlHexadecimalCharacters   = new Regex(@"[\x01-\x08\x0B-\x0C\x0E-\x1F\xD800-\xDFFF\xFFFE-\xFFFF]");
+            Regex invalidXmlHexadecimalCharacters = new Regex(@"[^\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]");
 
             //------------------------------------------------------------
             //	Validate parameter

@@ -1,3 +1,13 @@
+﻿/****************************************************************************
+Modification History:
+*****************************************************************************
+Date		Author		Description
+*****************************************************************************
+11/26/2007	brian.kuhn	Created SyndicationDiscoveryUtility Class
+04/10/2008  brian.kuhn  Implemented fix for work item 9962.
+04/22/2007  brian.kuhn  Implemented feature for work item 10036.
+04/22/2007  brian.kuhn  Implemented feature for work item 10409.
+****************************************************************************/
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -784,9 +794,9 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             HttpWebRequest httpRequest      = (HttpWebRequest)HttpWebRequest.Create(source);
             httpRequest.UserAgent           = frameworkUserAgent;
-            new WebRequestOptions(credentials).ApplyOptions(httpRequest);
             httpRequest.IfModifiedSince     = lastModified;
             httpRequest.Headers.Add(HttpRequestHeader.IfNoneMatch, entityTag);
+            new WebRequestOptions(credentials).ApplyOptions(httpRequest);
 
             //------------------------------------------------------------
             //	Perform conditional get operation
@@ -884,9 +894,9 @@ namespace Sage.SData.Client.Common
             //------------------------------------------------------------
             HttpWebRequest httpRequest      = (HttpWebRequest)HttpWebRequest.Create(source);
             httpRequest.UserAgent           = frameworkUserAgent;
-            if (options != null) options.ApplyOptions(httpRequest);
             httpRequest.IfModifiedSince     = lastModified;
             httpRequest.Headers.Add(HttpRequestHeader.IfNoneMatch, entityTag);
+            if (options != null) options.ApplyOptions(httpRequest);
 
             //------------------------------------------------------------
             //	Perform conditional get operation

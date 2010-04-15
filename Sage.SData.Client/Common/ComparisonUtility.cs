@@ -1,3 +1,10 @@
+﻿/****************************************************************************
+Modification History:
+*****************************************************************************
+Date		Author		Description
+*****************************************************************************
+02/12/2008	brian.kuhn	Created ComparisonUtility Class
+****************************************************************************/
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -1,4 +1,11 @@
-﻿using System;
+﻿/****************************************************************************
+Modification History:
+*****************************************************************************
+Date		Author		Description
+*****************************************************************************
+01/18/2008	brian.kuhn	Created IExtensibleSyndicationObject Interface
+****************************************************************************/
+using System;
 using System.Collections.Generic;
 
 namespace Sage.SData.Client.Extensions

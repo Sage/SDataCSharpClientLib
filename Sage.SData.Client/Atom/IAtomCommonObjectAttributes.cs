@@ -1,4 +1,11 @@
-﻿using System;
+﻿/****************************************************************************
+Modification History:
+*****************************************************************************
+Date		Author		Description
+*****************************************************************************
+12/06/2007	brian.kuhn	Created IAtomCommonObjectAttributes Interface
+****************************************************************************/
+using System;
 using System.Globalization;
 
 namespace Sage.SData.Client.Atom

@@ -1,4 +1,11 @@
-﻿using System;
+﻿/****************************************************************************
+Modification History:
+*****************************************************************************
+Date		Author		Description
+*****************************************************************************
+12/06/2007	brian.kuhn	Created AtomId Class
+****************************************************************************/
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;

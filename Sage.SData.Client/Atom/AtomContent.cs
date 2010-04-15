@@ -1,4 +1,12 @@
-﻿using System;
+﻿/****************************************************************************
+Modification History:
+*****************************************************************************
+Date		Author		Description
+*****************************************************************************
+12/06/2007	brian.kuhn	Created AtomContent Class
+07/01/2008  brian.kuhn  Implemented fix for work item 10408.
+****************************************************************************/
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
