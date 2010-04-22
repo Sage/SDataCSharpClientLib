@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{908FFE7B-070B-41FC-8D3E-B0FEAE1AB972}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SDataClientApp</RootNamespace>
+    <AssemblyName>SDataClientApp</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Sage.SData.Client, Version=1.0.0.3157, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Sage.SData.Client\bin\Debug\Sage.SData.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaseControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ResourceProperties.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ResourceProperties.Designer.cs">
+      <DependentUpon>ResourceProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResourceSchema.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ResourceSchema.Designer.cs">
+      <DependentUpon>ResourceSchema.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResourceTemplate.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ResourceTemplate.Designer.cs">
+      <DependentUpon>ResourceTemplate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SingleResource.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SingleResource.Designer.cs">
+      <DependentUpon>SingleResource.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResourceCollection.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ResourceCollection.Designer.cs">
+      <DependentUpon>ResourceCollection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ServiceConfig.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ServiceConfig.Designer.cs">
+      <DependentUpon>ServiceConfig.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ResourceCollection.resx">
+      <DependentUpon>ResourceCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ResourceProperties.resx">
+      <DependentUpon>ResourceProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ResourceSchema.resx">
+      <DependentUpon>ResourceSchema.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ResourceTemplate.resx">
+      <DependentUpon>ResourceTemplate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ServiceConfig.resx">
+      <DependentUpon>ServiceConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SingleResource.resx">
+      <DependentUpon>SingleResource.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

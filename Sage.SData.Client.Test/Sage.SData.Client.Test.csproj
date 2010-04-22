@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{92C27580-82D9-46FC-8E4A-9B75E6FF6C2B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sage.SData.Client.Test</RootNamespace>
+    <AssemblyName>Sage.SData.Client.Test</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\dependencies\NUnit\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Framework\DiagnosisTests.cs" />
+    <Compile Include="Framework\MediaTypeNamesTests.cs" />
+    <Compile Include="Framework\SDataUriTests.cs" />
+    <Compile Include="Framework\UriFormatterTests.cs" />
+    <Compile Include="Framework\W3CDateTimeTests.cs" />
+    <Compile Include="Metadata\SMEIntegerPropertyAttributeTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Core\AtomFeedReaderTests.cs" />
+    <Compile Include="Core\IntermediateApplicationsRequestTests.cs" />
+    <Compile Include="Core\IntermediateContractsRequestTests.cs" />
+    <Compile Include="Core\IntermediateDataSetsRequestTests.cs" />
+    <Compile Include="Core\IntermediateResourceCollectionsRequestTests.cs" />
+    <Compile Include="Core\IntermediateServicesRequestTests.cs" />
+    <Compile Include="Core\SDataEndPointCollectionRequestTests.cs" />
+    <Compile Include="Core\SDataResourceCollectionRequestTests.cs" />
+    <Compile Include="Core\SDataResourcePropertyRequestTests.cs" />
+    <Compile Include="Core\SDataResourceSchemaRequestTests.cs" />
+    <Compile Include="Core\SDataServiceOperationRequestTests.cs" />
+    <Compile Include="Core\SDataServiceTests.cs" />
+    <Compile Include="Core\SDataSingleResourceRequestTests.cs" />
+    <Compile Include="Core\SDataTemplateResourceRequestTests.cs" />
+    <Compile Include="MockSDataService.cs" />
+    <None Include="TestEntry.xml" />
+    <None Include="TestFeed.xml" />
+    <None Include="TestSchema.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sage.SData.Client\Sage.SData.Client_3_5.csproj">
+      <Project>{590B03D1-FC26-4AFD-98F8-421E6E8DDBA8}</Project>
+      <Name>Sage.SData.Client_3_5</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

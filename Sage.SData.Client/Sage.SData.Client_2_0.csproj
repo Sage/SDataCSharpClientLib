@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{590B03D1-FC26-4AFD-98F8-421E6E8DDBA8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sage.SData.Client</RootNamespace>
+    <AssemblyName>Sage.SData.Client</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Sage.SData.Client.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Adapters\Atom10SyndicationResourceAdapter.cs" />
+    <Compile Include="Atom\AtomCategory.cs" />
+    <Compile Include="Atom\AtomContent.cs" />
+    <Compile Include="Atom\AtomEntry.cs" />
+    <Compile Include="Atom\AtomFeed.cs" />
+    <Compile Include="Atom\AtomGenerator.cs" />
+    <Compile Include="Atom\AtomIcon.cs" />
+    <Compile Include="Atom\AtomId.cs" />
+    <Compile Include="Atom\AtomLink.cs" />
+    <Compile Include="Atom\AtomLogo.cs" />
+    <Compile Include="Atom\AtomPersonConstruct.cs" />
+    <Compile Include="Atom\AtomSource.cs" />
+    <Compile Include="Atom\AtomTextConstruct.cs" />
+    <Compile Include="Atom\AtomTextConstructType.cs" />
+    <Compile Include="Atom\AtomUtility.cs" />
+    <Compile Include="Common\WebRequestOptions.cs" />
+    <Compile Include="Core\AtomFeedReader.cs" />
+    <Compile Include="Core\BatchProcess.cs" />
+    <Compile Include="Atom\IAtomCommonObjectAttributes.cs" />
+    <Compile Include="Common\DiscoverableSyndicationEndpoint.cs" />
+    <Compile Include="Common\MimeMediaTypeAttribute.cs" />
+    <Compile Include="Common\ComparisonUtility.cs" />
+    <Compile Include="Common\EnumerationMetadataAttribute.cs" />
+    <Compile Include="Common\ISyndicationResource.cs" />
+    <Compile Include="Common\SyndicationContentFormat.cs" />
+    <Compile Include="Adapters\SyndicationResourceAdapter.cs" />
+    <Compile Include="Common\SyndicationResourceLoadedEventArgs.cs" />
+    <Compile Include="Common\SyndicationResourceMetadata.cs" />
+    <Compile Include="Common\SyndicationResourceSaveSettings.cs" />
+    <Compile Include="Common\SyndicationDateTimeUtility.cs" />
+    <Compile Include="Common\SyndicationDiscoveryUtility.cs" />
+    <Compile Include="Common\SyndicationEncodingUtility.cs" />
+    <Compile Include="Common\TrackbackDiscoveryMetadata.cs" />
+    <Compile Include="Core\AsyncRequest.cs" />
+    <Compile Include="Core\IntermediateApplicationsRequest.cs" />
+    <Compile Include="Core\IntermediateContractsRequest.cs" />
+    <Compile Include="Core\IntermediateDataSetsRequest.cs" />
+    <Compile Include="Core\IntermediateResourceCollectionsRequest.cs" />
+    <Compile Include="Core\IntermediateServicesRequest.cs" />
+    <Compile Include="Core\ISDataRequestSettings.cs" />
+    <Compile Include="Core\ISDataService.cs" />
+    <Compile Include="Core\SDataApplicationRequest.cs" />
+    <Compile Include="Core\SDataBaseRequest.cs" />
+    <Compile Include="Core\SDataBatchRequest.cs" />
+    <Compile Include="Core\SDataClientException.cs" />
+    <Compile Include="Core\SDataEndPointCollectionRequest.cs" />
+    <Compile Include="Core\SDataOperationalRequest.cs" />
+    <Compile Include="Core\SDataResourceCollectionRequest.cs" />
+    <Compile Include="Core\SDataResourcePropertyRequest.cs" />
+    <Compile Include="Core\SDataResourceSchemaRequest.cs" />
+    <Compile Include="Core\SDataService.cs" />
+    <Compile Include="Core\SDataServiceException.cs" />
+    <Compile Include="Core\SDataServiceOperationRequest.cs" />
+    <Compile Include="Core\SDataSingleResourceRequest.cs" />
+    <Compile Include="Core\SDataSystemRequest.cs" />
+    <Compile Include="Core\SDataTemplateResourceRequest.cs" />
+    <None Include="Examplecs.cs" />
+    <Compile Include="Framework\Common.cs" />
+    <Compile Include="Framework\Diagnosis.cs" />
+    <Compile Include="Framework\HttpMethod.cs" />
+    <Compile Include="Framework\MediaType.cs" />
+    <Compile Include="Framework\MediaTypeNames.cs" />
+    <Compile Include="Framework\RequestOperation.cs" />
+    <Compile Include="Framework\SDataRequest.cs" />
+    <Compile Include="Framework\SDataResponse.cs" />
+    <Compile Include="Framework\SDataUri.cs" />
+    <Compile Include="Framework\Severity.cs" />
+    <Compile Include="Framework\Tracking.cs" />
+    <Compile Include="Framework\UriFormatter.cs" />
+    <Compile Include="Framework\UriPathParser.cs" />
+    <Compile Include="Framework\UriPathSegment.cs" />
+    <Compile Include="Framework\UriQueryParser.cs" />
+    <Compile Include="Framework\W3CDateTime.cs" />
+    <Compile Include="Extensions\OpenSearch\OpenSearchExtension.cs" />
+    <Compile Include="Extensions\OpenSearch\OpenSearchExtensionContext.cs" />
+    <Compile Include="Extensions\OpenSearch\OpenSearchExtensionHelper.cs" />
+    <Compile Include="Extensions\SDataHttp\SDataHttpExtension.cs" />
+    <Compile Include="Extensions\SDataHttp\SDataHttpExtensionContext.cs" />
+    <Compile Include="Extensions\SDataHttp\SDataHttpExtensionHelper.cs" />
+    <Compile Include="Extensions\SData\SDataExtension.cs" />
+    <Compile Include="Extensions\SData\SDataExtensionContext.cs" />
+    <Compile Include="Extensions\SData\SDataExtensionHelper.cs" />
+    <Compile Include="Extensions\SData\SDataPayload.cs" />
+    <Compile Include="Extensions\SData\SDataPayloadCollection.cs" />
+    <Compile Include="Extensions\SData\SDataPayloadTypeDescriptionProvider.cs" />
+    <Compile Include="Extensions\SData\XPathNavigatorExtensions.cs" />
+    <Compile Include="Extensions\SimpleList\SimpleListDataType.cs" />
+    <Compile Include="Extensions\SimpleList\SimpleListGroup.cs" />
+    <Compile Include="Extensions\SimpleList\SimpleListSort.cs" />
+    <Compile Include="Extensions\SimpleList\SimpleListSyndicationExtension.cs" />
+    <Compile Include="Extensions\SimpleList\SimpleListSyndicationExtensionContext.cs" />
+    <Compile Include="Extensions\SimpleList\SimpleListSyndicationExtensionHelper.cs" />
+    <Compile Include="Extensions\SyndicationExtension.cs" />
+    <Compile Include="Extensions\SyndicationExtensionAdapter.cs" />
+    <Compile Include="Extensions\IExtensibleSyndicationObject.cs" />
+    <Compile Include="Extensions\ISyndicationExtension.cs" />
+    <Compile Include="Common\Guard.cs" />
+    <Compile Include="Extensions\SyndicationExtensionLoadedEventArgs.cs" />
+    <Compile Include="LinqBridge\Action.cs" />
+    <Compile Include="LinqBridge\Enumerable.cs" />
+    <Compile Include="LinqBridge\Enumerable.g.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Enumerable.g.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LinqBridge\ExtensionAttribute.cs" />
+    <Compile Include="LinqBridge\Func.cs" />
+    <Compile Include="LinqBridge\IGrouping.cs" />
+    <Compile Include="LinqBridge\ILookup.cs" />
+    <Compile Include="LinqBridge\IOrderedEnumerable.cs" />
+    <Compile Include="LinqBridge\Lookup.cs" />
+    <Compile Include="LinqBridge\OrderedEnumerable.cs" />
+    <Compile Include="LinqBridge\Public.cs" />
+    <Compile Include="LinqBridge\Tuple.cs" />
+    <Compile Include="Metadata\SMEArrayProperty.cs" />
+    <Compile Include="Metadata\SMEBase64BinaryProperty.cs" />
+    <Compile Include="Metadata\SMEByteArrayProperty.cs" />
+    <Compile Include="Metadata\SMEHexBinaryProperty.cs" />
+    <Compile Include="Metadata\MetadataManager.cs" />
+    <Compile Include="Metadata\SMEBoolProperty.cs" />
+    <Compile Include="Metadata\SMEByteProperty.cs" />
+    <Compile Include="Metadata\SMECurrencyProperty.cs" />
+    <Compile Include="Metadata\SMEDateProperty.cs" />
+    <Compile Include="Metadata\SMEDateTimeProperty.cs" />
+    <Compile Include="Metadata\SMEDecimalProperty.cs" />
+    <Compile Include="Metadata\SMEDoubleProperty.cs" />
+    <Compile Include="Metadata\SMEEnumProperty.cs" />
+    <Compile Include="Metadata\SMEFloatProperty.cs" />
+    <Compile Include="Metadata\SMEGuidProperty.cs" />
+    <Compile Include="Metadata\SMEIntegerProperty.cs" />
+    <Compile Include="Metadata\SMELongProperty.cs" />
+    <Compile Include="Metadata\SMENormalizedStringProperty.cs" />
+    <Compile Include="Metadata\SMEObjectProperty.cs" />
+    <Compile Include="Metadata\SMEProperty.cs" />
+    <Compile Include="Metadata\SMERelationshipProperty.cs" />
+    <Compile Include="Metadata\SMEShortProperty.cs" />
+    <Compile Include="Metadata\SMEStringProperty.cs" />
+    <Compile Include="Metadata\SMETimeProperty.cs" />
+    <Compile Include="Metadata\SMETokenProperty.cs" />
+    <Compile Include="Metadata\SMEUnsignedByteProperty.cs" />
+    <Compile Include="Metadata\SMEUnsignedIntegerProperty.cs" />
+    <Compile Include="Metadata\SMEUnsignedLongProperty.cs" />
+    <Compile Include="Metadata\SMEUnsignedShortProperty.cs" />
+    <Compile Include="Metadata\SMEUriProperty.cs" />
+    <Compile Include="Metadata\SDataSchema.cs" />
+    <Compile Include="Metadata\SMEResource.cs" />
+    <Compile Include="Metadata\SDataResource.cs" />
+    <Compile Include="Metadata\TypeInfoHelper.cs" />
+    <Compile Include="Metadata\XDataTypes.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Common\SyndicationResourceLoadSettings.cs" />
+    <None Include="LinqBridge\Enumerable.g.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Enumerable.g.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
