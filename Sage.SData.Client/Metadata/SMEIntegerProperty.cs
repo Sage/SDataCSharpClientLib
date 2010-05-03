@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 
@@ -165,6 +167,59 @@ namespace Sage.SData.Client.Metadata
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns a value indicating if the property schema has facets.
+        /// </summary>
+        /// <value><b>true</b> if the property schema has facets; otherwise, <b>false</b>.</value>
+        protected override bool HasFacets
+        {
+            get { return base.HasFacets || Minimum != DefaultMinimum || Maximum != DefaultMaximum; }
+        }
+
+        /// <summary>
+        /// Adds the schema facets for this property.
+        /// </summary>
+        /// <param name="builder">The <see cref="StringBuilder"/> to add the facets to.</param>
+        protected override void OnGetSchemaFacets(StringBuilder builder)
+        {
+            base.OnGetSchemaFacets(builder);
+
+            if (Minimum != DefaultMinimum)
+            {
+                // <xs:minInclusive value="x" />
+                builder.AppendFormat("<{0} {1}=\"{2}\"/>",
+                                     TypeInfoHelper.FormatXS(SDataResource.XmlConstants.MinInclusive),
+                                     SDataResource.XmlConstants.Value,
+                                     Minimum
+                    );
+            }
+
+            if (Maximum != DefaultMaximum)
+            {
+                // <xs:maxInclusive value="x" />
+                builder.AppendFormat("<{0} {1}=\"{2}\"/>",
+                                     TypeInfoHelper.FormatXS(SDataResource.XmlConstants.MaxInclusive),
+                                     SDataResource.XmlConstants.Value,
+                                     Maximum
+                    );
+            }
+        }
+
+        protected override IDictionary<string, string> OnGetSchemaAttributes()
+        {
+            var attributes = base.OnGetSchemaAttributes();
+
+            if (Length != DefaultLength)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(SDataResource.XmlConstants.TotalDigits),
+                    Length.ToString()
+                    );
+            }
+
+            return attributes;
         }
 
         /// <summary>

@@ -14,6 +14,7 @@ namespace Sage.SData.Client.Metadata
         public SMENormalizedStringProperty(int maxLength, string label) :
             base(maxLength, label)
         {
+            DataType = XSDataTypes.NormalizedString;
         }
 
         /// <summary>
@@ -24,6 +25,7 @@ namespace Sage.SData.Client.Metadata
         public SMENormalizedStringProperty(int maxLength) :
             base(maxLength)
         {
+            DataType = XSDataTypes.NormalizedString;
         }
 
         /// <summary>
@@ -33,6 +35,7 @@ namespace Sage.SData.Client.Metadata
         public SMENormalizedStringProperty(string label) :
             base(label)
         {
+            DataType = XSDataTypes.NormalizedString;
         }
 
         /// <summary>
@@ -40,6 +43,7 @@ namespace Sage.SData.Client.Metadata
         /// </summary>
         public SMENormalizedStringProperty()
         {
+            DataType = XSDataTypes.NormalizedString;
         }
     }
 }

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 
@@ -26,7 +28,7 @@ namespace Sage.SData.Client.Metadata
             base(label)
         {
             _iMaxLength = maxLength;
-            DataType = XSDataTypes.NormalizedString;
+            DataType = XSDataTypes.String;
         }
 
         /// <summary>
@@ -150,6 +152,49 @@ namespace Sage.SData.Client.Metadata
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns a value indicating if the property schema has facets.
+        /// </summary>
+        /// <value><b>true</b> if the property schema has facets; otherwise, <b>false</b>.</value>
+        protected override bool HasFacets
+        {
+            get { return base.HasFacets || MinimumLength > 0; }
+        }
+
+        /// <summary>
+        /// Adds the schema facets for this property.
+        /// </summary>
+        /// <param name="builder">The <see cref="StringBuilder"/> to add the facets to.</param>
+        protected override void OnGetSchemaFacets(StringBuilder builder)
+        {
+            base.OnGetSchemaFacets(builder);
+
+            if (MinimumLength > 0)
+            {
+                // <xs:minLength value="x" />
+                builder.AppendFormat("<{0} {1}=\"{2}\"/>",
+                                     TypeInfoHelper.FormatXS(SDataResource.XmlConstants.MinLength),
+                                     SDataResource.XmlConstants.Value,
+                                     MinimumLength
+                    );
+            }
+        }
+
+        protected override IDictionary<string, string> OnGetSchemaAttributes()
+        {
+            var attributes = base.OnGetSchemaAttributes();
+
+            if (MaximumLength > 0)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(SDataResource.XmlConstants.MaxLength),
+                    MaximumLength.ToString()
+                    );
+            }
+
+            return attributes;
         }
 
         /// <summary>

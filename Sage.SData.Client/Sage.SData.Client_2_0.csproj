@@ -176,6 +176,7 @@
     <Compile Include="Metadata\SMEGuidProperty.cs" />
     <Compile Include="Metadata\SMEIntegerProperty.cs" />
     <Compile Include="Metadata\SMELongProperty.cs" />
+    <Compile Include="Metadata\SMEMultiLineStringProperty.cs" />
     <Compile Include="Metadata\SMENormalizedStringProperty.cs" />
     <Compile Include="Metadata\SMEObjectProperty.cs" />
     <Compile Include="Metadata\SMEProperty.cs" />

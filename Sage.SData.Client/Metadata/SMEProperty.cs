@@ -252,6 +252,7 @@ namespace Sage.SData.Client.Metadata
         /// <summary>
         /// Indicates if the property is a global identifier for the resource.
         /// </summary>
+        [Obsolete("Depreciated in SData version 1.0")]
         public bool IsGlobalId
         {
             get { return _bIsGlobalId; }
@@ -270,6 +271,7 @@ namespace Sage.SData.Client.Metadata
         /// <summary>
         /// Indicates if the property is an identifier for the resource.
         /// </summary>
+        [Obsolete("Depreciated in SData version 1.0")]
         public bool IsIdentifier
         {
             get { return _bIsIdentifier; }
@@ -279,6 +281,7 @@ namespace Sage.SData.Client.Metadata
         /// <summary>
         /// Indicates if the property is a descriptor for the resource.
         /// </summary>
+        [Obsolete("Depreciated in SData version 1.0")]
         public bool IsDescriptor
         {
             get { return _bIsDescriptor; }
@@ -299,6 +302,7 @@ namespace Sage.SData.Client.Metadata
         /// Indicates that the property is dependent upon a related resource 
         /// and gives the XPath expression for the corresponding property in the related resouce 
         /// </summary>
+        [Obsolete("Depreciated in SData version 1.0")]
         public string CopiedFrom
         {
             get { return _strCopiedFrom; }
@@ -605,137 +609,149 @@ namespace Sage.SData.Client.Metadata
                                  0
                 );
 
-            if (!String.IsNullOrEmpty(Label))
+            foreach (var pair in OnGetSchemaAttributes())
             {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(LabelName),
-                                     TypeInfoHelper.Escape(Label)
-                    );
-            }
-
-            if (Nillable)
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.XmlConstants.Nillable,
-                                     Nillable.ToString().ToLower()
-                    );
-            }
-
-            if (Precedence > 0)
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(PrecedenceName),
-                                     Precedence
-                    );
-            }
-
-            if (CanGroup)
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(CanGroupName),
-                                     CanGroup.ToString().ToLower()
-                    );
-            }
-
-            if (CanFilter)
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(CanFilterName),
-                                     CanFilter.ToString().ToLower()
-                    );
-            }
-
-            if (CanSort)
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(CanSortName),
-                                     CanSort.ToString().ToLower()
-                    );
-            }
-
-            if (IsDescriptor)
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(IsDescriptorName),
-                                     IsDescriptor.ToString().ToLower()
-                    );
-            }
-
-            if (IsIdentifier)
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(IsIdentifierName),
-                                     IsIdentifier.ToString().ToLower()
-                    );
-            }
-
-            if (IsReadOnly)
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(IsReadOnlyName),
-                                     IsReadOnly.ToString().ToLower()
-                    );
-            }
-
-            if (IsGlobalId)
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(IsGlobalIdName),
-                                     IsGlobalId.ToString().ToLower()
-                    );
-            }
-
-            if (IsMandatory)
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(IsMandatoryName),
-                                     IsMandatory.ToString().ToLower()
-                    );
-            }
-
-            if (IsUniqueKey)
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(IsUniqueKeyName),
-                                     IsUniqueKey.ToString().ToLower()
-                    );
-            }
-
-            if (Unsupported)
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(UnsupportedName),
-                                     Unsupported.ToString().ToLower()
-                    );
-            }
-
-            if (!String.IsNullOrEmpty(GroupName))
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(GroupNameName),
-                                     GroupName
-                    );
-            }
-
-            if (!String.IsNullOrEmpty(CopiedFrom))
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(CopiedFromName),
-                                     CopiedFrom
-                    );
-            }
-
-            if (IsLocalized)
-            {
-                builder.AppendFormat(" {0}=\"{1}\"",
-                                     SDataResource.FormatSME(IsLocalizedName),
-                                     IsLocalized.ToString().ToLower()
-                    );
+                builder.AppendFormat(" {0}=\"{1}\"", pair.Key, pair.Value);
             }
 
             builder.Append("/>");
 
             return builder.ToString();
+        }
+
+        protected virtual IDictionary<string, string> OnGetSchemaAttributes()
+        {
+            IDictionary<string, string> attributes = new Dictionary<string, string>();
+
+            if (!String.IsNullOrEmpty(Label))
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(LabelName),
+                    TypeInfoHelper.Escape(Label)
+                    );
+            }
+
+            if (Nillable)
+            {
+                attributes.Add(
+                    SDataResource.XmlConstants.Nillable,
+                    Nillable.ToString().ToLower()
+                    );
+            }
+
+            if (Precedence > 0)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(PrecedenceName),
+                    Precedence.ToString()
+                    );
+            }
+
+            if (CanGroup)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(CanGroupName),
+                    CanGroup.ToString().ToLower()
+                    );
+            }
+
+            if (CanFilter)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(CanFilterName),
+                    CanFilter.ToString().ToLower()
+                    );
+            }
+
+            if (CanSort)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(CanSortName),
+                    CanSort.ToString().ToLower()
+                    );
+            }
+
+            if (IsDescriptor)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(IsDescriptorName),
+                    IsDescriptor.ToString().ToLower()
+                    );
+            }
+
+            if (IsIdentifier)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(IsIdentifierName),
+                    IsIdentifier.ToString().ToLower()
+                    );
+            }
+
+            if (IsReadOnly)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(IsReadOnlyName),
+                    IsReadOnly.ToString().ToLower()
+                    );
+            }
+
+            if (IsGlobalId)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(IsGlobalIdName),
+                    IsGlobalId.ToString().ToLower()
+                    );
+            }
+
+            if (IsMandatory)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(IsMandatoryName),
+                    IsMandatory.ToString().ToLower()
+                    );
+            }
+
+            if (IsUniqueKey)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(IsUniqueKeyName),
+                    IsUniqueKey.ToString().ToLower()
+                    );
+            }
+
+            if (Unsupported)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(UnsupportedName),
+                    Unsupported.ToString().ToLower()
+                    );
+            }
+
+            if (!String.IsNullOrEmpty(GroupName))
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(GroupNameName),
+                    GroupName
+                    );
+            }
+
+            if (!String.IsNullOrEmpty(CopiedFrom))
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(CopiedFromName),
+                    CopiedFrom
+                    );
+            }
+
+            if (IsLocalized)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(IsLocalizedName),
+                    IsLocalized.ToString().ToLower()
+                    );
+            }
+
+            return attributes;
         }
 
         /// <summary>

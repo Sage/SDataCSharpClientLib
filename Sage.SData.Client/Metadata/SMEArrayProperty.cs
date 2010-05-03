@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Schema;
 
@@ -90,6 +91,21 @@ namespace Sage.SData.Client.Metadata
                         break;
                 }
             }
+        }
+
+        protected override IDictionary<string, string> OnGetSchemaAttributes()
+        {
+            var attributes = base.OnGetSchemaAttributes();
+
+            if (MaximumLength > 0)
+            {
+                attributes.Add(
+                    SDataResource.FormatSME(SDataResource.XmlConstants.MaxLength),
+                    MaximumLength.ToString()
+                    );
+            }
+
+            return attributes;
         }
 
         /// <summary>

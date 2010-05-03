@@ -26,6 +26,7 @@ namespace Sage.SData.Client.Metadata
         static TypeInfoHelper()
         {
             _oXSDataTypeToSMEType = new Dictionary<string, ConstructorInfo>(StringComparer.InvariantCultureIgnoreCase);
+            _oXSDataTypeToSMEType[XSDataTypes.String] = typeof (SMEMultiLineStringProperty).GetConstructor(Type.EmptyTypes);
             _oXSDataTypeToSMEType[XSDataTypes.NormalizedString] = typeof (SMEStringProperty).GetConstructor(Type.EmptyTypes);
             _oXSDataTypeToSMEType[XSDataTypes.Token] = typeof (SMETokenProperty).GetConstructor(Type.EmptyTypes);
             _oXSDataTypeToSMEType[XSDataTypes.Boolean] = typeof (SMEBoolProperty).GetConstructor(Type.EmptyTypes);
@@ -50,6 +51,7 @@ namespace Sage.SData.Client.Metadata
 
             _oSMETypeToXSDataType = new Dictionary<Type, string>();
             _oSMETypeToXSDataType[typeof (SMEStringProperty)] = XSDataTypes.NormalizedString;
+            _oSMETypeToXSDataType[typeof (SMEMultiLineStringProperty)] = XSDataTypes.String;
             _oSMETypeToXSDataType[typeof (SMETokenProperty)] = XSDataTypes.Token;
             _oSMETypeToXSDataType[typeof (SMEBoolProperty)] = XSDataTypes.Boolean;
             _oSMETypeToXSDataType[typeof (SMEDecimalProperty)] = XSDataTypes.Decimal;

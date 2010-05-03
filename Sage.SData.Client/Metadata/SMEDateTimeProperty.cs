@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Xml.Schema;
 using Sage.SData.Client.Framework;
 
@@ -113,6 +114,44 @@ namespace Sage.SData.Client.Metadata
                     else
                         _oMax = dateTime.DateTime;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Returns a value indicating if the property schema has facets.
+        /// </summary>
+        /// <value><b>true</b> if the property schema has facets; otherwise, <b>false</b>.</value>
+        protected override bool HasFacets
+        {
+            get { return base.HasFacets || Minimum != DefaultMinimum || Maximum != DefaultMaximum; }
+        }
+
+        /// <summary>
+        /// Adds the schema facets for this property.
+        /// </summary>
+        /// <param name="builder">The <see cref="StringBuilder"/> to add the facets to.</param>
+        protected override void OnGetSchemaFacets(StringBuilder builder)
+        {
+            base.OnGetSchemaFacets(builder);
+
+            if (Minimum != DefaultMinimum)
+            {
+                // <xs:minInclusive value="x" />
+                builder.AppendFormat("<{0} {1}=\"{2}\"/>",
+                                     TypeInfoHelper.FormatXS(SDataResource.XmlConstants.MinInclusive),
+                                     SDataResource.XmlConstants.Value,
+                                     new W3CDateTime(Minimum)
+                    );
+            }
+
+            if (Maximum != DefaultMaximum)
+            {
+                // <xs:maxInclusive value="x" />
+                builder.AppendFormat("<{0} {1}=\"{2}\"/>",
+                                     TypeInfoHelper.FormatXS(SDataResource.XmlConstants.MaxInclusive),
+                                     SDataResource.XmlConstants.Value,
+                                     new W3CDateTime(Maximum)
+                    );
             }
         }
 

@@ -221,6 +221,8 @@ namespace Sage.SData.Client.Metadata
                 {
                     var hasRelationship = false;
 
+                    metaDataProperty.Nillable = element.IsNillable;
+
                     // Load SData/SME attributes which are applied at the resource level
                     if (element.UnhandledAttributes != null && element.UnhandledAttributes.Length > 0)
                     {
