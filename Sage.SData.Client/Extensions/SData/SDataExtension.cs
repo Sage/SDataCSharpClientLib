@@ -18,9 +18,6 @@ namespace Sage.SData.Client.Extensions
 
         #region PRIVATE/PROTECTED/PUBLIC MEMBERS
 
-        public const string XsiNamespaceUri = "http://www.w3.org/2001/XMLSchema-instance";
-        public const string SDataNamespaceUri = "http://schemas.sage.com/sdata/2008/1";
-
         /// <summary>
         /// Private member to hold specific information about the extension.
         /// </summary>
@@ -38,7 +35,7 @@ namespace Sage.SData.Client.Extensions
         /// Initializes a new instance of the <see cref="SDataExtension"/> class.
         /// </summary>
         public SDataExtension()
-            : base("sdata", SDataNamespaceUri, new Version("1.0"))
+            : base(Framework.Common.SData.Prefix, Framework.Common.SData.Namespace, new Version("1.0"))
         {
             //------------------------------------------------------------
             //	Initialization handled by base class
@@ -236,7 +233,7 @@ namespace Sage.SData.Client.Extensions
         void ISyndicationExtension.WriteXmlNamespaceDeclaration(XmlWriter writer)
         {
             WriteXmlNamespaceDeclaration(writer);
-            writer.WriteAttributeString("xmlns", "xsi", null, XsiNamespaceUri);
+            writer.WriteAttributeString("xmlns", Framework.Common.XSI.Prefix, null, Framework.Common.XSI.Namespace);
         }
     }
 }

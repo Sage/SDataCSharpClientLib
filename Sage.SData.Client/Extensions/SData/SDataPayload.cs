@@ -41,25 +41,25 @@ namespace Sage.SData.Client.Extensions
             Namespace = source.NamespaceURI;
 
             string value;
-            Key = source.TryGetAttribute("key", SDataExtension.SDataNamespaceUri, out value) ? value : null;
-            Uri = source.TryGetAttribute("uri", SDataExtension.SDataNamespaceUri, out value) && !string.IsNullOrEmpty(value) ? new Uri(value) : null;
-            Uuid = source.TryGetAttribute("uuid", SDataExtension.SDataNamespaceUri, out value) && !string.IsNullOrEmpty(value) ? new Guid(value) : (Guid?) null;
-            Descriptor = source.TryGetAttribute("descriptor", SDataExtension.SDataNamespaceUri, out value) ? value : null;
-            Lookup = source.TryGetAttribute("lookup", SDataExtension.SDataNamespaceUri, out value) ? value : null;
-            IsDeleted = source.TryGetAttribute("isDeleted", SDataExtension.SDataNamespaceUri, out value) && !string.IsNullOrEmpty(value) ? XmlConvert.ToBoolean(value) : (bool?) null;
+            Key = source.TryGetAttribute("key", Framework.Common.SData.Namespace, out value) ? value : null;
+            Uri = source.TryGetAttribute("uri", Framework.Common.SData.Namespace, out value) && !string.IsNullOrEmpty(value) ? new Uri(value) : null;
+            Uuid = source.TryGetAttribute("uuid", Framework.Common.SData.Namespace, out value) && !string.IsNullOrEmpty(value) ? new Guid(value) : (Guid?)null;
+            Descriptor = source.TryGetAttribute("descriptor", Framework.Common.SData.Namespace, out value) ? value : null;
+            Lookup = source.TryGetAttribute("lookup", Framework.Common.SData.Namespace, out value) ? value : null;
+            IsDeleted = source.TryGetAttribute("isDeleted", Framework.Common.SData.Namespace, out value) && !string.IsNullOrEmpty(value) ? XmlConvert.ToBoolean(value) : (bool?)null;
 
             return source.SelectChildren(XPathNodeType.Element).Cast<XPathNavigator>().All(item => LoadItem(item, manager));
         }
 
-        public bool LoadItem(XPathNavigator source, XmlNamespaceManager manager)
+        private bool LoadItem(XPathNavigator source, XmlNamespaceManager manager)
         {
             string value;
 
-            if (source.TryGetAttribute("nil", SDataExtension.XsiNamespaceUri, out value) && XmlConvert.ToBoolean(value))
+            if (source.TryGetAttribute("nil", Framework.Common.XSI.Namespace, out value) && XmlConvert.ToBoolean(value))
             {
                 Values[source.LocalName] = null;
             }
-            else if (source.HasAttribute("key", SDataExtension.SDataNamespaceUri) || source.HasAttribute("uuid", SDataExtension.SDataNamespaceUri))
+            else if (source.HasAttribute("key", Framework.Common.SData.Namespace) || source.HasAttribute("uuid", Framework.Common.SData.Namespace))
             {
                 var child = new SDataPayload();
 
@@ -70,7 +70,7 @@ namespace Sage.SData.Client.Extensions
 
                 Values[source.LocalName] = child;
             }
-            else if (source.HasAttribute("url", SDataExtension.SDataNamespaceUri) || source.SelectChildren(XPathNodeType.Element).Count > 0)
+            else if (source.HasAttribute("url", Framework.Common.SData.Namespace) || source.SelectChildren(XPathNodeType.Element).Count > 0)
             {
                 var collection = new SDataPayloadCollection();
 
@@ -128,7 +128,7 @@ namespace Sage.SData.Client.Extensions
             if (value == null)
             {
                 writer.WriteStartElement(name, Namespace);
-                writer.WriteAttributeString("nil", SDataExtension.XsiNamespaceUri, XmlConvert.ToString(true));
+                writer.WriteAttributeString("nil", Framework.Common.XSI.Namespace, XmlConvert.ToString(true));
                 writer.WriteEndElement();
             }
             else if (value is SDataPayload)

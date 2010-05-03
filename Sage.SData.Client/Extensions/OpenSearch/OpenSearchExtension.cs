@@ -35,7 +35,7 @@ namespace Sage.SData.Client.Extensions
         /// Initializes a new instance of the <see cref="OpenSearchExtension"/> class.
         /// </summary>
         public OpenSearchExtension()
-            : base("opensearch", "http://a9.com/-/spec/opensearch/1.1/", new Version("1.0"))
+            : base(Framework.Common.OpenSearch.Prefix, Framework.Common.OpenSearch.Namespace, new Version("1.0"))
         {
             //------------------------------------------------------------
             //	Initialization handled by base class

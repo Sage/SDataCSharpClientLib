@@ -35,7 +35,7 @@ namespace Sage.SData.Client.Extensions
         /// Initializes a new instance of the <see cref="SDataHttpExtension"/> class.
         /// </summary>
         public SDataHttpExtension()
-            : base("http", "http://schemas.sage.com/sdata/http/2008/1", new Version("1.0"))
+            : base(Framework.Common.HTTP.Prefix, Framework.Common.HTTP.Namespace, new Version("1.0"))
         {
             //------------------------------------------------------------
             //	Initialization handled by base class
