@@ -20,7 +20,7 @@ namespace Sage.SData.Client.Framework
     public class SDataResponse
     {
         private readonly HttpStatusCode _statusCode;
-        private readonly MediaType _contentType;
+        private readonly MediaType? _contentType;
         private readonly string _eTag;
         private readonly string _location;
         private readonly object _content;
@@ -29,15 +29,21 @@ namespace Sage.SData.Client.Framework
         {
             var httpResponse = response as HttpWebResponse;
             _statusCode = httpResponse != null ? httpResponse.StatusCode : 0;
-            _contentType = MediaTypeNames.GetMediaType(response.ContentType);
+
+            MediaType contentType;
+            if (MediaTypeNames.TryGetMediaType(response.ContentType, out contentType))
+            {
+                _contentType = contentType;
+            }
+
             _eTag = response.Headers[HttpResponseHeader.ETag];
             _location = response.Headers[HttpResponseHeader.Location] ?? redirectLocation;
 
-            if (_statusCode != HttpStatusCode.NoContent)
+            if (_statusCode != HttpStatusCode.NoContent && _contentType != null)
             {
                 using (var stream = response.GetResponseStream())
                 {
-                    _content = LoadContent(stream, _contentType);
+                    _content = LoadContent(stream, contentType);
                 }
             }
         }
@@ -53,7 +59,7 @@ namespace Sage.SData.Client.Framework
         /// <summary>
         /// The response content type.
         /// </summary>
-        public MediaType ContentType
+        public MediaType? ContentType
         {
             get { return _contentType; }
         }
