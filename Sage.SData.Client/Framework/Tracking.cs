@@ -12,7 +12,8 @@ namespace Sage.SData.Client.Framework
     /// Represents tracking information used to track the progress of an
     /// asynchronous operation.
     /// </summary>
-    [XmlType(TypeName = "tracking", Namespace = "http://schemas.sage.com/sdata/2008/1")]
+    [XmlRoot(Namespace = Common.SData.Namespace)]
+    [XmlType(TypeName = "tracking", Namespace = Common.SData.Namespace)]
     public class Tracking
     {
         /// <summary>

@@ -73,7 +73,8 @@ namespace Sage.SData.Client.Framework
     /// <summary>
     /// Provides details of an error that has occurred.
     /// </summary>
-    [XmlSchemaProvider("_sf_GetSchema")]
+    [XmlRoot(Namespace = Common.SData.Namespace)]
+    [XmlType(TypeName = "diagnosis", Namespace = Common.SData.Namespace)]
     public class Diagnosis
     {
         #region Fields
