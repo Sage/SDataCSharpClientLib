@@ -11,13 +11,23 @@ namespace Sage.SData.Client.Metadata
     {
         public static SDataSchema Read(Stream stream)
         {
+            return Read(stream, null);
+        }
+
+        public static SDataSchema Read(Stream stream, string targetElementName)
+        {
             using (var reader = new StreamReader(stream))
             {
-                return Read(reader);
+                return Read(reader, targetElementName);
             }
         }
 
         public static SDataSchema Read(TextReader reader)
+        {
+            return Read(reader, null);
+        }
+
+        public static SDataSchema Read(TextReader reader, string targetElementName)
         {
             var xsd = XmlSchema.Read(reader, null);
 
@@ -43,6 +53,7 @@ namespace Sage.SData.Client.Metadata
 
             return new SDataSchema
                    {
+                       TargetElementName = targetElementName,
                        Namespace = xsd.TargetNamespace,
                        Resources = resources
                    };
@@ -52,6 +63,7 @@ namespace Sage.SData.Client.Metadata
         {
         }
 
+        public string TargetElementName { get; private set; }
         public string Namespace { get; private set; }
         public IDictionary<string, SDataResource> Resources { get; private set; }
 

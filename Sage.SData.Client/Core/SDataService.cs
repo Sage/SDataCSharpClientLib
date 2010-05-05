@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Xml;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
 using Sage.SData.Client.Extensions;
@@ -377,6 +378,26 @@ namespace Sage.SData.Client.Core
             {
                 var operation = new RequestOperation(HttpMethod.Get);
                 var response = ExecuteRequest(url, operation, null);
+                var text = response.Content as string;
+
+                if (text != null && response.ContentType == MediaType.Xml)
+                {
+                    var targetElementName = !string.IsNullOrEmpty(response.Location)
+                                                ? new Uri(response.Location).Fragment
+                                                : null;
+
+                    using (var reader = new StringReader(text))
+                    {
+                        try
+                        {
+                            return SDataSchema.Read(reader, targetElementName);
+                        }
+                        catch (XmlException)
+                        {
+                        }
+                    }
+                }
+
                 return response.Content;
             }
             catch (WebException ex)
@@ -500,10 +521,13 @@ namespace Sage.SData.Client.Core
                 var requestUrl = request.ToString();
                 var operation = new RequestOperation(HttpMethod.Get);
                 var response = ExecuteRequest(requestUrl, operation, MediaType.Xml);
+                var targetElementName = !string.IsNullOrEmpty(response.Location)
+                                            ? new Uri(response.Location).Fragment
+                                            : null;
 
                 using (var reader = new StringReader((string) response.Content))
                 {
-                    return SDataSchema.Read(reader);
+                    return SDataSchema.Read(reader, targetElementName);
                 }
             }
             catch (WebException ex)

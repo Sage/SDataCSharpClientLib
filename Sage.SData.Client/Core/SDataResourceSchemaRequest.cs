@@ -24,8 +24,8 @@ namespace Sage.SData.Client.Core
         /// </example>
         public string Version
         {
-            get { return Uri.QueryArgs["version"]; }
-            set { Uri.QueryArgs["version"] = value; }
+            get { return Uri["version"]; }
+            set { Uri["version"] = value; }
         }
 
         /// <summary>
