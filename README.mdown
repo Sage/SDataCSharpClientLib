@@ -1,0 +1,8 @@
+Sage SData Client Libraries for .NET
+====================================
+
+This repository contains the following
+
+*	A .NET 3.5 library for consuming [SData](http://sdata.sage.com).
+*	A set of unit tests
+*	A WinForms application, which demonstrates various features of the API
