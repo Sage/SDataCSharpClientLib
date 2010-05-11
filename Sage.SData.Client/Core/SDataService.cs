@@ -204,10 +204,6 @@ namespace Sage.SData.Client.Core
                 eTag = response.ETag;
                 return (AtomFeed) response.Content;
             }
-            catch (WebException ex)
-            {
-                throw new SDataServiceException(ex);
-            }
             catch (Exception ex)
             {
                 throw new SDataClientException(ex.Message, ex);
@@ -251,10 +247,6 @@ namespace Sage.SData.Client.Core
 
                 return entry;
             }
-            catch (WebException ex)
-            {
-                throw new SDataServiceException(ex);
-            }
             catch (Exception ex)
             {
                 throw new SDataClientException(ex.Message, ex);
@@ -279,10 +271,6 @@ namespace Sage.SData.Client.Core
                 var tracking = (Tracking) response.Content;
                 return new AsyncRequest(this, response.Location, tracking);
             }
-            catch (WebException ex)
-            {
-                throw new SDataServiceException(ex);
-            }
             catch (Exception ex)
             {
                 throw new SDataClientException(ex.Message, ex);
@@ -303,10 +291,6 @@ namespace Sage.SData.Client.Core
                 var operation = new RequestOperation(HttpMethod.Delete);
                 var response = ExecuteRequest(url, operation, null);
                 return response.StatusCode == HttpStatusCode.OK;
-            }
-            catch (WebException ex)
-            {
-                throw new SDataServiceException(ex);
             }
             catch (Exception ex)
             {
@@ -355,10 +339,6 @@ namespace Sage.SData.Client.Core
                 var response = ExecuteRequest(requestUrl, operation, null);
                 return response.StatusCode == HttpStatusCode.OK;
             }
-            catch (WebException ex)
-            {
-                throw new SDataServiceException(ex);
-            }
             catch (Exception ex)
             {
                 throw new SDataClientException(ex.Message, ex);
@@ -395,14 +375,13 @@ namespace Sage.SData.Client.Core
                         catch (XmlException)
                         {
                         }
+                        catch (InvalidOperationException)
+                        {
+                        }
                     }
                 }
 
                 return response.Content;
-            }
-            catch (WebException ex)
-            {
-                throw new SDataServiceException(ex);
             }
             catch (Exception ex)
             {
@@ -438,10 +417,6 @@ namespace Sage.SData.Client.Core
                 var response = ExecuteRequest(requestUrl, operation, MediaType.Atom);
                 eTag = response.ETag;
                 return (AtomFeed) response.Content;
-            }
-            catch (WebException ex)
-            {
-                throw new SDataServiceException(ex);
             }
             catch (Exception ex)
             {
@@ -497,10 +472,6 @@ namespace Sage.SData.Client.Core
 
                 return entry;
             }
-            catch (WebException ex)
-            {
-                throw new SDataServiceException(ex);
-            }
             catch (Exception ex)
             {
                 throw new SDataClientException(ex.Message, ex);
@@ -529,10 +500,6 @@ namespace Sage.SData.Client.Core
                 {
                     return SDataSchema.Read(reader, targetElementName);
                 }
-            }
-            catch (WebException ex)
-            {
-                throw new SDataServiceException(ex);
             }
             catch (Exception ex)
             {
@@ -580,10 +547,6 @@ namespace Sage.SData.Client.Core
                 }
 
                 return entry;
-            }
-            catch (WebException ex)
-            {
-                throw new SDataServiceException(ex);
             }
             catch (Exception ex)
             {

@@ -1,14 +1,14 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Xml;
 using System.Xml.Serialization;
-using Sage.SData.Client.Framework;
 
-namespace Sage.SData.Client.Core
+namespace Sage.SData.Client.Framework
 {
     /// <summary>
     /// Exception thrown by SDataService class
     /// </summary>
-    public class SDataServiceException : WebException
+    public class SDataException : WebException
     {
         private readonly Diagnosis _diagnosis;
 
@@ -24,7 +24,7 @@ namespace Sage.SData.Client.Core
         /// constructor
         /// </summary>
         /// <param name="innerException"></param>
-        public SDataServiceException(WebException innerException)
+        public SDataException(WebException innerException)
             : base(innerException.Message, innerException)
         {
             if (innerException.Response == null)
@@ -42,7 +42,9 @@ namespace Sage.SData.Client.Core
                 }
                 catch (XmlException)
                 {
-                    return;
+                }
+                catch (InvalidOperationException)
+                {
                 }
             }
         }

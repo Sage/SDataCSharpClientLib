@@ -118,7 +118,17 @@ namespace Sage.SData.Client.Framework
             while (true)
             {
                 var request = CreateRequest(uri, operation);
-                var response = request.GetResponse();
+
+                WebResponse response;
+                try
+                {
+                    response = request.GetResponse();
+                }
+                catch (WebException ex)
+                {
+                    throw new SDataException(ex);
+                }
+
                 var httpResponse = response as HttpWebResponse;
                 var statusCode = httpResponse != null ? httpResponse.StatusCode : 0;
 
