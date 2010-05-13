@@ -48,100 +48,121 @@ namespace Sage.SData.Client.Extensions
             Lookup = source.TryGetAttribute("lookup", Framework.Common.SData.Namespace, out value) ? value : null;
             IsDeleted = source.TryGetAttribute("isDeleted", Framework.Common.SData.Namespace, out value) && !string.IsNullOrEmpty(value) ? XmlConvert.ToBoolean(value) : (bool?) null;
 
-            return source.SelectChildren(XPathNodeType.Element).Cast<XPathNavigator>().All(item => LoadItem(item, manager));
+            return source.SelectChildren(XPathNodeType.Element)
+                .Cast<XPathNavigator>()
+                .GroupBy(item => item.LocalName)
+                .All(group => LoadItem(group.Key, group, manager));
         }
 
-        private bool LoadItem(XPathNavigator source, XmlNamespaceManager manager)
+        private bool LoadItem(string name, IEnumerable<XPathNavigator> items, XmlNamespaceManager manager)
         {
-            object item;
+            object value;
 
-            switch (InferItemType(source))
+            if (items.Count() > 1)
             {
-                case ItemType.Property:
+                var collection = new SDataPayloadCollection();
+
+                if (!collection.Load(items, manager))
                 {
-                    string value;
-
-                    if (source.TryGetAttribute("nil", Framework.Common.XSI.Namespace, out value) && XmlConvert.ToBoolean(value))
-                    {
-                        item = null;
-                    }
-                    else
-                    {
-                        item = source.Value;
-                    }
-                }
-                    break;
-                case ItemType.Object:
-                {
-                    var obj = new SDataPayload();
-
-                    if (!obj.Load(source, manager))
-                    {
-                        return false;
-                    }
-
-                    item = obj;
-                }
-                    break;
-                case ItemType.Collection:
-                {
-                    var collection = new SDataPayloadCollection();
-
-                    if (!collection.Load(source, manager))
-                    {
-                        return false;
-                    }
-
-                    item = collection;
-                }
-                    break;
-                default:
                     return false;
+                }
+
+                value = collection;
+            }
+            else
+            {
+                var item = items.First();
+
+                switch (InferItemType(item))
+                {
+                    case ItemType.Property:
+                    {
+                        string nilValue;
+
+                        if (item.TryGetAttribute("nil", Framework.Common.XSI.Namespace, out nilValue) && XmlConvert.ToBoolean(nilValue))
+                        {
+                            value = null;
+                        }
+                        else
+                        {
+                            value = item.Value;
+                        }
+
+                        break;
+                    }
+                    case ItemType.Object:
+                    {
+                        var obj = new SDataPayload();
+
+                        if (!obj.Load(item, manager))
+                        {
+                            return false;
+                        }
+
+                        value = obj;
+                        break;
+                    }
+                    case ItemType.Collection:
+                    {
+                        var collection = new SDataPayloadCollection();
+
+                        if (!collection.Load(item, manager))
+                        {
+                            return false;
+                        }
+
+                        value = collection;
+                        break;
+                    }
+                    default:
+                        return false;
+                }
             }
 
-            Values[source.LocalName] = item;
+            Values.Add(name, value);
             return true;
         }
 
-        private static ItemType InferItemType(XPathNavigator source)
+        private static ItemType InferItemType(XPathNavigator item)
         {
             string value;
 
-            if (source.TryGetAttribute("nil", Framework.Common.XSI.Namespace, out value) && XmlConvert.ToBoolean(value))
+            if (item.TryGetAttribute("nil", Framework.Common.XSI.Namespace, out value) && XmlConvert.ToBoolean(value))
             {
                 return ItemType.Property;
             }
 
-            if (source.HasAttribute("key", Framework.Common.SData.Namespace) ||
-                source.HasAttribute("uuid", Framework.Common.SData.Namespace) ||
-                source.HasAttribute("lookup", Framework.Common.SData.Namespace) ||
-                source.HasAttribute("descriptor", Framework.Common.SData.Namespace))
+            if (item.HasAttribute("key", Framework.Common.SData.Namespace) ||
+                item.HasAttribute("uuid", Framework.Common.SData.Namespace) ||
+                item.HasAttribute("lookup", Framework.Common.SData.Namespace) ||
+                item.HasAttribute("descriptor", Framework.Common.SData.Namespace))
             {
                 return ItemType.Object;
             }
 
-            if (source.HasAttribute("url", Framework.Common.SData.Namespace) ||
-                source.HasAttribute("deleteMissing", Framework.Common.SData.Namespace) ||
-                source.IsEmptyElement)
+            if (item.HasAttribute("url", Framework.Common.SData.Namespace) ||
+                item.HasAttribute("deleteMissing", Framework.Common.SData.Namespace) ||
+                item.IsEmptyElement)
             {
                 return ItemType.Collection;
             }
 
-            var children = source.SelectChildren(XPathNodeType.Element).Cast<XPathNavigator>();
+            var children = item.SelectChildren(XPathNodeType.Element).Cast<XPathNavigator>();
             var childCount = children.Count();
 
-            if (childCount <= 0)
+            if (childCount == 0)
             {
                 return ItemType.Property;
             }
 
-            if (children.Select(child => child.LocalName).Distinct().Count() == childCount &&
-                children.Any(item => InferItemType(item) != ItemType.Object))
+            if (childCount > 1 &&
+                children.Select(child => child.LocalName).Distinct().Count() == 1 &&
+                children.All(child => InferItemType(child) == ItemType.Object))
             {
-                return ItemType.Object;
+                return ItemType.Collection;
             }
 
-            return ItemType.Collection;
+            return ItemType.Object;
         }
 
         private enum ItemType
