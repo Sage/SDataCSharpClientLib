@@ -43,50 +43,112 @@ namespace Sage.SData.Client.Extensions
             string value;
             Key = source.TryGetAttribute("key", Framework.Common.SData.Namespace, out value) ? value : null;
             Uri = source.TryGetAttribute("uri", Framework.Common.SData.Namespace, out value) && !string.IsNullOrEmpty(value) ? new Uri(value) : null;
-            Uuid = source.TryGetAttribute("uuid", Framework.Common.SData.Namespace, out value) && !string.IsNullOrEmpty(value) ? new Guid(value) : (Guid?)null;
+            Uuid = source.TryGetAttribute("uuid", Framework.Common.SData.Namespace, out value) && !string.IsNullOrEmpty(value) ? new Guid(value) : (Guid?) null;
             Descriptor = source.TryGetAttribute("descriptor", Framework.Common.SData.Namespace, out value) ? value : null;
             Lookup = source.TryGetAttribute("lookup", Framework.Common.SData.Namespace, out value) ? value : null;
-            IsDeleted = source.TryGetAttribute("isDeleted", Framework.Common.SData.Namespace, out value) && !string.IsNullOrEmpty(value) ? XmlConvert.ToBoolean(value) : (bool?)null;
+            IsDeleted = source.TryGetAttribute("isDeleted", Framework.Common.SData.Namespace, out value) && !string.IsNullOrEmpty(value) ? XmlConvert.ToBoolean(value) : (bool?) null;
 
             return source.SelectChildren(XPathNodeType.Element).Cast<XPathNavigator>().All(item => LoadItem(item, manager));
         }
 
         private bool LoadItem(XPathNavigator source, XmlNamespaceManager manager)
         {
+            object item;
+
+            switch (InferItemType(source))
+            {
+                case ItemType.Property:
+                {
+                    string value;
+
+                    if (source.TryGetAttribute("nil", Framework.Common.XSI.Namespace, out value) && XmlConvert.ToBoolean(value))
+                    {
+                        item = null;
+                    }
+                    else
+                    {
+                        item = source.Value;
+                    }
+                }
+                    break;
+                case ItemType.Object:
+                {
+                    var obj = new SDataPayload();
+
+                    if (!obj.Load(source, manager))
+                    {
+                        return false;
+                    }
+
+                    item = obj;
+                }
+                    break;
+                case ItemType.Collection:
+                {
+                    var collection = new SDataPayloadCollection();
+
+                    if (!collection.Load(source, manager))
+                    {
+                        return false;
+                    }
+
+                    item = collection;
+                }
+                    break;
+                default:
+                    return false;
+            }
+
+            Values[source.LocalName] = item;
+            return true;
+        }
+
+        private static ItemType InferItemType(XPathNavigator source)
+        {
             string value;
 
             if (source.TryGetAttribute("nil", Framework.Common.XSI.Namespace, out value) && XmlConvert.ToBoolean(value))
             {
-                Values[source.LocalName] = null;
+                return ItemType.Property;
             }
-            else if (source.HasAttribute("key", Framework.Common.SData.Namespace) || source.HasAttribute("uuid", Framework.Common.SData.Namespace))
+
+            if (source.HasAttribute("key", Framework.Common.SData.Namespace) ||
+                source.HasAttribute("uuid", Framework.Common.SData.Namespace) ||
+                source.HasAttribute("lookup", Framework.Common.SData.Namespace) ||
+                source.HasAttribute("descriptor", Framework.Common.SData.Namespace))
             {
-                var child = new SDataPayload();
-
-                if (!child.Load(source, manager))
-                {
-                    return false;
-                }
-
-                Values[source.LocalName] = child;
+                return ItemType.Object;
             }
-            else if (source.HasAttribute("url", Framework.Common.SData.Namespace) || source.SelectChildren(XPathNodeType.Element).Count > 0)
+
+            if (source.HasAttribute("url", Framework.Common.SData.Namespace) ||
+                source.HasAttribute("deleteMissing", Framework.Common.SData.Namespace) ||
+                source.IsEmptyElement)
             {
-                var collection = new SDataPayloadCollection();
-
-                if (!collection.Load(source, manager))
-                {
-                    return false;
-                }
-
-                Values[source.LocalName] = collection;
+                return ItemType.Collection;
             }
-            else
+
+            var children = source.SelectChildren(XPathNodeType.Element).Cast<XPathNavigator>();
+            var childCount = children.Count();
+
+            if (childCount <= 0)
             {
-                Values[source.LocalName] = source.Value;
+                return ItemType.Property;
             }
 
-            return true;
+            if (children.Select(child => child.LocalName).Distinct().Count() == childCount &&
+                children.Any(item => InferItemType(item) != ItemType.Object))
+            {
+                return ItemType.Object;
+            }
+
+            return ItemType.Collection;
+        }
+
+        private enum ItemType
+        {
+            Property,
+            Object,
+            Collection
         }
 
         public void WriteTo(XmlWriter writer, string xmlNamespace)
