@@ -155,8 +155,7 @@ namespace Sage.SData.Client.Extensions
                 return ItemType.Property;
             }
 
-            if (childCount > 1 &&
-                children.Select(child => child.LocalName).Distinct().Count() == 1 &&
+            if (children.Select(child => child.LocalName).Distinct().Count() == 1 &&
                 children.All(child => InferItemType(child) == ItemType.Object))
             {
                 return ItemType.Collection;

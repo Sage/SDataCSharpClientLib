@@ -100,6 +100,32 @@ namespace Sage.SData.Client.Test.Extensions
         }
 
         [Test]
+        public void Collection_Of_One_Property_Without_Attributes()
+        {
+            var xml = @"<salesOrder xmlns:sdata=""http://schemas.sage.com/sdata/2008/1"">
+                          <orderLines>
+                            <salesOrderLine sdata:key=""43660-1"" />
+                          </orderLines>
+                        </salesOrder>";
+            var payload = LoadPayload(xml);
+
+            Assert.That(payload.ResourceName, Is.EqualTo("salesOrder"));
+            Assert.That(payload.Values.Count, Is.EqualTo(1));
+
+            object value;
+            Assert.IsTrue(payload.Values.TryGetValue("orderLines", out value));
+            Assert.That(value, Is.InstanceOfType(typeof(SDataPayloadCollection)));
+            var col = (SDataPayloadCollection)value;
+            Assert.That(col.Count, Is.EqualTo(1));
+
+            var item = col[0];
+            Assert.That(item, Is.InstanceOfType(typeof(SDataPayload)));
+            Assert.That(item.ResourceName, Is.EqualTo("salesOrderLine"));
+            Assert.That(item.Key, Is.EqualTo("43660-1"));
+            CollectionAssert.IsEmpty(item.Values);
+        }
+
+        [Test]
         public void Collection_Property_Without_Attributes()
         {
             var xml = @"<salesOrder xmlns:sdata=""http://schemas.sage.com/sdata/2008/1"">
