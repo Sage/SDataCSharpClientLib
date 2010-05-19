@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml;
+using Moq;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
 using Sage.SData.Client.Core;
@@ -12,12 +12,14 @@ namespace Sage.SData.Client.Test.Core
     [TestFixture]
     public class SDataSingleResourceRequestTests : AssertionHelper
     {
-        private MockSDataService _service;
+        private Mock<SDataService> _mock;
+        private ISDataService _service;
 
         [TestFixtureSetUp]
         public void Setup()
         {
-            _service = new MockSDataService();
+            _mock = new Mock<SDataService>(MockBehavior.Strict, "http://localhost:59213/sdata/aw/dynamic/-/", "lee", "abc123");
+            _service = _mock.Object;
         }
 
         [Test]
@@ -81,9 +83,15 @@ namespace Sage.SData.Client.Test.Core
                                ResourceKind = "employees",
                                ResourceSelector = "3"
                            };
+            _mock.Setup(s => s.ReadEntry(request1)).Returns(TestData.Entry);
+            _mock.Setup(s => s.ReadEntry(request2)).Returns(TestData.Entry);
+            _mock.Setup(s => s.ReadEntry(request3)).Returns(TestData.Entry);
 
             request2.Entry = request2.Read();
             request3.Entry = request3.Read();
+
+            _mock.Setup(s => s.UpdateEntry(request2, request2.Entry)).Returns(TestData.Entry);
+            _mock.Setup(s => s.DeleteEntry(request3, request3.Entry)).Returns(true);
 
             var payload2 = request2.Entry.GetSDataPayload();
             payload2.Values["MaritalStatus"] = "Married";
@@ -97,6 +105,7 @@ namespace Sage.SData.Client.Test.Core
                 request2.Update();
                 request3.Delete();
 
+                _mock.Setup(s => s.CreateFeed(batch, It.IsAny<AtomFeed>())).Returns(TestData.Feed);
                 batchfeed = batch.Commit();
             }
 
@@ -111,6 +120,7 @@ namespace Sage.SData.Client.Test.Core
                               ResourceKind = "employees",
                               ResourceSelector = "1"
                           };
+            _mock.Setup(s => s.ReadEntry(request)).Returns(TestData.Entry);
 
             var entry = request.Read();
             Expect(entry, Is.Not.Null);
@@ -142,6 +152,7 @@ namespace Sage.SData.Client.Test.Core
                         };
             entry.SetSDataPayload(payload);
             request.Entry = entry;
+            _mock.Setup(s => s.CreateEntry(request, request.Entry)).Returns(TestData.Entry);
 
             entry = request.Create();
             Expect(entry, Is.Not.Null);
@@ -155,11 +166,13 @@ namespace Sage.SData.Client.Test.Core
                               ResourceKind = "employees",
                               ResourceSelector = "1"
                           };
+            _mock.Setup(s => s.ReadEntry(request)).Returns(TestData.Entry);
 
             var entry = request.Read();
             var payload = entry.GetSDataPayload();
             payload.Values["Title"] = "test update";
             request.Entry = entry;
+            _mock.Setup(s => s.UpdateEntry(request, request.Entry)).Returns(TestData.Entry);
 
             entry = request.Update();
             Expect(entry, Is.Not.Null);
@@ -173,8 +186,12 @@ namespace Sage.SData.Client.Test.Core
                               ResourceKind = "employees",
                               ResourceSelector = "1"
                           };
+            _mock.Setup(s => s.ReadEntry(request)).Returns(TestData.Entry);
 
             request.Entry = request.Read();
+
+            _mock.Setup(s => s.DeleteEntry(request, request.Entry)).Returns(true);
+
             var result = request.Delete();
             Expect(result);
         }

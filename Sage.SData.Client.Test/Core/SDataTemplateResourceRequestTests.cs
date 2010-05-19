@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
+﻿using Moq;
+using NUnit.Framework;
 using Sage.SData.Client.Core;
 
 namespace Sage.SData.Client.Test.Core
@@ -7,12 +7,14 @@ namespace Sage.SData.Client.Test.Core
     [TestFixture]
     public class SDataTemplateResourceRequestTests : AssertionHelper
     {
-        private MockSDataService _service;
+        private Mock<SDataService> _mock;
+        private ISDataService _service;
 
         [TestFixtureSetUp]
         public void Setup()
         {
-            _service = new MockSDataService();
+            _mock = new Mock<SDataService>(MockBehavior.Strict, "http://localhost:59213/sdata/aw/dynamic/-/", "lee", "abc123");
+            _service = _mock.Object;
         }
 
         [Test]
@@ -34,6 +36,8 @@ namespace Sage.SData.Client.Test.Core
         public void TemplateResource_Verify_CanRead()
         {
             var request = new SDataTemplateResourceRequest(_service) {ResourceKind = "employees"};
+            _mock.Setup(s => s.ReadEntry(request)).Returns(TestData.Entry);
+
             var entry = request.Read();
             Expect(entry, Is.Not.Null);
         }

@@ -364,7 +364,7 @@ namespace Sage.SData.Client.Metadata
                     return type;
             }
 
-            return RoleType.resourceKind;
+            return RoleType.ResourceKind;
         }
     }
 
@@ -402,11 +402,11 @@ namespace Sage.SData.Client.Metadata
         /// <summary>
         /// The associated type is a resource.
         /// </summary>
-        resourceKind,
+        ResourceKind,
 
         /// <summary>
         /// The associated type is a service.
         /// </summary>
-        serviceOperation
+        ServiceOperation
     }
 }

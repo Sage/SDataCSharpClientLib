@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Xml;
 using System.Xml.XPath;
 using Sage.SData.Client.Common;
@@ -8,45 +7,29 @@ using Sage.SData.Client.Framework;
 namespace Sage.SData.Client.Extensions
 {
     /// <summary>
-    /// Encapsulates specific information about an individual <see cref="SDataExtension"/>.
+    /// Encapsulates specific information about an individual <see cref="SDataSyncExtension"/>.
     /// </summary>
     [Serializable]
-    public class SDataExtensionContext
+    public class SDataSyncExtensionContext
     {
-        //============================================================
-        //	PUBLIC/PRIVATE/PROTECTED MEMBERS
-        //============================================================
-
-        #region PRIVATE/PROTECTED/PUBLIC MEMBERS
-
-        /// <summary>
-        /// Private member to hold information that allows the client to diagnose errors
-        /// </summary>
-        private Collection<Diagnosis> _diagnoses;
-
-        #endregion
-
         //============================================================
         //	PUBLIC PROPERTIES
         //============================================================
 
         /// <summary>
-        /// SDataPayload that represent the sdata:payload element in an AtomEntry
+        /// Sync Mode
         /// </summary>
-        public SDataPayload Payload { get; set; }
+        public SyncMode? SyncMode { get; set; }
 
         /// <summary>
-        /// Gets information that allows the client to diagnose errors
+        /// Digest
         /// </summary>
-        public Collection<Diagnosis> Diagnoses
-        {
-            get { return _diagnoses ?? (_diagnoses = new Collection<Diagnosis>()); }
-        }
+        public Digest Digest { get; set; }
 
         /// <summary>
-        /// Gets the inline XML schema that describes the feed or entry
+        /// Sync State
         /// </summary>
-        public string Schema { get; set; }
+        public SyncState SyncState { get; set; }
 
         //============================================================
         //	PUBLIC METHODS
@@ -80,33 +63,33 @@ namespace Sage.SData.Client.Extensions
             //------------------------------------------------------------
             if (source.HasChildren)
             {
-                var payloadNavigator = source.SelectSingleNode("sdata:payload/*", manager);
-                if (payloadNavigator != null)
+                var syncModeNavigator = source.SelectSingleNode("sync:syncMode", manager);
+                if (syncModeNavigator != null && !string.IsNullOrEmpty(syncModeNavigator.Value))
                 {
-                    var payload = new SDataPayload();
-                    if (payload.Load(payloadNavigator, manager))
-                    {
-                        Payload = payload;
-                        wasLoaded = true;
-                    }
-                }
-
-                var diagnosesNavigator = source.Select("sdata:diagnoses", manager);
-                foreach (XPathNavigator item in diagnosesNavigator)
-                {
-                    var diagnosis = new Diagnosis();
-                    if (diagnosis.Load(item, manager))
-                    {
-                        Diagnoses.Add(diagnosis);
-                        wasLoaded = true;
-                    }
-                }
-
-                var schemaNavigator = source.SelectSingleNode("sdata:schema", manager);
-                if (schemaNavigator != null && !string.IsNullOrEmpty(schemaNavigator.Value))
-                {
-                    Schema = schemaNavigator.Value;
+                    SyncMode = (SyncMode) Enum.Parse(typeof (SyncMode), syncModeNavigator.Value, true);
                     wasLoaded = true;
+                }
+
+                var digestNavigator = source.SelectSingleNode("sync:digest", manager);
+                if (digestNavigator != null)
+                {
+                    var digest = new Digest();
+                    if (digest.Load(digestNavigator, manager))
+                    {
+                        Digest = digest;
+                        wasLoaded = true;
+                    }
+                }
+
+                var syncStateNavigator = source.SelectSingleNode("sync:syncState", manager);
+                if (syncStateNavigator != null)
+                {
+                    var syncState = new SyncState();
+                    if (syncState.Load(syncStateNavigator, manager))
+                    {
+                        SyncState = syncState;
+                        wasLoaded = true;
+                    }
                 }
             }
 
@@ -137,26 +120,19 @@ namespace Sage.SData.Client.Extensions
             //	Write current extension details to the writer
             //------------------------------------------------------------
 
-            if (Payload != null)
+            if (SyncMode != null)
             {
-                Payload.WriteTo(writer, xmlNamespace);
+                writer.WriteElementString("syncMode", xmlNamespace, SyncMode.ToString().ToUpper());
             }
 
-            if (Diagnoses.Count > 0)
+            if (Digest != null)
             {
-                writer.WriteStartElement("diagnoses", xmlNamespace);
-                foreach (var diagnosis in Diagnoses)
-                {
-                    diagnosis.WriteTo(writer, xmlNamespace);
-                }
-                writer.WriteEndElement();
+                Digest.WriteTo(writer, xmlNamespace);
             }
 
-            if (Schema != null)
+            if (SyncState != null)
             {
-                writer.WriteStartElement("schema", xmlNamespace);
-                writer.WriteCData(Schema);
-                writer.WriteEndElement();
+                SyncState.WriteTo(writer, xmlNamespace);
             }
         }
 

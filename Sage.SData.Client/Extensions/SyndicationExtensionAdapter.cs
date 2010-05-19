@@ -77,6 +77,7 @@ namespace Sage.SData.Client.Extensions
                 extensions.Add(typeof(OpenSearchExtension));
                 extensions.Add(typeof(SDataExtension));
                 extensions.Add(typeof(SDataHttpExtension));
+                extensions.Add(typeof(SDataSyncExtension));
                 extensions.Add(typeof(SimpleListSyndicationExtension));
 
                 return extensions;

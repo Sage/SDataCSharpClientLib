@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Sage.SData.Client.Core;
 
 namespace Sage.SData.Client.Test.Core

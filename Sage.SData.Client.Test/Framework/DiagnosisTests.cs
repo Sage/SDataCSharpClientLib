@@ -18,9 +18,11 @@ namespace Sage.SData.Client.Test.Framework
         [Test]
         public void Diagnosis_SDataCode_Should_Be_An_Enum_Test()
         {
-            var diagnosis = new Diagnosis();
-            diagnosis.SDataCode = DiagnosisCode.ApplicationDiagnosis;
-            diagnosis.ApplicationCode = "Application error";
+            var diagnosis = new Diagnosis
+                            {
+                                SDataCode = DiagnosisCode.ApplicationDiagnosis,
+                                ApplicationCode = "Application error"
+                            };
             string xml;
 
             using (var textWriter = new StringWriter())

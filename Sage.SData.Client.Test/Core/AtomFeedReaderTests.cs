@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
+﻿using Moq;
+using NUnit.Framework;
 using Sage.SData.Client.Core;
 
 namespace Sage.SData.Client.Test.Core
@@ -7,23 +7,22 @@ namespace Sage.SData.Client.Test.Core
     [TestFixture]
     public class AtomFeedReaderTests : AssertionHelper
     {
-        private MockSDataService _service;
+        private Mock<SDataService> _mock;
+        private ISDataService _service;
 
         [TestFixtureSetUp]
         public void Setup()
         {
-            _service = new MockSDataService();
+            _mock = new Mock<SDataService>(MockBehavior.Strict, "http://localhost:59213/sdata/aw/dynamic/-/", "lee", "abc123");
+            _service = _mock.Object;
         }
 
         [Test]
         public void AtomFeedReader_Verify_CanRead()
         {
-            var request = new SDataResourceCollectionRequest(_service)
-                          {
-                              ResourceKind = "employees",
-                              Count = 10,
-                              StartIndex = 1
-                          };
+            var request = new SDataResourceCollectionRequest(_service);
+            _mock.Setup(s => s.ReadFeed(request)).Returns(TestData.Feed);
+
             var reader = request.ExecuteReader();
             Expect(reader, Is.Not.Null);
         }
@@ -32,6 +31,8 @@ namespace Sage.SData.Client.Test.Core
         public void AtomFeedReader_EnumeratorMatchesIndexer()
         {
             var request = new SDataResourceCollectionRequest(_service);
+            _mock.Setup(s => s.ReadFeed(request)).Returns(TestData.Feed);
+
             var reader = request.ExecuteReader();
             var i = 0;
 
@@ -46,6 +47,8 @@ namespace Sage.SData.Client.Test.Core
         public void AtomFeedReader_IndexerMatchesCurrent()
         {
             var request = new SDataResourceCollectionRequest(_service);
+            _mock.Setup(s => s.ReadFeed(request)).Returns(TestData.Feed);
+
             var reader = request.ExecuteReader();
 
             for (var i = 0; i < reader.Count; i++)
@@ -62,6 +65,8 @@ namespace Sage.SData.Client.Test.Core
         public void AtomFeedReader_CurrentMatchesEnumerator()
         {
             var request = new SDataResourceCollectionRequest(_service);
+            _mock.Setup(s => s.ReadFeed(request)).Returns(TestData.Feed);
+
             var reader = request.ExecuteReader();
             var enumerator = reader.GetEnumerator();
 
