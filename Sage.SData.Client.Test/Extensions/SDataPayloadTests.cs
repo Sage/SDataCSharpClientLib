@@ -3,7 +3,6 @@ using System.IO;
 using System.Xml;
 using System.Xml.XPath;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Sage.SData.Client.Extensions;
 
 namespace Sage.SData.Client.Test.Extensions
@@ -40,7 +39,7 @@ namespace Sage.SData.Client.Test.Extensions
             Assert.That(value, Is.Null);
 
             Assert.IsTrue(payload.Values.TryGetValue("contact", out value));
-            Assert.That(value, Is.InstanceOfType(typeof (SDataPayload)));
+            Assert.IsInstanceOf<SDataPayload>(value);
             var obj = (SDataPayload) value;
             Assert.That(obj.Key, Is.EqualTo("216"));
             Assert.That(obj.Uri, Is.EqualTo(new Uri("http://www.example.com/sdata/myApp/myContract/-/contacts('216')")));
@@ -48,7 +47,7 @@ namespace Sage.SData.Client.Test.Extensions
             CollectionAssert.IsEmpty(obj.Values);
 
             Assert.IsTrue(payload.Values.TryGetValue("orderLines", out value));
-            Assert.That(value, Is.InstanceOfType(typeof (SDataPayloadCollection)));
+            Assert.IsInstanceOf<SDataPayloadCollection>(value);
             var col = (SDataPayloadCollection) value;
             Assert.That(col.Uri, Is.EqualTo(new Uri("http://www.example.com/sdata/myApp/myContract/-/salesOrderLines?where=salesOrderID%20eq%2043660")));
             CollectionAssert.IsEmpty(col);
@@ -70,7 +69,7 @@ namespace Sage.SData.Client.Test.Extensions
 
             object value;
             Assert.IsTrue(payload.Values.TryGetValue("contact", out value));
-            Assert.That(value, Is.InstanceOfType(typeof (SDataPayload)));
+            Assert.IsInstanceOf<SDataPayload>(value);
             var obj = (SDataPayload) value;
             Assert.That(obj.Values.Count, Is.EqualTo(2));
 
@@ -94,7 +93,7 @@ namespace Sage.SData.Client.Test.Extensions
 
             object value;
             Assert.IsTrue(payload.Values.TryGetValue("orderLines", out value));
-            Assert.That(value, Is.InstanceOfType(typeof (SDataPayloadCollection)));
+            Assert.IsInstanceOf<SDataPayloadCollection>(value);
             var col = (SDataPayloadCollection) value;
             CollectionAssert.IsEmpty(col);
         }
@@ -114,12 +113,11 @@ namespace Sage.SData.Client.Test.Extensions
 
             object value;
             Assert.IsTrue(payload.Values.TryGetValue("orderLines", out value));
-            Assert.That(value, Is.InstanceOfType(typeof(SDataPayloadCollection)));
-            var col = (SDataPayloadCollection)value;
+            Assert.IsInstanceOf<SDataPayloadCollection>(value);
+            var col = (SDataPayloadCollection) value;
             Assert.That(col.Count, Is.EqualTo(1));
 
             var item = col[0];
-            Assert.That(item, Is.InstanceOfType(typeof(SDataPayload)));
             Assert.That(item.ResourceName, Is.EqualTo("salesOrderLine"));
             Assert.That(item.Key, Is.EqualTo("43660-1"));
             CollectionAssert.IsEmpty(item.Values);
@@ -141,18 +139,16 @@ namespace Sage.SData.Client.Test.Extensions
 
             object value;
             Assert.IsTrue(payload.Values.TryGetValue("orderLines", out value));
-            Assert.That(value, Is.InstanceOfType(typeof (SDataPayloadCollection)));
+            Assert.IsInstanceOf<SDataPayloadCollection>(value);
             var col = (SDataPayloadCollection) value;
             Assert.That(col.Count, Is.EqualTo(2));
 
             var item = col[0];
-            Assert.That(item, Is.InstanceOfType(typeof (SDataPayload)));
             Assert.That(item.ResourceName, Is.EqualTo("salesOrderLine"));
             Assert.That(item.Key, Is.EqualTo("43660-1"));
             CollectionAssert.IsEmpty(item.Values);
 
             item = col[1];
-            Assert.That(item, Is.InstanceOfType(typeof (SDataPayload)));
             Assert.That(item.ResourceName, Is.EqualTo("salesOrderLine"));
             Assert.That(item.Key, Is.EqualTo("43660-2"));
             CollectionAssert.IsEmpty(item.Values);
@@ -181,19 +177,17 @@ namespace Sage.SData.Client.Test.Extensions
             Assert.That(value, Is.EqualTo("http://www.example.com/sdata/myApp1/myContract/-/accounts"));
 
             Assert.IsTrue(payload.Values.TryGetValue("digestEntry", out value));
-            Assert.That(value, Is.InstanceOfType(typeof (SDataPayloadCollection)));
+            Assert.IsInstanceOf<SDataPayloadCollection>(value);
             var col = (SDataPayloadCollection) value;
             Assert.That(col.Count, Is.EqualTo(2));
 
             var item = col[0];
-            Assert.That(item, Is.InstanceOfType(typeof (SDataPayload)));
             Assert.That(item.ResourceName, Is.EqualTo("digestEntry"));
             Assert.That(item.Values.Count, Is.EqualTo(1));
             Assert.IsTrue(item.Values.TryGetValue("tick", out value));
             Assert.That(value, Is.EqualTo("5"));
 
             item = col[1];
-            Assert.That(item, Is.InstanceOfType(typeof (SDataPayload)));
             Assert.That(item.ResourceName, Is.EqualTo("digestEntry"));
             Assert.That(item.Values.Count, Is.EqualTo(1));
             Assert.IsTrue(item.Values.TryGetValue("tick", out value));

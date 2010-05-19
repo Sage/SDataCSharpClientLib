@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
+﻿using Moq;
+using NUnit.Framework;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Core;
 
@@ -8,12 +8,14 @@ namespace Sage.SData.Client.Test.Core
     [TestFixture]
     public class SDataResourcePropertyRequestTests : AssertionHelper
     {
-        private MockSDataService _service;
+        private Mock<SDataService> _mock;
+        private ISDataService _service;
 
         [TestFixtureSetUp]
         public void Setup()
         {
-            _service = new MockSDataService();
+            _mock = new Mock<SDataService>(MockBehavior.Strict, "http://localhost:59213/sdata/aw/dynamic/-/", "lee", "abc123");
+            _service = _mock.Object;
         }
 
         [Test]
@@ -61,6 +63,7 @@ namespace Sage.SData.Client.Test.Core
                               ResourceSelector = "1",
                               ResourceProperties = {"Contacts"}
                           };
+            _mock.Setup(s => s.ReadFeed(request)).Returns(TestData.Feed);
 
             var feed = request.ReadFeed();
             Expect(feed, Is.Not.Null);
@@ -75,6 +78,7 @@ namespace Sage.SData.Client.Test.Core
                               ResourceSelector = "1",
                               ResourceProperties = {"LoginID"}
                           };
+            _mock.Setup(s => s.ReadEntry(request)).Returns(TestData.Entry);
 
             var entry = request.Read();
             Expect(entry, Is.Not.Null);
@@ -90,6 +94,7 @@ namespace Sage.SData.Client.Test.Core
                               ResourceProperties = {"Address", "City"},
                               Entry = new AtomEntry()
                           };
+            _mock.Setup(s => s.CreateEntry(request, request.Entry)).Returns(TestData.Entry);
 
             var entry = request.Create();
             Expect(entry, Is.Not.Null);
@@ -105,6 +110,7 @@ namespace Sage.SData.Client.Test.Core
                               ResourceProperties = {"Address", "City"},
                               Entry = new AtomEntry()
                           };
+            _mock.Setup(s => s.UpdateEntry(request, request.Entry)).Returns(TestData.Entry);
 
             var entry = request.Update();
             Expect(entry, Is.Not.Null);
@@ -119,6 +125,7 @@ namespace Sage.SData.Client.Test.Core
                               ResourceSelector = "1",
                               ResourceProperties = {"Address", "City"}
                           };
+            _mock.Setup(s => s.DeleteEntry(request, request.Entry)).Returns(true);
 
             var result = request.Delete();
             Expect(result);
