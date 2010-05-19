@@ -114,6 +114,9 @@
     <Compile Include="Extensions\SDataHttp\SDataHttpExtension.cs" />
     <Compile Include="Extensions\SDataHttp\SDataHttpExtensionContext.cs" />
     <Compile Include="Extensions\SDataHttp\SDataHttpExtensionHelper.cs" />
+    <Compile Include="Extensions\SDataSync\SDataSyncExtension.cs" />
+    <Compile Include="Extensions\SDataSync\SDataSyncExtensionContext.cs" />
+    <Compile Include="Extensions\SDataSync\SDataSyncExtensionHelper.cs" />
     <Compile Include="Extensions\SData\SDataExtension.cs" />
     <Compile Include="Extensions\SData\SDataExtensionContext.cs" />
     <Compile Include="Extensions\SData\SDataExtensionHelper.cs" />
@@ -132,6 +135,8 @@
     <Compile Include="Extensions\SyndicationExtensionLoadedEventArgs.cs" />
     <Compile Include="Framework\Common.cs" />
     <Compile Include="Framework\Diagnosis.cs" />
+    <Compile Include="Framework\Digest.cs" />
+    <Compile Include="Framework\DigestEntry.cs" />
     <Compile Include="Framework\HttpMethod.cs" />
     <Compile Include="Framework\MediaType.cs" />
     <Compile Include="Framework\MediaTypeNames.cs" />
@@ -141,6 +146,8 @@
     <Compile Include="Framework\SDataResponse.cs" />
     <Compile Include="Framework\SDataUri.cs" />
     <Compile Include="Framework\Severity.cs" />
+    <Compile Include="Framework\SyncMode.cs" />
+    <Compile Include="Framework\SyncState.cs" />
     <Compile Include="Framework\Tracking.cs" />
     <Compile Include="Framework\UriFormatter.cs" />
     <Compile Include="Framework\UriPathParser.cs" />

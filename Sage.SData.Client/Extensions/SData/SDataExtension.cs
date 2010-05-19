@@ -116,11 +116,6 @@ namespace Sage.SData.Client.Extensions
         public override bool Load(IXPathNavigable source)
         {
             //------------------------------------------------------------
-            //	Local members
-            //------------------------------------------------------------
-            bool wasLoaded;
-
-            //------------------------------------------------------------
             //	Validate parameter
             //------------------------------------------------------------
             Guard.ArgumentNotNull(source, "source");
@@ -129,7 +124,7 @@ namespace Sage.SData.Client.Extensions
             //	Attempt to extract syndication extension information
             //------------------------------------------------------------
             var navigator = source.CreateNavigator();
-            wasLoaded = Context.Load(navigator, CreateNamespaceManager(navigator));
+            var wasLoaded = Context.Load(navigator, CreateNamespaceManager(navigator));
 
             //------------------------------------------------------------
             //	Raise extension loaded event
@@ -209,10 +204,12 @@ namespace Sage.SData.Client.Extensions
             //------------------------------------------------------------
             using (var stream = new MemoryStream())
             {
-                var settings = new XmlWriterSettings();
-                settings.ConformanceLevel = ConformanceLevel.Fragment;
-                settings.Indent = true;
-                settings.OmitXmlDeclaration = true;
+                var settings = new XmlWriterSettings
+                               {
+                                   ConformanceLevel = ConformanceLevel.Fragment,
+                                   Indent = true,
+                                   OmitXmlDeclaration = true
+                               };
 
                 using (var writer = XmlWriter.Create(stream, settings))
                 {

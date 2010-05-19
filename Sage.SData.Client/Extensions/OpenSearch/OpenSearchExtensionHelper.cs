@@ -44,33 +44,33 @@ namespace Sage.SData.Client.Extensions
         /// <summary>
         /// Extension method to set opensearch items per page
         /// </summary>
-        /// <param name="entry"></param>
+        /// <param name="feed"></param>
         /// <param name="value"></param>
-        public static void SetOpenSearchItemsPerPage(this AtomEntry entry, int value)
+        public static void SetOpenSearchItemsPerPage(this AtomFeed feed, int value)
         {
-            var context = GetContext(entry, true);
+            var context = GetContext(feed, true);
             context.ItemsPerPage = value;
         }
 
         /// <summary>
         /// Extension method to set opensearch total results
         /// </summary>
-        /// <param name="entry"></param>
+        /// <param name="feed"></param>
         /// <param name="value"></param>
-        public static void SetOpenSearchTotalResults(this AtomEntry entry, int value)
+        public static void SetOpenSearchTotalResults(this AtomFeed feed, int value)
         {
-            var context = GetContext(entry, true);
+            var context = GetContext(feed, true);
             context.TotalResults = value;
         }
 
         /// <summary>
         /// Extension method to set opensearch start index
         /// </summary>
-        /// <param name="entry"></param>
+        /// <param name="feed"></param>
         /// <param name="value"></param>
-        public static void SetOpenSearchStartIndex(this AtomEntry entry, int value)
+        public static void SetOpenSearchStartIndex(this AtomFeed feed, int value)
         {
-            var context = GetContext(entry, true);
+            var context = GetContext(feed, true);
             context.StartIndex = value;
         }
 

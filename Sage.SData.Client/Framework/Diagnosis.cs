@@ -7,7 +7,6 @@
 
 using System;
 using System.Xml;
-using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Xml.XPath;
 using Sage.SData.Client.Common;
@@ -168,20 +167,6 @@ namespace Sage.SData.Client.Framework
         /// <value>An XPath expression</value>
         [XmlElement("payloadPath")]
         public string PayloadPath { get; set; }
-
-        #endregion
-
-        #region Statics
-
-        /// <summary>
-        /// Adds the schema for this class to the schema collection.
-        /// </summary>
-        /// <param name="schemas">Schema collection to add this classes schema to.</param>
-        /// <returns>Full qualified name to the schema.</returns>
-        public static XmlQualifiedName _sf_GetSchema(XmlSchemaSet schemas)
-        {
-            return new XmlQualifiedName("diagnosis", Common.SData.Namespace);
-        }
 
         #endregion
 

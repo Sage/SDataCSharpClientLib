@@ -48,14 +48,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dependencies\NUnit\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Sage.SData.Client">
-      <HintPath>..\Sage.SData.Client\bin\Debug\Sage.SData.Client.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\SDataPayloadTests.cs" />
+    <Compile Include="Extensions\SDataSyncExtensionContextTests.cs" />
     <Compile Include="Framework\DiagnosisTests.cs" />
     <Compile Include="Framework\MediaTypeNamesTests.cs" />
     <Compile Include="Framework\SDataUriTests.cs" />
@@ -91,6 +89,12 @@
     <None Include="TestEntry.xml" />
     <None Include="TestFeed.xml" />
     <None Include="TestSchema.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sage.SData.Client\Sage.SData.Client_3_5.csproj">
+      <Project>{590B03D1-FC26-4AFD-98F8-421E6E8DDBA8}</Project>
+      <Name>Sage.SData.Client_3_5</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

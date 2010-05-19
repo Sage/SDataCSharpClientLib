@@ -7,10 +7,10 @@ using Sage.SData.Client.Common;
 namespace Sage.SData.Client.Extensions
 {
     /// <summary>
-    /// Extends the atomentry to handle SDataHttp.
+    /// Extends atom feeds and entries to handle SDataSync.
     /// </summary>
     [Serializable]
-    public class SDataHttpExtension : SyndicationExtension
+    public class SDataSyncExtension : SyndicationExtension
     {
         //============================================================
         //	PUBLIC/PRIVATE/PROTECTED MEMBERS
@@ -21,7 +21,7 @@ namespace Sage.SData.Client.Extensions
         /// <summary>
         /// Private member to hold specific information about the extension.
         /// </summary>
-        private SDataHttpExtensionContext extensionContext = new SDataHttpExtensionContext();
+        private SDataSyncExtensionContext extensionContext = new SDataSyncExtensionContext();
 
         #endregion
 
@@ -29,13 +29,13 @@ namespace Sage.SData.Client.Extensions
         //	CONSTRUCTORS
         //============================================================
 
-        #region SDataHttpExtension()
+        #region SDataSyncExtension()
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SDataHttpExtension"/> class.
+        /// Initializes a new instance of the <see cref="SDataSyncExtension"/> class.
         /// </summary>
-        public SDataHttpExtension()
-            : base(Framework.Common.HTTP.Prefix, Framework.Common.HTTP.Namespace, new Version("1.0"))
+        public SDataSyncExtension()
+            : base(Framework.Common.Sync.Prefix, Framework.Common.Sync.Namespace, new Version("1.0"))
         {
             //------------------------------------------------------------
             //	Initialization handled by base class
@@ -51,16 +51,16 @@ namespace Sage.SData.Client.Extensions
         #region Context
 
         /// <summary>
-        /// Gets or sets the <see cref="SDataHttpExtensionContext"/> object associated with this extension.
+        /// Gets or sets the <see cref="SDataSyncExtensionContext"/> object associated with this extension.
         /// </summary>
-        /// <value>A <see cref="SDataHttpExtensionContext"/> object that contains information associated with the current syndication extension.</value>
+        /// <value>A <see cref="SDataSyncExtensionContext"/> object that contains information associated with the current syndication extension.</value>
         /// <remarks>
         ///     The <b>Context</b> encapsulates all of the syndication extension information that can be retrieved or written to an extended syndication entity. 
         ///     Its purpose is to prevent property naming collisions between the base <see cref="SyndicationExtension"/> class and any custom properties that 
         ///     are defined for the custom syndication extension.
         /// </remarks>
         /// <exception cref="ArgumentNullException">The <paramref name="value"/> is a null reference (Nothing in Visual Basic).</exception>
-        public SDataHttpExtensionContext Context
+        public SDataSyncExtensionContext Context
         {
             get { return extensionContext; }
 
@@ -96,7 +96,7 @@ namespace Sage.SData.Client.Extensions
             //------------------------------------------------------------
             //	Determine if search condition was met 
             //------------------------------------------------------------
-            return extension.GetType() == typeof (SDataHttpExtension);
+            return extension.GetType() == typeof (SDataSyncExtension);
         }
 
         #endregion
