@@ -178,7 +178,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="request">The request that identifies the resource within the syndication data source.</param>
         /// <param name="feed"></param>
-        public AtomFeed CreateFeed(SDataBaseRequest request, AtomFeed feed)
+        public virtual AtomFeed CreateFeed(SDataBaseRequest request, AtomFeed feed)
         {
             string eTag;
             return CreateFeed(request, feed, out eTag);
@@ -191,7 +191,7 @@ namespace Sage.SData.Client.Core
         /// <param name="feed"></param>
         /// <param name="eTag"></param>
         /// <returns></returns>
-        public AtomFeed CreateFeed(SDataBaseRequest request, AtomFeed feed, out string eTag)
+        public virtual AtomFeed CreateFeed(SDataBaseRequest request, AtomFeed feed, out string eTag)
         {
             Guard.ArgumentNotNull(request, "request");
             Guard.ArgumentNotNull(feed, "feed");
@@ -215,20 +215,24 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="request">The request that identifies the resource within the syndication data source.</param>
         /// <param name="entry">The entry that should be created.</param>
-        public AtomEntry CreateEntry(SDataBaseRequest request, AtomEntry entry)
+        public virtual AtomEntry CreateEntry(SDataBaseRequest request, AtomEntry entry)
         {
             Guard.ArgumentNotNull(request, "request");
+            var requestUrl = request.ToString();
+            return CreateEntry(requestUrl, entry);
+        }
+
+        private AtomEntry CreateEntry(string url, AtomEntry entry)
+        {
             Guard.ArgumentNotNull(entry, "entry");
 
             try
             {
-                var requestUrl = request.ToString();
-
                 if (BatchProcess.Instance.Requests.Count > 0)
                 {
                     var batchRequest = new SDataBatchRequestItem
                                        {
-                                           Url = requestUrl,
+                                           Url = url,
                                            Method = HttpMethod.Post,
                                            Entry = entry
                                        };
@@ -237,7 +241,7 @@ namespace Sage.SData.Client.Core
                 }
 
                 var operation = new RequestOperation(HttpMethod.Post, entry);
-                var response = ExecuteRequest(requestUrl, operation, MediaType.AtomEntry);
+                var response = ExecuteRequest(url, operation, MediaType.AtomEntry);
                 entry = (AtomEntry) response.Content;
 
                 if (!string.IsNullOrEmpty(response.ETag))
@@ -258,7 +262,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="request">The request that identifies the resource within the syndication data source.</param>
         /// <param name="resource">The resource that should be created asynchronously.</param>
-        public AsyncRequest CreateAsync(SDataBaseRequest request, ISyndicationResource resource)
+        public virtual AsyncRequest CreateAsync(SDataBaseRequest request, ISyndicationResource resource)
         {
             Guard.ArgumentNotNull(request, "request");
             Guard.ArgumentNotNull(resource, "resource");
@@ -282,7 +286,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="url">the url for the operation</param>
         /// <returns><b>true</b> returns true if the operation was successful</returns>
-        public bool Delete(string url)
+        public virtual bool Delete(string url)
         {
             Guard.ArgumentNotNull(url, "url");
 
@@ -303,7 +307,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public bool DeleteEntry(SDataBaseRequest request)
+        public virtual bool DeleteEntry(SDataBaseRequest request)
         {
             return DeleteEntry(request, null);
         }
@@ -314,20 +318,23 @@ namespace Sage.SData.Client.Core
         /// <param name="request">The request from the syndication data source for the resource to be removed.</param>
         /// <param name="entry">the resource that is being deleted</param>
         /// <returns><b>true</b> if the syndication resource was successfully deleted; otherwise, <b>false</b>.</returns>
-        public bool DeleteEntry(SDataBaseRequest request, AtomEntry entry)
+        public virtual bool DeleteEntry(SDataBaseRequest request, AtomEntry entry)
         {
             Guard.ArgumentNotNull(request, "request");
+            return DeleteEntry(request.ToString(), entry);
+        }
 
+        private bool DeleteEntry(string url, AtomEntry entry)
+        {
             try
             {
-                var requestUrl = request.ToString();
                 var eTag = entry != null ? entry.GetSDataHttpETag() : null;
 
                 if (BatchProcess.Instance.Requests.Count > 0)
                 {
                     var batchRequest = new SDataBatchRequestItem
                                        {
-                                           Url = requestUrl,
+                                           Url = url,
                                            Method = HttpMethod.Delete,
                                            ETag = eTag
                                        };
@@ -336,7 +343,7 @@ namespace Sage.SData.Client.Core
                 }
 
                 var operation = new RequestOperation(HttpMethod.Delete) {ETag = eTag};
-                var response = ExecuteRequest(requestUrl, operation, null);
+                var response = ExecuteRequest(url, operation, null);
                 return response.StatusCode == HttpStatusCode.OK;
             }
             catch (Exception ex)
@@ -350,7 +357,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="url">url to read from </param>
         /// <returns>string response from server</returns>
-        public object Read(string url)
+        public virtual object Read(string url)
         {
             Guard.ArgumentNotNull(url, "url");
 
@@ -394,7 +401,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="request">request for the syndication resource to get information for.</param>
         /// <returns>AtomFeed <see cref="AtomFeed"/> populated with the specified resources's information from the data source.</returns>
-        public AtomFeed ReadFeed(SDataBaseRequest request)
+        public virtual AtomFeed ReadFeed(SDataBaseRequest request)
         {
             string eTag = null;
             return ReadFeed(request, ref eTag);
@@ -406,7 +413,7 @@ namespace Sage.SData.Client.Core
         /// <param name="request"></param>
         /// <param name="eTag"></param>
         /// <returns></returns>
-        public AtomFeed ReadFeed(SDataBaseRequest request, ref string eTag)
+        public virtual AtomFeed ReadFeed(SDataBaseRequest request, ref string eTag)
         {
             Guard.ArgumentNotNull(request, "request");
 
@@ -429,7 +436,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="request">Request for the syndication resource to get information for.</param>
         /// <returns>An <see cref="AtomEntry"/> populated with the specified resources' information from the data source.</returns>
-        public AtomEntry ReadEntry(SDataBaseRequest request)
+        public virtual AtomEntry ReadEntry(SDataBaseRequest request)
         {
             return ReadEntry(request, null);
         }
@@ -440,7 +447,7 @@ namespace Sage.SData.Client.Core
         /// <param name="request"></param>
         /// <param name="entry"></param>
         /// <returns></returns>
-        public AtomEntry ReadEntry(SDataBaseRequest request, AtomEntry entry)
+        public virtual AtomEntry ReadEntry(SDataBaseRequest request, AtomEntry entry)
         {
             Guard.ArgumentNotNull(request, "request");
 
@@ -483,7 +490,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="request">url for the syndication resource to get information for.</param>
         /// <returns>SDataSchema</returns>
-        public SDataSchema ReadSchema(SDataResourceSchemaRequest request)
+        public virtual SDataSchema ReadSchema(SDataResourceSchemaRequest request)
         {
             Guard.ArgumentNotNull(request, "request");
 
@@ -514,21 +521,25 @@ namespace Sage.SData.Client.Core
         /// <param name="entry">
         ///     An object that implements the <see cref="ISyndicationResource"/> interface that represents the updated information for the resource.
         /// </param>
-        public AtomEntry UpdateEntry(SDataBaseRequest request, AtomEntry entry)
+        public virtual AtomEntry UpdateEntry(SDataBaseRequest request, AtomEntry entry)
         {
             Guard.ArgumentNotNull(request, "request");
+            return UpdateEntry(request.ToString(), entry);
+        }
+
+        private AtomEntry UpdateEntry(string url, AtomEntry entry)
+        {
             Guard.ArgumentNotNull(entry, "entry");
 
             try
             {
-                var requestUrl = request.ToString();
                 var eTag = entry.GetSDataHttpETag();
 
                 if (BatchProcess.Instance.Requests.Count > 0)
                 {
                     var batchRequest = new SDataBatchRequestItem
                                        {
-                                           Url = requestUrl,
+                                           Url = url,
                                            Method = HttpMethod.Put,
                                            Entry = entry,
                                            ETag = eTag
@@ -538,7 +549,7 @@ namespace Sage.SData.Client.Core
                 }
 
                 var operation = new RequestOperation(HttpMethod.Put, entry) {ETag = eTag};
-                var response = ExecuteRequest(requestUrl, operation, MediaType.AtomEntry);
+                var response = ExecuteRequest(url, operation, MediaType.AtomEntry);
                 entry = (AtomEntry) response.Content;
 
                 if (!string.IsNullOrEmpty(response.ETag))
