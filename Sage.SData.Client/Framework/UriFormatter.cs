@@ -1032,9 +1032,9 @@ namespace Sage.SData.Client.Framework
                 if (query.Length > 0)
                     query.Append(QueryArgPrefix);
 
-                query.Append(pair.Key);
+                query.Append(Uri.EscapeDataString(pair.Key));
                 query.Append(QueryArgValuePrefix);
-                query.Append(pair.Value);
+                query.Append(Uri.EscapeDataString(pair.Value));
             }
 
             return query.ToString();
