@@ -51,7 +51,7 @@ namespace Sage.SData.Client.Core
             }
 
             var baseUri = uri.ToString();
-            var request = _requests.Reverse().FirstOrDefault(x => x.ToString() == baseUri);
+            var request = _requests.LastOrDefault(x => x.ToString() == baseUri);
 
             if (request == null)
             {

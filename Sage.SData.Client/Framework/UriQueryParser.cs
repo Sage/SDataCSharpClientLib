@@ -223,7 +223,7 @@ namespace Sage.SData.Client.Framework
                     if (parts[0].Length == 0)
                         continue;
 
-                    var key = parts[0].Trim();
+                    var key = Uri.UnescapeDataString(parts[0].Trim());
 
                     if (parts.Length == 1)
                         args[key] = string.Empty;

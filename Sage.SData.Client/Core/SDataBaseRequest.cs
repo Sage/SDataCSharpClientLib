@@ -129,9 +129,9 @@ namespace Sage.SData.Client.Core
         /// <returns>formatted string</returns>
         public override string ToString()
         {
-            var uri = new SDataUri(Uri);
+            var uri = new SDataUri(Uri.Uri.AbsoluteUri);
             BuildUrl(uri);
-            return uri.ToString();
+            return uri.Uri.AbsoluteUri.Replace("%20", " ");
         }
     }
 }

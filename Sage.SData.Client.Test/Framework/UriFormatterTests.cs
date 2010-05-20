@@ -22,5 +22,27 @@ namespace Sage.SData.Client.Test.Framework
             expected = new[] {new UriPathSegment("aw"), new UriPathSegment("dynamic"), new UriPathSegment("-")};
             CollectionAssert.AreEquivalent(uri.PathSegments, expected);
         }
+
+        [Test]
+        public void Assign_Ampersand_In_Query_Arg_Test()
+        {
+            var uri = new SDataUri("http://localhost:2001/sdata/aw/dynamic/-/accounts");
+            uri["a"] = "&";
+            uri["b"] = "&";
+
+            Assert.That(uri["a"], Is.EqualTo("&"));
+            Assert.That(uri["b"], Is.EqualTo("&"));
+            Assert.That(uri.Query, Is.EqualTo("a=%26&b=%26"));
+        }
+
+        [Test]
+        public void Assign_Ampersand_In_Query_Test()
+        {
+            var uri = new SDataUri("http://localhost:2001/sdata/aw/dynamic/-/accounts") {Query = "a=%26&b=%26"};
+
+            Assert.That(uri.Query, Is.EqualTo("a=%26&b=%26"));
+            Assert.That(uri["a"], Is.EqualTo("&"));
+            Assert.That(uri["b"], Is.EqualTo("&"));
+        }
     }
 }
