@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Resources;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -35,3 +36,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.2.1.1325")]
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: AssemblyInformationalVersion("1.2")]
+[assembly: InternalsVisibleTo("Sage.SData.Client.Test")]

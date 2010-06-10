@@ -3,6 +3,11 @@ using Sage.SData.Client.Core;
 
 namespace Sage.SData.Client.Test.Core
 {
+    using System;
+    using Atom;
+    using Client.Framework;
+    using Moq;
+
     [TestFixture]
     public class SDataServiceTests : AssertionHelper
     {
@@ -51,6 +56,48 @@ namespace Sage.SData.Client.Test.Core
 
             Expect(service.DataSet, Is.Not.Null);
             Expect(service.DataSet, Is.EqualTo("-"));
+        }
+
+        [Test]
+        public void verify_can_handle_AtomFeed_response_for_create_entry()
+        {
+            var mock = new Mock<ISDataResponse>(MockBehavior.Strict);
+            var feed = new AtomFeed();
+            feed.AddEntry(new AtomEntry());
+
+            mock.SetupGet(r => r.Content).Returns(feed);
+            mock.SetupGet(r => r.ETag).Returns(String.Empty);
+
+            var service = new MockService(mock);
+            var result = service.CreateEntry(new SDataServiceOperationRequest(service) { OperationName = "computePrice" }, new AtomEntry());
+            Expect(result, Is.InstanceOf<AtomEntry>());
+        }
+
+        [Test]
+        public void verify_can_handle_AtomEntry_response_for_create_entry()
+        {
+            var mock = new Mock<ISDataResponse>(MockBehavior.Strict);
+            mock.SetupGet(r => r.Content).Returns(new AtomEntry());
+            mock.SetupGet(r => r.ETag).Returns(String.Empty);
+
+            var service = new MockService(mock);
+            var result = service.CreateEntry(new SDataServiceOperationRequest(service) { OperationName = "computePrice" }, new AtomEntry());
+            Expect(result, Is.InstanceOf<AtomEntry>());
+        }
+
+        class MockService : SDataService
+        {
+            private readonly Mock<ISDataResponse> _mock;
+
+            public MockService(Mock<ISDataResponse> mock)
+            {
+                _mock = mock;
+            }
+
+            protected internal override ISDataResponse ExecuteRequest(string url, RequestOperation operation, MediaType? accept)
+            {
+                return _mock.Object;
+            }
         }
     }
 }

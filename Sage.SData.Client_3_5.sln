@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sage.SData.Client_3_5", "Sage.SData.Client\Sage.SData.Client_3_5.csproj", "{590B03D1-FC26-4AFD-98F8-421E6E8DDBA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sage.SData.Client.Test", "Sage.SData.Client.Test\Sage.SData.Client.Test.csproj", "{92C27580-82D9-46FC-8E4A-9B75E6FF6C2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDataClientApp", "demos\SDataClientApp\SDataClientApp.csproj", "{908FFE7B-070B-41FC-8D3E-B0FEAE1AB972}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{590B03D1-FC26-4AFD-98F8-421E6E8DDBA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{590B03D1-FC26-4AFD-98F8-421E6E8DDBA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{590B03D1-FC26-4AFD-98F8-421E6E8DDBA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{590B03D1-FC26-4AFD-98F8-421E6E8DDBA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92C27580-82D9-46FC-8E4A-9B75E6FF6C2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92C27580-82D9-46FC-8E4A-9B75E6FF6C2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92C27580-82D9-46FC-8E4A-9B75E6FF6C2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92C27580-82D9-46FC-8E4A-9B75E6FF6C2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{908FFE7B-070B-41FC-8D3E-B0FEAE1AB972}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{908FFE7B-070B-41FC-8D3E-B0FEAE1AB972}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{908FFE7B-070B-41FC-8D3E-B0FEAE1AB972}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{908FFE7B-070B-41FC-8D3E-B0FEAE1AB972}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

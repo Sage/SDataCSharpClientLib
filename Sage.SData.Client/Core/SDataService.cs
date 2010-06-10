@@ -10,6 +10,8 @@ using Sage.SData.Client.Metadata;
 
 namespace Sage.SData.Client.Core
 {
+    using System.Linq;
+
     /// <summary>
     /// Service class for processing SData Request
     /// </summary>
@@ -242,14 +244,23 @@ namespace Sage.SData.Client.Core
 
                 var operation = new RequestOperation(HttpMethod.Post, entry);
                 var response = ExecuteRequest(url, operation, MediaType.AtomEntry);
-                entry = (AtomEntry) response.Content;
-
-                if (!string.IsNullOrEmpty(response.ETag))
+                var result = response.Content as AtomEntry;
+                
+                if (result == null)
                 {
-                    entry.SetSDataHttpETag(response.ETag);
+                    var feedResult = response.Content as AtomFeed;
+                    if (feedResult != null)
+                    {
+                        result = feedResult.Entries.FirstOrDefault();
+                    }
                 }
 
-                return entry;
+                if (!string.IsNullOrEmpty(response.ETag) && result != null)
+                {
+                    result.SetSDataHttpETag(response.ETag);
+                }
+
+                return result;
             }
             catch (Exception ex)
             {
@@ -614,7 +625,7 @@ namespace Sage.SData.Client.Core
         {
         }
 
-        private SDataResponse ExecuteRequest(string url, RequestOperation operation, MediaType? accept)
+        protected internal virtual ISDataResponse ExecuteRequest(string url, RequestOperation operation, MediaType? accept)
         {
             var request = new SDataRequest(url, operation)
                           {

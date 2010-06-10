@@ -14,10 +14,42 @@ using Sage.SData.Client.Atom;
 namespace Sage.SData.Client.Framework
 {
     /// <summary>
+    /// An interfact which encapsulates interesting information returned
+    /// from a request.
+    /// </summary>
+    public interface ISDataResponse
+    {
+        /// <summary>
+        /// The response status code.
+        /// </summary>
+        HttpStatusCode StatusCode { get; }
+
+        /// <summary>
+        /// The response content type.
+        /// </summary>
+        MediaType? ContentType { get; }
+
+        /// <summary>
+        /// The response ETag.
+        /// </summary>
+        string ETag { get; }
+
+        /// <summary>
+        /// The response location.
+        /// </summary>
+        string Location { get; }
+
+        /// <summary>
+        /// The response content.
+        /// </summary>
+        object Content { get; }
+    }
+
+    /// <summary>
     /// The response class which encapsulates interesting information returned
     /// from a request.
     /// </summary>
-    public class SDataResponse
+    public class SDataResponse : ISDataResponse
     {
         private readonly HttpStatusCode _statusCode;
         private readonly MediaType? _contentType;
