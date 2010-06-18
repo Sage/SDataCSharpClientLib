@@ -6,35 +6,31 @@ using System.Xml.Serialization;
 namespace Sage.SData.Client.Framework
 {
     /// <summary>
-    /// Exception thrown by SDataService class
+    /// The exception that is thrown when an error occurs on an SData server.
     /// </summary>
     public class SDataException : WebException
     {
         private readonly Diagnosis _diagnosis;
+        private readonly HttpStatusCode? _statusCode;
 
         /// <summary>
-        /// An object containing additional diagnostic information about the error.
-        /// </summary>
-        public Diagnosis Diagnosis
-        {
-            get { return _diagnosis; }
-        }
-
-        /// <summary>
-        /// constructor
+        /// Initializes a new instance.
         /// </summary>
         /// <param name="innerException"></param>
         public SDataException(WebException innerException)
-            : base(innerException.Message, innerException)
+            : base(innerException.Message, innerException, innerException.Status, innerException.Response)
         {
-            if (innerException.Response == null)
+            if (Response == null)
             {
                 return;
             }
 
+            var httpResponse = Response as HttpWebResponse;
+            _statusCode = httpResponse != null ? httpResponse.StatusCode : (HttpStatusCode?) null;
+
             var serializer = new XmlSerializer(typeof (Diagnosis));
 
-            using (var stream = innerException.Response.GetResponseStream())
+            using (var stream = Response.GetResponseStream())
             {
                 try
                 {
@@ -50,7 +46,23 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// gets the exception message
+        /// Gets the high level diagnostic information returned from the server.
+        /// </summary>
+        public Diagnosis Diagnosis
+        {
+            get { return _diagnosis; }
+        }
+
+        /// <summary>
+        /// Gets the HTTP status code associated with the exception.
+        /// </summary>
+        public HttpStatusCode? StatusCode
+        {
+            get { return _statusCode; }
+        }
+
+        /// <summary>
+        /// Gets a message that describes the exception.
         /// </summary>
         public override string Message
         {
