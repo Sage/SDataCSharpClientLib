@@ -511,7 +511,7 @@ namespace Sage.SData.Client.Core
                 var operation = new RequestOperation(HttpMethod.Get);
                 var response = ExecuteRequest(requestUrl, operation, MediaType.Xml);
                 var targetElementName = !string.IsNullOrEmpty(response.Location)
-                                            ? new Uri(response.Location).Fragment
+                                            ? new Uri(response.Location).Fragment.TrimStart('#')
                                             : null;
 
                 using (var reader = new StringReader((string) response.Content))
