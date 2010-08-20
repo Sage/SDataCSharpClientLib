@@ -87,9 +87,9 @@ namespace Sage.SData.Client.Framework
         public IWebProxy Proxy { get; set; }
 
         /// <summary>
-        /// Gets or sets the accept media type used by requests.
+        /// Gets or sets the accept media types accepted by requests.
         /// </summary>
-        public MediaType? Accept { get; set; }
+        public MediaType[] Accept { get; set; }
 
         /// <summary>
         /// Gets or sets the cookies associated with this request.
@@ -206,7 +206,7 @@ namespace Sage.SData.Client.Framework
 
                 if (Accept != null)
                 {
-                    httpRequest.Accept = MediaTypeNames.GetMediaType(Accept.Value);
+                    httpRequest.Accept = string.Join(",", Array.ConvertAll(Accept, type => MediaTypeNames.GetMediaType(type)));
                 }
 
                 if (Cookies != null)

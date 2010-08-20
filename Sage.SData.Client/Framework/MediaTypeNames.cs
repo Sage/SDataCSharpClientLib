@@ -295,6 +295,17 @@ namespace Sage.SData.Client.Framework
                 return false;
             }
 
+            ContentType key;
+            try
+            {
+                key = new ContentType(name);
+            }
+            catch (FormatException)
+            {
+                mediaType = DefaultMediaType;
+                return false;
+            }
+
             var found = NameToMediaType.TryGetValue(new ContentType(name), out mediaType);
 
             if (!found)

@@ -62,8 +62,9 @@ namespace Sage.SData.Client.Framework
         public const string PathSegmentPrefix = "/";
 
         /// <summary>
-        /// Returns the <see cref="string"/> used as the fragment prefix.
+        /// Returns the <see cref="string"/> used to prefix the frament part of a <see cref="Uri"/>.
         /// </summary>
+        /// <value>A <see cref="string"/> used to prefix the frament part of a <see cref="Uri"/>.</value>
         public const string FragmentPrefix = "#";
 
         /// <summary>
@@ -102,6 +103,7 @@ namespace Sage.SData.Client.Framework
         private string _host;
         private string _pathPrefix;
         private string _server;
+        private string _fragment;
 
         private string _directPath;
         private bool _requiresParsePath;
@@ -109,8 +111,6 @@ namespace Sage.SData.Client.Framework
         private List<UriPathSegment> _pathSegments;
 
         private IDictionary<string, string> _queryArgs;
-
-        private string _fragment;
 
         #endregion
 
@@ -181,6 +181,7 @@ namespace Sage.SData.Client.Framework
             _host = uri._host;
             _pathPrefix = uri._pathPrefix;
             _server = uri._server;
+            _fragment = uri._fragment;
 
             PathInternal = uri.PathInternal;
             _directPath = uri._directPath;
@@ -200,11 +201,6 @@ namespace Sage.SData.Client.Framework
 
             if (uri._queryArgs != null)
                 _queryArgs = new Dictionary<string, string>(uri._queryArgs, StringComparer.InvariantCultureIgnoreCase);
-
-            if (!string.IsNullOrEmpty(uri._fragment))
-            {
-                _fragment = uri._fragment.Substring(1);
-            }
         }
 
         #region Properties
@@ -319,6 +315,25 @@ namespace Sage.SData.Client.Framework
             {
                 CheckParseUri();
                 _server = value;
+                RequiresRebuildUri = true;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the fragment for the <see cref="Uri"/>.
+        /// </summary>
+        /// <value>The fragment for the <see cref="Uri"/>.</value>
+        public string Fragment
+        {
+            get
+            {
+                CheckParseUri();
+                return _fragment;
+            }
+            set
+            {
+                CheckParseUri();
+                _fragment = value;
                 RequiresRebuildUri = true;
             }
         }
@@ -491,6 +506,15 @@ namespace Sage.SData.Client.Framework
             get { return PathSegments; }
         }
 
+        /// <summary>
+        /// Returns the last path segment.
+        /// </summary>
+        /// <value>The last path segment.</value>
+        public UriPathSegment LastPathSegment
+        {
+            get { return PathSegments[PathSegments.Length - 1]; }
+        }
+
         internal UriPathSegment[] PathSegmentsInternal
         {
             get { return _pathSegments.ToArray(); }
@@ -569,21 +593,6 @@ namespace Sage.SData.Client.Framework
                 }
 
                 RequiresRebuildUri = true;
-            }
-        }
-
-        public string Fragment
-        {
-            get
-            {
-                CheckParseUri();
-                return _fragment;
-            }
-            set
-            {
-                CheckParseUri();
-                _fragment = value;
-                _requiresRebuildUri = true;
             }
         }
 
@@ -816,7 +825,7 @@ namespace Sage.SData.Client.Framework
         #region Overrides
 
         /// <summary>
-        /// Returns a <see cref="String"/> representing the <see cref="Uri"/>.
+        /// Returns a <see cref="string"/> representing the <see cref="Uri"/>.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -940,7 +949,9 @@ namespace Sage.SData.Client.Framework
 
             if (!string.IsNullOrEmpty(_fragment))
             {
-                uri.Append(FragmentPrefix);
+                if (!_fragment.StartsWith(FragmentPrefix))
+                    uri.Append(FragmentPrefix);
+
                 uri.Append(_fragment);
             }
 
@@ -975,9 +986,9 @@ namespace Sage.SData.Client.Framework
                 _host = string.Empty;
                 _pathPrefix = string.Empty;
                 _server = string.Empty;
+                _fragment = string.Empty;
                 PathInternal = string.Empty;
                 _queryArgs = null;
-                _fragment = string.Empty;
             }
             else
             {
@@ -1003,6 +1014,10 @@ namespace Sage.SData.Client.Framework
                     PathInternal = path.Substring(endServer + 1);
                 }
 
+                _fragment = _uri.Fragment;
+                if (_fragment.StartsWith(FragmentPrefix))
+                    _fragment = _fragment.Substring(FragmentPrefix.Length);
+
                 if (PathInternal != null && PathInternal.StartsWith(PathSegmentPrefix))
                     PathInternal = PathInternal.Substring(PathSegmentPrefix.Length);
 
@@ -1010,19 +1025,14 @@ namespace Sage.SData.Client.Framework
                     _queryArgs = UriQueryParser.Parse(_uri.Query.Substring(QueryPrefix.Length));
                 else
                     _queryArgs = UriQueryParser.Parse(_uri.Query);
-
-                if (!string.IsNullOrEmpty(_uri.Fragment))
-                {
-                    _fragment = _uri.Fragment.Substring(1);
-                }
             }
         }
 
         /// <summary>
-        /// Builds a query <see cref="String"/> from the specified <see cref="IDictionary{TKey, TValue}"/>.
+        /// Builds a query <see cref="string"/> from the specified <see cref="IDictionary{TKey, TValue}"/>.
         /// </summary>
         /// <param name="args">The arguments to build the query string from.</param>
-        /// <returns>A <see cref="String"/> containing the query.</returns>
+        /// <returns>A <see cref="string"/> containing the query.</returns>
         public static string BuildQuery(IEnumerable<KeyValuePair<string, string>> args)
         {
             var query = new StringBuilder();

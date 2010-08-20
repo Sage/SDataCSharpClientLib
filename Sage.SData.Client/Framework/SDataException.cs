@@ -27,20 +27,24 @@ namespace Sage.SData.Client.Framework
 
             var httpResponse = Response as HttpWebResponse;
             _statusCode = httpResponse != null ? httpResponse.StatusCode : (HttpStatusCode?) null;
+            MediaType mediaType;
 
-            var serializer = new XmlSerializer(typeof (Diagnosis));
-
-            using (var stream = Response.GetResponseStream())
+            if (MediaTypeNames.TryGetMediaType(Response.ContentType, out mediaType) && mediaType == MediaType.Xml)
             {
-                try
+                var serializer = new XmlSerializer(typeof (Diagnosis));
+
+                using (var stream = Response.GetResponseStream())
                 {
-                    _diagnosis = (Diagnosis) serializer.Deserialize(stream);
-                }
-                catch (XmlException)
-                {
-                }
-                catch (InvalidOperationException)
-                {
+                    try
+                    {
+                        _diagnosis = (Diagnosis) serializer.Deserialize(stream);
+                    }
+                    catch (XmlException)
+                    {
+                    }
+                    catch (InvalidOperationException)
+                    {
+                    }
                 }
             }
         }

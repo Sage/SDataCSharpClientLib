@@ -23,6 +23,23 @@ namespace Sage.SData.Client.Test.Framework
             CollectionAssert.AreEquivalent(uri.PathSegments, expected);
         }
 
+        /// <summary>
+        /// URI fragments should be supported to facilitate working with
+        /// $schema redirection URIs.
+        /// </summary>
+        [Test]
+        public void Support_Uri_Fragments_Test()
+        {
+            var uri = new UriFormatter("http://m6400/sdata/-/-/-/#one");
+            Assert.That(uri.Fragment, Is.EqualTo("one"));
+
+            uri.Host = "localhost";
+            Assert.That(uri.Fragment, Is.EqualTo("one"));
+
+            uri.Fragment = "two";
+            StringAssert.EndsWith("#two", uri.ToString());
+        }
+
         [Test]
         public void Assign_Ampersand_In_Query_Arg_Test()
         {

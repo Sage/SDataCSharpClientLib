@@ -202,7 +202,7 @@ namespace Sage.SData.Client.Core
             {
                 var requestUrl = request.ToString();
                 var operation = new RequestOperation(HttpMethod.Post, feed);
-                var response = ExecuteRequest(requestUrl, operation, MediaType.Atom);
+                var response = ExecuteRequest(requestUrl, operation, MediaType.Atom, MediaType.Xml);
                 eTag = response.ETag;
                 return (AtomFeed) response.Content;
             }
@@ -243,7 +243,7 @@ namespace Sage.SData.Client.Core
                 }
 
                 var operation = new RequestOperation(HttpMethod.Post, entry);
-                var response = ExecuteRequest(url, operation, MediaType.AtomEntry);
+                var response = ExecuteRequest(url, operation, MediaType.AtomEntry, MediaType.Xml);
                 var result = response.Content as AtomEntry;
                 
                 if (result == null)
@@ -304,7 +304,7 @@ namespace Sage.SData.Client.Core
             try
             {
                 var operation = new RequestOperation(HttpMethod.Delete);
-                var response = ExecuteRequest(url, operation, null);
+                var response = ExecuteRequest(url, operation, MediaType.Xml);
                 return response.StatusCode == HttpStatusCode.OK;
             }
             catch (Exception ex)
@@ -354,7 +354,7 @@ namespace Sage.SData.Client.Core
                 }
 
                 var operation = new RequestOperation(HttpMethod.Delete) {ETag = eTag};
-                var response = ExecuteRequest(url, operation, null);
+                var response = ExecuteRequest(url, operation, MediaType.Xml);
                 return response.StatusCode == HttpStatusCode.OK;
             }
             catch (Exception ex)
@@ -375,7 +375,7 @@ namespace Sage.SData.Client.Core
             try
             {
                 var operation = new RequestOperation(HttpMethod.Get);
-                var response = ExecuteRequest(url, operation, null);
+                var response = ExecuteRequest(url, operation, MediaType.Xml);
                 var text = response.Content as string;
 
                 if (text != null && response.ContentType == MediaType.Xml)
@@ -432,7 +432,7 @@ namespace Sage.SData.Client.Core
             {
                 var requestUrl = request.ToString();
                 var operation = new RequestOperation(HttpMethod.Get) {ETag = eTag};
-                var response = ExecuteRequest(requestUrl, operation, MediaType.Atom);
+                var response = ExecuteRequest(requestUrl, operation, MediaType.Atom, MediaType.Xml);
                 eTag = response.ETag;
                 return (AtomFeed) response.Content;
             }
@@ -480,7 +480,7 @@ namespace Sage.SData.Client.Core
                 }
 
                 var operation = new RequestOperation(HttpMethod.Get) {ETag = eTag};
-                var response = ExecuteRequest(requestUrl, operation, MediaType.AtomEntry);
+                var response = ExecuteRequest(requestUrl, operation, MediaType.AtomEntry, MediaType.Xml);
                 entry = (AtomEntry) response.Content;
 
                 if (!string.IsNullOrEmpty(response.ETag))
@@ -560,7 +560,7 @@ namespace Sage.SData.Client.Core
                 }
 
                 var operation = new RequestOperation(HttpMethod.Put, entry) {ETag = eTag};
-                var response = ExecuteRequest(url, operation, MediaType.AtomEntry);
+                var response = ExecuteRequest(url, operation, MediaType.AtomEntry, MediaType.Xml);
                 entry = (AtomEntry) response.Content;
 
                 if (!string.IsNullOrEmpty(response.ETag))
@@ -625,7 +625,7 @@ namespace Sage.SData.Client.Core
         {
         }
 
-        protected internal virtual ISDataResponse ExecuteRequest(string url, RequestOperation operation, MediaType? accept)
+        protected internal virtual ISDataResponse ExecuteRequest(string url, RequestOperation operation, params MediaType[] accept)
         {
             var request = new SDataRequest(url, operation)
                           {
