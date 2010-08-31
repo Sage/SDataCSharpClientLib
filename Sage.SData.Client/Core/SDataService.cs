@@ -354,7 +354,7 @@ namespace Sage.SData.Client.Core
                 }
 
                 var operation = new RequestOperation(HttpMethod.Delete) {ETag = eTag};
-                var response = ExecuteRequest(url, operation, MediaType.Xml);
+                var response = ExecuteRequest(url, operation, MediaType.AtomEntry, MediaType.Xml);
                 return response.StatusCode == HttpStatusCode.OK;
             }
             catch (Exception ex)
