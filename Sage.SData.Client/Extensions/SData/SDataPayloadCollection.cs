@@ -12,10 +12,17 @@ namespace Sage.SData.Client.Extensions
         public Uri Uri { get; set; }
         public bool? DeleteMissing { get; set; }
         public bool IsNested { get; set; }
+        public string ResourceName { get; set; }
 
         public SDataPayloadCollection()
         {
             IsNested = true;
+        }
+
+        public SDataPayloadCollection(string resourceName)
+            : this()
+        {
+            ResourceName = resourceName;
         }
 
         public bool Load(XPathNavigator source, XmlNamespaceManager manager)
@@ -63,6 +70,11 @@ namespace Sage.SData.Client.Extensions
                 }
 
                 Add(child);
+
+                if (string.IsNullOrEmpty(ResourceName))
+                {
+                    ResourceName = child.ResourceName;
+                }
             }
 
             return true;
@@ -80,7 +92,7 @@ namespace Sage.SData.Client.Extensions
 
             foreach (var item in this)
             {
-                item.WriteTo(item.ResourceName, item.Namespace ?? ns, writer, xmlNamespace);
+                item.WriteTo(ResourceName, ns, writer, xmlNamespace);
             }
 
             if (IsNested)

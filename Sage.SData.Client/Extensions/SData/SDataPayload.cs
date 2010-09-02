@@ -188,6 +188,16 @@ namespace Sage.SData.Client.Extensions
 
         internal void WriteTo(string name, string ns, XmlWriter writer, string xmlNamespace)
         {
+            if (!string.IsNullOrEmpty(ResourceName))
+            {
+                name = ResourceName;
+            }
+
+            if (!string.IsNullOrEmpty(ns))
+            {
+                ns = Namespace;
+            }
+
             writer.WriteStartElement(name, ns);
 
             if (Key != null) writer.WriteAttributeString("key", xmlNamespace, Key);
