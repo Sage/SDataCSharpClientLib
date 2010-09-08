@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Xml;
 using System.Xml.Serialization;
@@ -10,7 +13,7 @@ namespace Sage.SData.Client.Framework
     /// </summary>
     public class SDataException : WebException
     {
-        private readonly Diagnosis _diagnosis;
+        private readonly Collection<Diagnosis> _diagnoses;
         private readonly HttpStatusCode? _statusCode;
 
         /// <summary>
@@ -31,19 +34,23 @@ namespace Sage.SData.Client.Framework
 
             if (MediaTypeNames.TryGetMediaType(Response.ContentType, out mediaType) && mediaType == MediaType.Xml)
             {
-                var serializer = new XmlSerializer(typeof (Diagnosis));
-
-                using (var stream = Response.GetResponseStream())
+                using (var memoryStream = new MemoryStream())
                 {
-                    try
+                    using (var responseStream = Response.GetResponseStream())
                     {
-                        _diagnosis = (Diagnosis) serializer.Deserialize(stream);
+                        CopyStream(responseStream, memoryStream);
                     }
-                    catch (XmlException)
+
+                    _diagnoses = Deserialize<Diagnoses>(memoryStream);
+
+                    if (_diagnoses == null)
                     {
-                    }
-                    catch (InvalidOperationException)
-                    {
+                        var diagnosis = Deserialize<Diagnosis>(memoryStream);
+
+                        if (diagnosis != null)
+                        {
+                            _diagnoses = new Collection<Diagnosis> {diagnosis};
+                        }
                     }
                 }
             }
@@ -52,9 +59,18 @@ namespace Sage.SData.Client.Framework
         /// <summary>
         /// Gets the high level diagnostic information returned from the server.
         /// </summary>
+        [Obsolete("Use the Diagnoses property instead.")]
         public Diagnosis Diagnosis
         {
-            get { return _diagnosis; }
+            get { return _diagnoses != null && _diagnoses.Count > 0 ? _diagnoses[0] : null; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Collection<Diagnosis> Diagnoses
+        {
+            get { return _diagnoses; }
         }
 
         /// <summary>
@@ -70,7 +86,41 @@ namespace Sage.SData.Client.Framework
         /// </summary>
         public override string Message
         {
-            get { return _diagnosis != null ? _diagnosis.Message : base.Message; }
+            get
+            {
+                return _diagnoses != null
+                           ? string.Join(Environment.NewLine, _diagnoses.Select(diagnosis => diagnosis.Message).ToArray())
+                           : base.Message;
+            }
+        }
+
+        private static void CopyStream(Stream source, Stream destination)
+        {
+            var buffer = new byte[0x1000];
+            int num;
+            while ((num = source.Read(buffer, 0, buffer.Length)) != 0)
+            {
+                destination.Write(buffer, 0, num);
+            }
+        }
+
+        private static T Deserialize<T>(Stream stream)
+        {
+            stream.Seek(0, SeekOrigin.Begin);
+            var serializer = new XmlSerializer(typeof (T));
+
+            try
+            {
+                return (T) serializer.Deserialize(stream);
+            }
+            catch (XmlException)
+            {
+            }
+            catch (InvalidOperationException)
+            {
+            }
+
+            return default(T);
         }
     }
 }
