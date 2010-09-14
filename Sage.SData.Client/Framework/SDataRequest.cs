@@ -110,9 +110,18 @@ namespace Sage.SData.Client.Framework
         public SDataResponse GetResponse()
         {
             var uri = Uri;
-            var operation = _operations.Count == 1
-                                ? _operations[0]
-                                : CreateBatchOperation();
+            RequestOperation operation;
+
+            if (_operations.Count == 1)
+            {
+                operation = _operations[0];
+            }
+            else
+            {
+                operation = CreateBatchOperation();
+                uri = new SDataUri(uri).AppendPath("$batch").ToString();
+            }
+
             string location = null;
 
             while (true)
@@ -184,7 +193,6 @@ namespace Sage.SData.Client.Framework
                 feed.AddEntry(entry);
             }
 
-            uri.AppendPath("$batch");
             return new RequestOperation(HttpMethod.Post, feed);
         }
 
