@@ -167,8 +167,8 @@
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.statusStrip);
             this.Name = "MainForm";
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();

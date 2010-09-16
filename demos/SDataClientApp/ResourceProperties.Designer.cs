@@ -52,6 +52,7 @@
             label24 = new System.Windows.Forms.Label();
             btnPropertiesRead = new System.Windows.Forms.Button();
             label25 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.rpGridEntries)).BeginInit();
             this.SuspendLayout();
             // 
             // btnClearProperties
@@ -245,6 +246,7 @@
             this.Controls.Add(label25);
             this.Name = "ResourceProperties";
             this.Size = new System.Drawing.Size(800, 600);
+            ((System.ComponentModel.ISupportInitialize)(this.rpGridEntries)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
