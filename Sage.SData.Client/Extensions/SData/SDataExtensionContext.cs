@@ -103,9 +103,9 @@ namespace Sage.SData.Client.Extensions
                 }
 
                 var schemaNavigator = source.SelectSingleNode("sdata:schema", manager);
-                if (schemaNavigator != null && !string.IsNullOrEmpty(schemaNavigator.Value))
+                if (schemaNavigator != null && !string.IsNullOrEmpty(schemaNavigator.InnerXml))
                 {
-                    Schema = schemaNavigator.Value;
+                    Schema = schemaNavigator.InnerXml;
                     wasLoaded = true;
                 }
             }

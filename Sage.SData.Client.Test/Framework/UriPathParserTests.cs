@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Sage.SData.Client.Framework;
 
-namespace Sage.Common.Syndication.Test.Uri
+namespace Sage.SData.Client.Test.Framework
 {
     [TestFixture]
     public class UriPathParserTests

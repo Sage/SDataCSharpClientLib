@@ -189,7 +189,7 @@
     <Compile Include="Metadata\SMEUnsignedShortProperty.cs" />
     <Compile Include="Metadata\SMEUriProperty.cs" />
     <Compile Include="Metadata\TypeInfoHelper.cs" />
-    <Compile Include="Metadata\XDataTypes.cs" />
+    <Compile Include="Metadata\XSDataTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Examplecs.cs" />
   </ItemGroup>

@@ -39,7 +39,7 @@ namespace Sage.SData.Client.Metadata
         /// with the specified length, decimal places and lab el.
         /// </summary>
         /// <param name="length">Maximum length of the data.</param>
-        /// <param name="decimalPlaces">Maximum number of Float places.</param>
+        /// <param name="decimalPlaces">Maximum number of decimal places.</param>
         /// <param name="label">The label for the property.</param>
         public SMEDoubleProperty(int length, int decimalPlaces, string label) :
             base(label)
@@ -53,10 +53,10 @@ namespace Sage.SData.Client.Metadata
 
         /// <summary>
         /// Initialises a new instance of the <see cref="SMEDoubleProperty"/> class
-        /// with the specified length and Float places.
+        /// with the specified length and decimal places.
         /// </summary>
         /// <param name="length">Maximum length of the data.</param>
-        /// <param name="decimalPlaces">Maximum number of Float places.</param>
+        /// <param name="decimalPlaces">Maximum number of decimal places.</param>
         public SMEDoubleProperty(int length, int decimalPlaces) :
             this(length, decimalPlaces, String.Empty)
         {
@@ -103,7 +103,7 @@ namespace Sage.SData.Client.Metadata
         /// <summary>
         /// Gets or sets the minimum value;
         /// </summary>
-        /// A <see cref="float"/> containing the minimum value;
+        /// A <see cref="double"/> containing the minimum value;
         public double Minimum
         {
             get { return _dMin; }
@@ -113,7 +113,7 @@ namespace Sage.SData.Client.Metadata
         /// <summary>
         /// Gets or sets the maximum value;
         /// </summary>
-        /// A <see cref="float"/> containing the maximum value;
+        /// A <see cref="double"/> containing the maximum value;
         public double Maximum
         {
             get { return _dMax; }
@@ -228,10 +228,10 @@ namespace Sage.SData.Client.Metadata
         {
             base.OnValidate(value, typeof (double));
 
-            var typedValue = (double) value;
-
             if (value != null)
             {
+                var typedValue = (double) value;
+
                 if (typedValue < Minimum)
                     ThrowValidationFailed(SDataResource.XmlConstants.MinInclusive);
 

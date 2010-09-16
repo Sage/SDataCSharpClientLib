@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Sage.SData.Client.Metadata
 {
@@ -46,9 +48,51 @@ namespace Sage.SData.Client.Metadata
             return DefaultAverageLength;
         }
 
+        protected override bool HasFacets
+        {
+            get { return true; }
+        }
+
         protected override string Suffix
         {
             get { return SDataResource.XmlConstants.EnumSuffix; }
+        }
+
+        protected override void OnGetRelatedSchemaTypes(string xsdType, IDictionary<string, string> relatedTypes)
+        {
+            if (!HasFacets)
+                return;
+
+            // Construct a simpleText
+            var builder = new StringBuilder();
+
+            // <xs:simpleType name="x">
+            builder.AppendFormat("<{0} {1}=\"{2}\">",
+                                 TypeInfoHelper.FormatXS(SDataResource.XmlConstants.SimpleType),
+                                 SDataResource.XmlConstants.Name,
+                                 xsdType
+                );
+
+            // <xs:restriction base="xs:string">
+            builder.AppendFormat("<{0} {1}=\"{2}\">",
+                                 TypeInfoHelper.FormatXS(SDataResource.XmlConstants.Restriction),
+                                 SDataResource.XmlConstants.Base,
+                                 TypeInfoHelper.GetXSDataType(GetType())
+                );
+
+            OnGetSchemaFacets(builder);
+
+            // </xs:restriction>
+            builder.AppendFormat("</{0}>",
+                                 TypeInfoHelper.FormatXS(SDataResource.XmlConstants.Restriction)
+                );
+
+            //</xs:simpleType>
+            builder.AppendFormat("</{0}>",
+                                 TypeInfoHelper.FormatXS(SDataResource.XmlConstants.SimpleType)
+                );
+
+            relatedTypes[xsdType] = builder.ToString();
         }
 
         /// <summary>
@@ -57,7 +101,7 @@ namespace Sage.SData.Client.Metadata
         /// <param name="value">The value to validate.</param>
         protected override void OnValidate(object value)
         {
-            base.OnValidate(value, typeof (Enum));
+            OnValidate(value, typeof (Enum));
         }
 
         #endregion

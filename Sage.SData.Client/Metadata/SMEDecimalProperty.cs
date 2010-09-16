@@ -7,16 +7,16 @@ using System.Xml.Schema;
 namespace Sage.SData.Client.Metadata
 {
     /// <summary>
-    /// Defines a Decimalal property.
+    /// Defines a decimal property.
     /// </summary>
     public class SMEDecimalProperty : SMEProperty
     {
         #region Constants
 
         /// <summary>
-        /// Default average length for a <see cref="float"/>.
+        /// Default average length for a <see cref="decimal"/>.
         /// </summary>
-        /// <value>The default average length for a <see cref="float"/>, which is <b>14</b>.</value>
+        /// <value>The default average length for a <see cref="decimal"/>, which is <b>14</b>.</value>
         public const int DefaultAverageLength = 14;
 
         public const decimal DefaultMinimum = 0;

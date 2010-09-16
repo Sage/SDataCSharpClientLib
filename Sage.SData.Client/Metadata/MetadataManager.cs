@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sage (UK) Limited 2007. All rights reserved.
+// Copyright (c) Sage (UK) Limited 2007. All rights reserved.
 // This code may not be copied or used, except as set out in a written licence agreement
 // between the user and Sage (UK) Limited, which specifically permits the user to use
 // this code. Please contact [email@sage.com] if you do not have such a licence.
@@ -16,7 +16,7 @@ namespace Sage.SData.Client.Metadata
     /// <summary>
     /// Manages the Metadata for types.
     /// </summary>
-    public static class MetadataManager
+    internal static class MetadataManager
     {
         #region XmlConstants
 
@@ -64,15 +64,41 @@ namespace Sage.SData.Client.Metadata
 
         #endregion
 
+        #region Static Helper Methods
+
+        /// <summary>
+        /// Returns an array of types including base types for the specified type.
+        /// </summary>
+        /// <param name="metaData">The type to return the types for.</param>
+        /// <returns>Array of types including base types for the specified type.</returns>
+        internal static IEnumerable<SDataResource> GetMetadataChain(SDataResource metaData)
+        {
+            var types = new List<SDataResource>();
+
+            for (;;)
+            {
+                types.Insert(0, metaData);
+
+                metaData = metaData.BaseType as SDataResource;
+
+                if (metaData == null)
+                    break;
+            }
+
+            return types.ToArray();
+        }
+
+        #endregion
+
         #region Static Metadata Methods
 
         /// <summary>
-        /// Returns the Metadata for the specified <see cref="Type"/> and qualified name.
+        /// Returns the Metadata for the specified and qualified name.
         /// </summary>
         /// <param name="name">The qualified name for the associated schema type.</param>
         /// <param name="schemaSet">The schema set containing the specified schema type.</param>
         /// <returns>The Metadata for the specified <see cref="Type"/> and qualified name.</returns>
-        public static SDataResource GetMetadata(XmlQualifiedName name, XmlSchemaSet schemaSet)
+        internal static SDataResource GetMetadata(XmlQualifiedName name, XmlSchemaSet schemaSet)
         {
             lock (_oNameToMetadata)
             {
@@ -82,58 +108,91 @@ namespace Sage.SData.Client.Metadata
                 if (!_oNameToMetadata.TryGetValue(name, out metaData))
                     metaData = null;
 
-                if (metaData != null) return metaData;
-
-                var runtimeObject = new SDataResource();
-
-                // NOTE: we only add the type name if it has a valid schema
-                if (TypeInfoHelper.IsValidQualifiedName(name) && schemaSet != null && schemaSet.Count > 0)
-                    _oNameToMetadata[name] = runtimeObject;
-
-                try
+                if (metaData == null)
                 {
-                    runtimeObject.Load(name, schemaSet);
-
-                    if (TypeInfoHelper.IsValidQualifiedName(name) && schemaSet != null && !_oLoadingSchemas.ContainsKey(schemaSet))
-                    {
-                        // Flag this schema as being loaded
-                        _oLoadingSchemas[schemaSet] = true;
-
-                        // We might as well load the rest of the schema types at this point
-                        foreach (XmlSchema schema in schemaSet.Schemas())
-                        {
-                            foreach (XmlQualifiedName otherType in schema.Elements.Names)
-                            {
-                                // Don't load framework types this way as the associated
-                                // classes can influence the details (XmlGroupDerived)
-                                if (Framework.Common.IsFrameworkNamespace(otherType.Namespace))
-                                    continue;
-
-                                if (!_oNameToMetadata.ContainsKey(otherType))
-                                {
-                                    var otherMetadata = new SDataResource();
-
-                                    _oNameToMetadata[otherType] = otherMetadata;
-
-                                    otherMetadata.Load(otherType, schemaSet);
-                                }
-                            }
-                        }
-
-                        _oLoadingSchemas.Remove(schemaSet);
-                    }
-                }
-                catch
-                {
-                    if (TypeInfoHelper.IsValidQualifiedName(name))
-                        _oNameToMetadata.Remove(name);
-
-                    throw;
+                    // First time call, so load the details now
+                    metaData = GetMetadata2(name, schemaSet);
                 }
 
-                return runtimeObject;
+                return metaData;
             }
         }
+
+        /// <summary>
+        /// Returns the Metadata for the specified <see cref="Type"/> and qualified name.
+        /// </summary>
+        /// <param name="name">The qualified name for the associated schema type.</param>
+        /// <param name="schemaSet">The schema set containing the specified schema type.</param>
+        /// <returns>The Metadata for the specified <see cref="Type"/> and qualified name.</returns>
+        private static SDataResource GetMetadata2(XmlQualifiedName name, XmlSchemaSet schemaSet)
+        {
+            lock (_oNameToMetadata)
+            {
+                SDataResource metaData;
+
+                // See if we have already loaded the Metadata for the specified name
+                if (name == null || !_oNameToMetadata.TryGetValue(name, out metaData))
+                    metaData = null;
+
+                if (metaData == null)
+                {
+                    var runtimeObject = new SDataResource();
+
+                    // NOTE: we only add the type name if it has a valid schema
+                    if (TypeInfoHelper.IsValidQualifiedName(name) && schemaSet != null && schemaSet.Count > 0)
+                        _oNameToMetadata[name] = runtimeObject;
+
+                    try
+                    {
+                        runtimeObject.Load(name, schemaSet);
+
+                        if (TypeInfoHelper.IsValidQualifiedName(name) && schemaSet != null && !_oLoadingSchemas.ContainsKey(schemaSet))
+                        {
+                            // Flag this schema as being loaded
+                            _oLoadingSchemas[schemaSet] = true;
+
+                            // We might as well load the rest of the schema types at this point
+                            foreach (XmlSchema schema in schemaSet.Schemas())
+                            {
+                                foreach (XmlQualifiedName otherType in schema.Elements.Names)
+                                {
+                                    // Don't load framework types this way as the associated
+                                    // classes can influence the details (XmlGroupDerived)
+                                    if (Framework.Common.IsFrameworkNamespace(otherType.Namespace))
+                                        continue;
+
+                                    if (!_oNameToMetadata.ContainsKey(otherType))
+                                    {
+                                        var otherMetadata = new SDataResource();
+
+                                        _oNameToMetadata[otherType] = otherMetadata;
+
+                                        otherMetadata.Load(otherType, schemaSet);
+                                    }
+                                }
+                            }
+
+                            _oLoadingSchemas.Remove(schemaSet);
+                        }
+                    }
+                    catch
+                    {
+                        if (TypeInfoHelper.IsValidQualifiedName(name))
+                            _oNameToMetadata.Remove(name);
+
+                        throw;
+                    }
+
+                    metaData = runtimeObject;
+                }
+
+                return metaData;
+            }
+        }
+
+        #endregion
+
+        #region Local Static Methods
 
         public static string GetSchema(string targetNs, XmlNamespaceManager namespaceManager, IEnumerable<SDataResource> metaData)
         {
@@ -143,8 +202,9 @@ namespace Sage.SData.Client.Metadata
             builder.Append(XmlConstants.XmlDeclaration);
 
             // <xs:schema targetNamespace="http://schemas.sage.com/accounts50/2007" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sdata="http://schemas.sage.com/sdata/2008/1" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns="http://schemas.sage.com/accounts50/2007">
+            builder.AppendFormat("<{0} ", TypeInfoHelper.FormatXS(XmlConstants.Schema));
+
             var namespaceList = new Dictionary<string, string>();
-            builder.AppendFormat("<");
 
             var prefix = namespaceManager.LookupPrefix(targetNs);
             string typeDeclaration;
@@ -179,10 +239,9 @@ namespace Sage.SData.Client.Metadata
             if (String.IsNullOrEmpty(targetNs))
                 targetNamespace = "";
             else
-                targetNamespace = String.Format(" {0}=\"{1}\"", XmlConstants.TargetNamespace, targetNs);
+                targetNamespace = String.Format("{0}=\"{1}\" ", XmlConstants.TargetNamespace, targetNs);
 
-            builder.AppendFormat("{0}{1} {2}=\"{3}\" {4}",
-                                 TypeInfoHelper.FormatXS(XmlConstants.Schema),
+            builder.AppendFormat("{0}{1}=\"{2}\" {3}",
                                  targetNamespace,
                                  Framework.Common.XmlNS,
                                  targetNs,
@@ -209,7 +268,7 @@ namespace Sage.SData.Client.Metadata
             var types = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 
             foreach (var next in metaData)
-                next.GetSchema(types);
+                next.GetSchema(types, false, true);
 
             foreach (var type in types.Values)
                 builder.Append(type);
