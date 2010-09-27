@@ -230,6 +230,22 @@ namespace Sage.SData.Client.Test.Extensions
             Assert.That(node, Is.Not.Null);
         }
 
+        [Test]
+        public void Primitive_Values_Formatted_Appropriately()
+        {
+            var payload = new SDataPayload
+                          {
+                              ResourceName = "salesOrder",
+                              Namespace = "",
+                              Values = {{"orderDate", DateTime.Now}}
+                          };
+            var nav = WritePayload(payload);
+            var node = nav.SelectSingleNode("*/salesOrder/orderDate");
+
+            Assert.That(node, Is.Not.Null);
+            Assert.DoesNotThrow(() => XmlConvert.ToDateTime(node.Value, XmlDateTimeSerializationMode.RoundtripKind));
+        }
+
         private static SDataPayload LoadPayload(string xml)
         {
             var payload = new SDataPayload();
