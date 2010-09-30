@@ -14,14 +14,23 @@ namespace Sage.SData.Client.Core
     {
         private const string BatchTerm = "$batch";
 
-        private readonly IList<SDataBatchRequestItem> _requests;
+        private readonly IList<SDataBatchRequestItem> _items;
 
         /// <summary>
-        /// Queue of batch requests
+        /// Collection of batch request items
         /// </summary>
+        public IList<SDataBatchRequestItem> Items
+        {
+            get { return _items; }
+        }
+
+        /// <summary>
+        /// Collection of batch request items
+        /// </summary>
+        [Obsolete("Use the Items property instead.")]
         public IList<SDataBatchRequestItem> Requests
         {
-            get { return _requests; }
+            get { return _items; }
         }
 
         /// <summary>
@@ -31,7 +40,7 @@ namespace Sage.SData.Client.Core
         public SDataBatchRequest(ISDataService service)
             : base(service)
         {
-            _requests = new List<SDataBatchRequestItem>();
+            _items = new List<SDataBatchRequestItem>();
             BatchProcess.Instance.Requests.Add(this);
         }
 
@@ -85,13 +94,14 @@ namespace Sage.SData.Client.Core
         {
             var feed = GetFeed();
             feed = Service.CreateFeed(this, feed);
-            Requests.Clear();
+            Items.Clear();
             return feed;
         }
 
         public void Dispose()
         {
-            Requests.Clear();
+            Items.Clear();
+            BatchProcess.Instance.Requests.Remove(this);
         }
 
         private AtomFeed GetFeed()
@@ -103,11 +113,11 @@ namespace Sage.SData.Client.Core
                            UpdatedOn = DateTime.Now
                        };
 
-            foreach (var request in Requests)
+            foreach (var item in Items)
             {
-                var entry = request.Entry ?? new AtomEntry {Id = new AtomId(new Uri(request.Url))};
-                entry.SetSDataHttpMethod(request.Method);
-                entry.SetSDataHttpIfMatch(request.ETag);
+                var entry = item.Entry ?? new AtomEntry {Id = new AtomId(new Uri(item.Url))};
+                entry.SetSDataHttpMethod(item.Method);
+                entry.SetSDataHttpIfMatch(item.ETag);
                 feed.AddEntry(entry);
             }
 

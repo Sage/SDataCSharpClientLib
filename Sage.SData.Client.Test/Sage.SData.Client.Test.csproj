@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\BatchProcessTests.cs" />
     <Compile Include="Extensions\SDataPayloadTests.cs" />
     <Compile Include="Extensions\SDataSyncExtensionContextTests.cs" />
     <Compile Include="Framework\DiagnosisTests.cs" />
