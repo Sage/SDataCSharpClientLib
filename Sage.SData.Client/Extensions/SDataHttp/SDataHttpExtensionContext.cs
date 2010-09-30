@@ -156,7 +156,7 @@ namespace Sage.SData.Client.Extensions
 
             if (HttpStatus != null)
             {
-                writer.WriteElementString("httpStatus", xmlNamespace, HttpStatus.ToString());
+                writer.WriteElementString("httpStatus", xmlNamespace, ((int) HttpStatus).ToString());
             }
 
             if (!string.IsNullOrEmpty(HttpMessage))
