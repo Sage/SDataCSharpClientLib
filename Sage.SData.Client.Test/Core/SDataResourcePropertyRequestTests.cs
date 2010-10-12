@@ -90,7 +90,7 @@ namespace Sage.SData.Client.Test.Core
             var request = new SDataResourcePropertyRequest(_service)
                           {
                               ResourceKind = "employees",
-                              ResourceSelector = "id = '1234'",
+                              ResourceSelector = "id eq '1234'",
                               ResourceProperties = {"Address", "City"},
                               Entry = new AtomEntry()
                           };
@@ -106,7 +106,7 @@ namespace Sage.SData.Client.Test.Core
             var request = new SDataResourcePropertyRequest(_service)
                           {
                               ResourceKind = "employees",
-                              ResourceSelector = "id = '1234'",
+                              ResourceSelector = "id eq '1234'",
                               ResourceProperties = {"Address", "City"},
                               Entry = new AtomEntry()
                           };

@@ -44,11 +44,11 @@ namespace Sage.SData.Client.Test.Core
             var request = new SDataSingleResourceRequest(_service)
                           {
                               ResourceKind = "employees",
-                              ResourceSelector = "id = '1234'"
+                              ResourceSelector = "id eq '1234'"
                           };
 
             var url = request.ToString();
-            Expect(url, Is.EqualTo("http://localhost:59213/sdata/aw/dynamic/-/employees(id = '1234')"));
+            Expect(url, Is.EqualTo("http://localhost:59213/sdata/aw/dynamic/-/employees(id eq '1234')"));
         }
 
         [Test]

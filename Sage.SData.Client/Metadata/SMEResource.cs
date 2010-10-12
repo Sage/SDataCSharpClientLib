@@ -450,6 +450,11 @@ namespace Sage.SData.Client.Metadata
         /// <summary>
         /// The associated type is a service.
         /// </summary>
-        ServiceOperation
+        ServiceOperation,
+
+        /// <summary>
+        /// The associated type is a named query.
+        /// </summary>
+        Query
     }
 }
