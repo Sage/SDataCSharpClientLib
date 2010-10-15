@@ -6,10 +6,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Net.Mime;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
 using Sage.SData.Client.Extensions;
+using Sage.SData.Client.Mime;
 
 namespace Sage.SData.Client.Framework
 {
@@ -158,6 +161,7 @@ namespace Sage.SData.Client.Framework
             }
 
             var feed = new AtomFeed();
+            var batchOp = new RequestOperation(HttpMethod.Post, feed);
 
             foreach (var op in _operations)
             {
@@ -191,9 +195,14 @@ namespace Sage.SData.Client.Framework
                 }
 
                 feed.AddEntry(entry);
+
+                foreach (var file in op.Files)
+                {
+                    batchOp.Files.Add(file);
+                }
             }
 
-            return new RequestOperation(HttpMethod.Post, feed);
+            return batchOp;
         }
 
         private WebRequest CreateRequest(string uri, RequestOperation op)
@@ -248,13 +257,42 @@ namespace Sage.SData.Client.Framework
 
             if (op.Resource != null)
             {
-                request.ContentType = op.Resource is AtomFeed
+                using (var stream = request.GetRequestStream())
+                {
+                    var contentType = op.Resource is AtomFeed
                                           ? MediaTypeNames.AtomFeedMediaType
                                           : MediaTypeNames.AtomEntryMediaType;
 
-                using (var stream = request.GetRequestStream())
-                {
-                    op.Resource.Save(stream);
+                    var requestStream = op.Files.Count > 0 ? new MemoryStream() : stream;
+                    op.Resource.Save(requestStream);
+
+                    if (op.Files.Count > 0)
+                    {
+                        requestStream.Seek(0, SeekOrigin.Begin);
+                        var part = new MimePart(requestStream) {ContentType = contentType};
+
+                        using (var multipart = new MimeMessage(part))
+                        {
+                            contentType = new ContentType("multipart/related") {Boundary = multipart.Boundary}.ToString();
+
+                            foreach (var file in op.Files)
+                            {
+                                var type = !string.IsNullOrEmpty(file.ContentType) ? file.ContentType : "application/octet-stream";
+                                var disposition = new ContentDisposition(DispositionTypeNames.Attachment) { FileName = file.FileName };
+                                part = new MimePart(file.Stream)
+                                       {
+                                           ContentType = type,
+                                           ContentTransferEncoding = "binary",
+                                           ContentDisposition = disposition
+                                       };
+                                multipart.Add(part);
+                            }
+
+                            multipart.WriteTo(stream);
+                        }
+                    }
+
+                    request.ContentType = contentType;
                 }
             }
 

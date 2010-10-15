@@ -292,6 +292,11 @@ namespace Sage.SData.Client.Framework
         /// <returns>The <see cref="MediaType"/> that matches the specified name.</returns>
         public static MediaType GetMediaType(string name)
         {
+            if (name != null && name.StartsWith("multipart/", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return MediaType.Multipart;
+            }
+
             return NameToMediaType[new ContentType(name)];
         }
 
@@ -303,6 +308,12 @@ namespace Sage.SData.Client.Framework
         /// <returns><b>true</b> if the content type was found; otherwise, <b>false</b>.</returns>
         public static bool TryGetMediaType(string name, out MediaType mediaType)
         {
+            if (name != null && name.StartsWith("multipart/", StringComparison.InvariantCultureIgnoreCase))
+            {
+                mediaType = MediaType.Multipart;
+                return true;
+            }
+
             if (string.IsNullOrEmpty(name))
             {
                 mediaType = DefaultMediaType;

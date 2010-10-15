@@ -92,5 +92,10 @@ namespace Sage.SData.Client.Framework
         /// Form format
         /// </summary>
         [XmlEnum(MediaTypeNames.FormMediaType)] Form,
+
+        /// <summary>
+        /// Multipart format
+        /// </summary>
+        Multipart
     }
 }
