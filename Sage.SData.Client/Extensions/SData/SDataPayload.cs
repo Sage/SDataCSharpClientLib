@@ -245,6 +245,10 @@ namespace Sage.SData.Client.Extensions
             {
                 return XmlConvert.ToString((byte) value);
             }
+            if (value is sbyte)
+            {
+                return XmlConvert.ToString((sbyte) value);
+            }
             if (value is short)
             {
                 return XmlConvert.ToString((short) value);

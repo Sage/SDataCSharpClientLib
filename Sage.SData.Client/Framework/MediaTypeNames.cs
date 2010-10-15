@@ -53,6 +53,11 @@ namespace Sage.SData.Client.Framework
         public const string JsonMediaType = "application/json";
 
         /// <summary>
+        /// Binary Javascript Object Notation (BSON) content type
+        /// </summary>
+        public const string BsonMediaType = "application/bson";
+
+        /// <summary>
         /// Form content type
         /// </summary>
         public const string FormMediaType = "application/x-www-form-urlencoded";
@@ -101,6 +106,11 @@ namespace Sage.SData.Client.Framework
         /// Short Javascript Object Notation (JSON) content type
         /// </summary>
         public const string ShortJsonMediaType = "json";
+
+        /// <summary>
+        /// Short Binary Javascript Object Notation (BSON) content type
+        /// </summary>
+        public const string ShortBsonMediaType = "bson";
 
         /// <summary>
         /// Short ATOM feed content type.
@@ -206,6 +216,7 @@ namespace Sage.SData.Client.Framework
             MediaTypeToName[MediaType.Xslt] = XsltMediaType;
             MediaTypeToName[MediaType.Css] = CssMediaType;
             MediaTypeToName[MediaType.Json] = JsonMediaType;
+            MediaTypeToName[MediaType.Bson] = BsonMediaType;
             MediaTypeToName[MediaType.Form] = FormMediaType;
 
             NameToMediaType = new Dictionary<ContentType, MediaType>(new ContentTypeComparer());
@@ -224,6 +235,7 @@ namespace Sage.SData.Client.Framework
             NameToMediaType[new ContentType(XsltMediaType)] = MediaType.Xslt;
             NameToMediaType[new ContentType(CssMediaType)] = MediaType.Css;
             NameToMediaType[new ContentType(JsonMediaType)] = MediaType.Json;
+            NameToMediaType[new ContentType(BsonMediaType)] = MediaType.Bson;
             NameToMediaType[new ContentType(FormMediaType)] = MediaType.Form;
 
             MediaTypeToShortName = new Dictionary<MediaType, string>();
@@ -241,6 +253,7 @@ namespace Sage.SData.Client.Framework
             MediaTypeToShortName[MediaType.Xslt] = ShortXsltMediaType;
             MediaTypeToShortName[MediaType.Css] = ShortCssMediaType;
             MediaTypeToShortName[MediaType.Json] = ShortJsonMediaType;
+            MediaTypeToShortName[MediaType.Bson] = ShortBsonMediaType;
             MediaTypeToShortName[MediaType.Form] = ShortFormMediaType;
 
             ShortNameToMediaType = new Dictionary<string, MediaType>(StringComparer.InvariantCultureIgnoreCase);
@@ -258,6 +271,7 @@ namespace Sage.SData.Client.Framework
             ShortNameToMediaType[ShortXsltMediaType] = MediaType.Xslt;
             ShortNameToMediaType[ShortCssMediaType] = MediaType.Css;
             ShortNameToMediaType[ShortJsonMediaType] = MediaType.Json;
+            ShortNameToMediaType[ShortBsonMediaType] = MediaType.Bson;
             ShortNameToMediaType[ShortFormMediaType] = MediaType.Form;
         }
 
