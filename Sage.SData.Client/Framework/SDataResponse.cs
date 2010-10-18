@@ -5,25 +5,61 @@
 // appropriate legal action against those who make unauthorised use of this code.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Mime;
 using System.Xml;
 using System.Xml.Serialization;
 using Sage.SData.Client.Atom;
+using Sage.SData.Client.Mime;
 
 namespace Sage.SData.Client.Framework
 {
     /// <summary>
+    /// An interfact which encapsulates interesting information returned
+    /// from a request.
+    /// </summary>
+    public interface ISDataResponse
+    {
+        /// <summary>
+        /// The response status code.
+        /// </summary>
+        HttpStatusCode StatusCode { get; }
+
+        /// <summary>
+        /// The response content type.
+        /// </summary>
+        MediaType? ContentType { get; }
+
+        /// <summary>
+        /// The response ETag.
+        /// </summary>
+        string ETag { get; }
+
+        /// <summary>
+        /// The response location.
+        /// </summary>
+        string Location { get; }
+
+        /// <summary>
+        /// The response content.
+        /// </summary>
+        object Content { get; }
+    }
+
+    /// <summary>
     /// The response class which encapsulates interesting information returned
     /// from a request.
     /// </summary>
-    public class SDataResponse
+    public class SDataResponse : ISDataResponse
     {
         private readonly HttpStatusCode _statusCode;
         private readonly MediaType? _contentType;
         private readonly string _eTag;
         private readonly string _location;
         private readonly object _content;
+        private readonly IList<AttachedFile> _files;
 
         internal SDataResponse(WebResponse response, string redirectLocation)
         {
@@ -38,13 +74,56 @@ namespace Sage.SData.Client.Framework
 
             _eTag = response.Headers[HttpResponseHeader.ETag];
             _location = response.Headers[HttpResponseHeader.Location] ?? redirectLocation;
+            _files = new List<AttachedFile>();
 
             if (_statusCode != HttpStatusCode.NoContent && _contentType != null)
             {
-                using (var stream = response.GetResponseStream())
+                using (var responseStream = response.GetResponseStream())
                 {
-                    _content = LoadContent(stream, contentType);
+                    string boundary;
+
+                    if (_contentType == MediaType.Multipart && TryGetMultipartBoundary(response.ContentType, out boundary))
+                    {
+                        var multipart = MimeMessage.Parse(responseStream, boundary);
+                        var isFirst = true;
+
+                        foreach (var part in multipart)
+                        {
+                            if (isFirst)
+                            {
+                                _contentType = MediaTypeNames.GetMediaType(part.ContentType);
+                                _content = LoadContent(part.Content, _contentType.Value);
+                                isFirst = false;
+                            }
+                            else
+                            {
+                                var fileName = part.ContentDisposition != null ? part.ContentDisposition.FileName : null;
+                                _files.Add(new AttachedFile(part.ContentType, fileName, part.Content));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _content = LoadContent(responseStream, _contentType.Value);
+                    }
                 }
+            }
+        }
+
+        private static bool TryGetMultipartBoundary(string contentType, out string boundary)
+        {
+            ContentType type;
+
+            try
+            {
+                type = new ContentType(contentType);
+                boundary = type.Boundary;
+                return !string.IsNullOrEmpty(boundary);
+            }
+            catch (FormatException)
+            {
+                boundary = null;
+                return false;
             }
         }
 
@@ -86,6 +165,14 @@ namespace Sage.SData.Client.Framework
         public object Content
         {
             get { return _content; }
+        }
+
+        /// <summary>
+        /// Gets the files attached to the response.
+        /// </summary>
+        public IList<AttachedFile> Files
+        {
+            get { return _files; }
         }
 
         private static object LoadContent(Stream stream, MediaType contentType)

@@ -6,6 +6,7 @@
 // code.
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Xml;
 
 namespace Sage.SData.Client.Metadata
@@ -260,7 +261,7 @@ namespace Sage.SData.Client.Metadata
             base.OnLoadUnhandledAttribute(attribute);
         }
 
-        private RelationshipType GetRelationshipType(string attributeValue)
+        private static RelationshipType GetRelationshipType(string attributeValue)
         {
             foreach (RelationshipType type in Enum.GetValues(typeof (RelationshipType)))
             {
@@ -276,6 +277,39 @@ namespace Sage.SData.Client.Metadata
         protected override int GetDefaultAverageLength()
         {
             return 1;
+        }
+
+        internal static string GetSchemaAttributes(SMERelationshipProperty relationship, SMEResource resource)
+        {
+            if (relationship == null)
+                return String.Empty;
+
+            var builder = new StringBuilder();
+
+            //builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(IncludeByDefaultName), IncludeByDefaultName, relationship.IncludeByDefault ? "true" : "false");
+
+            if (relationship.Relationship != 0)
+                builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(RelationshipName), relationship.Relationship);
+
+            if (resource == null)
+            {
+                builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanGetName), relationship.CanGet ? "true" : "false");
+                builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanPostName), relationship.CanPost ? "true" : "false");
+                builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanPutName), relationship.CanPut ? "true" : "false");
+                builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanDeleteName), relationship.CanDelete ? "true" : "false");
+
+                builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanPagePreviousName), relationship.CanPagePrevious ? "true" : "false");
+                builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanPageNextName), relationship.CanPageNext ? "true" : "false");
+                builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanPageIndexName), relationship.CanPageIndex ? "true" : "false");
+            }
+
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(IsCollectionName), relationship.IsCollection ? "true" : "false");
+            builder.AppendFormat("{0}=\"{1}\"", SDataResource.XmlConstants.MinOccurs, relationship.MinOccurs);
+
+            if (relationship.MaxOccurs != 0)
+                builder.AppendFormat("{0}=\"{1}\"", SDataResource.XmlConstants.MaxOccurs, relationship.MaxOccurs == -1 ? SDataResource.XmlConstants.Unbounded : relationship.MaxOccurs.ToString());
+
+            return builder.ToString();
         }
     }
 

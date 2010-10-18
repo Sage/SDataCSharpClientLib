@@ -17,7 +17,22 @@ namespace Sage.SData.Client.Framework
     {
         #region Constants
 
-        private const string Pattern = @"(?<segment>[^!/()]*)(\((?<predicate>[^!()]*)?\))?";
+        private const string Pattern = @"(?<segment>
+                                           [^/(]*                       # anything other than slash or open paren
+                                         )
+                                         (
+                                           \(
+                                             (?<predicate>
+                                               (
+                                                 ('([^']|(''))*')       # single quoted literal string
+                                                 |
+                                                 (""([^""]|(""""))*"")  # double quoted literal string
+                                                 |
+                                                 ([^'"")]*)             # anything other than quote or close paren
+                                               )*
+                                             )
+                                           \)
+                                         )?";
 
         private static readonly Regex Regex = new Regex(Pattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
         private static readonly UriPathSegment[] EmptyPath = new UriPathSegment[] {};

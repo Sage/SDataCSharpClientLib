@@ -5,6 +5,7 @@
 // Sage will take appropriate legal action against those who make unauthorised use of this
 // code.
 using System;
+using System.Text;
 using System.Xml;
 
 namespace Sage.SData.Client.Metadata
@@ -347,7 +348,7 @@ namespace Sage.SData.Client.Metadata
             {
                 var typeString = type.ToString();
 
-                if (string.Equals(attributeString, typeString, StringComparison.InvariantCultureIgnoreCase))
+                if (String.Equals(attributeString, typeString, StringComparison.InvariantCultureIgnoreCase))
                     return type;
             }
 
@@ -360,11 +361,53 @@ namespace Sage.SData.Client.Metadata
             {
                 var typeString = type.ToString();
 
-                if (string.Equals(attributeString, typeString, StringComparison.InvariantCultureIgnoreCase))
+                if (String.Equals(attributeString, typeString, StringComparison.InvariantCultureIgnoreCase))
                     return type;
             }
 
             return RoleType.ResourceKind;
+        }
+
+        internal static string GetSchemaAttributes(SMEResource resource)
+        {
+            if (resource == null)
+                return String.Empty;
+
+            var builder = new StringBuilder();
+
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanGetName), resource.CanGet ? "true" : "false");
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanPostName), resource.CanPost ? "true" : "false");
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanPutName), resource.CanPut ? "true" : "false");
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanDeleteName), resource.CanDelete ? "true" : "false");
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanSearchName), resource.CanSearch ? "true" : "false");
+
+            if (!String.IsNullOrEmpty(resource.Path))
+                builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(PathName), resource.Path);
+
+            if (!String.IsNullOrEmpty(resource.PluralName))
+                builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(PluralNameName), resource.PluralName);
+
+            if (!String.IsNullOrEmpty(resource.Label))
+                builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(LabelName), TypeInfoHelper.Escape(resource.Label));
+
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanPagePreviousName), resource.CanPagePrevious ? "true" : "false");
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanPageNextName), resource.CanPageNext ? "true" : "false");
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(CanPageIndexName), resource.CanPageIndex ? "true" : "false");
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(SupportsETagName), resource.SupportsETag ? "true" : "false");
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(HasUuidName), resource.HasUuid ? "true" : "false");
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(HasTemplateName), resource.HasTemplate ? "true" : "false");
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(BatchingModeName), resource.BatchingMode);
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(RoleName), FormatRole(resource.Role));
+            builder.AppendFormat("{0}=\"{1}\" ", SDataResource.FormatSME(IsSyncSourceName), resource.IsSyncSource ? "true" : "false");
+            builder.AppendFormat("{0}=\"{1}\"", SDataResource.FormatSME(IsSyncTargetName), resource.IsSyncTarget ? "true" : "false");
+
+            return builder.ToString();
+        }
+
+        private static string FormatRole(RoleType role)
+        {
+            var str = role.ToString();
+            return char.ToLower(str[0]) + str.Substring(1);
         }
     }
 
@@ -407,6 +450,11 @@ namespace Sage.SData.Client.Metadata
         /// <summary>
         /// The associated type is a service.
         /// </summary>
-        ServiceOperation
+        ServiceOperation,
+
+        /// <summary>
+        /// The associated type is a named query.
+        /// </summary>
+        Query
     }
 }

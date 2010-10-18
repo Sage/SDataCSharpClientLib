@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -14,21 +14,21 @@ namespace Sage.SData.Client.Metadata
     {
         #region Constants
 
-        internal const string CanSortName = "canSort";
-        internal const string CanFilterName = "canFilter";
-        internal const string CanGroupName = "canGroup";
-        internal const string PrecedenceName = "precedence";
-        internal const string LabelName = "label";
-        internal const string GroupNameName = "groupName";
-        internal const string IsMandatoryName = "isMandatory";
-        internal const string IsUniqueKeyName = "isUniqueKey";
-        internal const string IsGlobalIdName = "isGlobalId";
-        internal const string IsLocalizedName = "isLocalized";
-        internal const string IsIdentifierName = "isIdentifier";
-        internal const string IsDescriptorName = "isDescriptor";
-        internal const string IsReadOnlyName = "isReadOnly";
-        internal const string CopiedFromName = "copiedFrom";
-        internal const string UnsupportedName = "unsupported";
+        private const string CanSortName = "canSort";
+        private const string CanFilterName = "canFilter";
+        private const string CanGroupName = "canGroup";
+        private const string PrecedenceName = "precedence";
+        private const string LabelName = "label";
+        private const string GroupNameName = "groupName";
+        private const string IsMandatoryName = "isMandatory";
+        private const string IsUniqueKeyName = "isUniqueKey";
+        private const string IsGlobalIdName = "isGlobalId";
+        private const string IsLocalizedName = "isLocalized";
+        private const string IsIdentifierName = "isIdentifier";
+        private const string IsDescriptorName = "isDescriptor";
+        private const string IsReadOnlyName = "isReadOnly";
+        private const string CopiedFromName = "copiedFrom";
+        private const string UnsupportedName = "unsupported";
 
         #endregion
 
@@ -118,7 +118,7 @@ namespace Sage.SData.Client.Metadata
         /// <value>The label for the property.</value>
         public string Label
         {
-            get { return String.IsNullOrEmpty(_strLabel) ? Name : _strLabel; }
+            get { return _strLabel ?? Name; }
             set { _strLabel = value; }
         }
 
@@ -369,7 +369,7 @@ namespace Sage.SData.Client.Metadata
         /// Validates the specified value against the constraints of the property.
         /// </summary>
         /// <param name="value">The value to validate.</param>
-        protected virtual void OnValidate(object value, Type type)
+        protected void OnValidate(object value, Type type)
         {
             if (value == null)
             {
@@ -529,7 +529,7 @@ namespace Sage.SData.Client.Metadata
         /// <param name="relatedTypes">Contains the schema details for any related types.</param>
         /// <param name="name">Name to base the type name on.</param>
         /// <returns>A unique type name.</returns>
-        protected string GetUniqueTypeName(IDictionary<string, string> relatedTypes, string name)
+        private string GetUniqueTypeName(IDictionary<string, string> relatedTypes, string name)
         {
             //find the parent resource name and use it as a property name prefix
             foreach (var relatedType in relatedTypes)
@@ -623,7 +623,7 @@ namespace Sage.SData.Client.Metadata
         {
             IDictionary<string, string> attributes = new Dictionary<string, string>();
 
-            if (!String.IsNullOrEmpty(Label))
+            if (Label != null)
             {
                 attributes.Add(
                     SDataResource.FormatSME(LabelName),
@@ -780,8 +780,6 @@ namespace Sage.SData.Client.Metadata
                                  SDataResource.XmlConstants.Base,
                                  TypeInfoHelper.GetXSDataType(GetType()));
 
-            OnGetSchemaAttributeFacets(builder);
-
             builder.Append(">");
 
             OnGetSchemaFacets(builder);
@@ -797,14 +795,6 @@ namespace Sage.SData.Client.Metadata
                 );
 
             relatedTypes[xsdType] = builder.ToString();
-        }
-
-        /// <summary>
-        /// Adds the schema attribute facets for this property.
-        /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to add the facets to.</param>
-        protected virtual void OnGetSchemaAttributeFacets(StringBuilder builder)
-        {
         }
 
         /// <summary>

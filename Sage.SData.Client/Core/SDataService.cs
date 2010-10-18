@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Xml;
 using Sage.SData.Client.Atom;
@@ -200,7 +201,7 @@ namespace Sage.SData.Client.Core
             {
                 var requestUrl = request.ToString();
                 var operation = new RequestOperation(HttpMethod.Post, feed);
-                var response = ExecuteRequest(requestUrl, operation, MediaType.Atom);
+                var response = ExecuteRequest(requestUrl, operation, MediaType.Atom, MediaType.Xml);
                 eTag = response.ETag;
                 return (AtomFeed) response.Content;
             }
@@ -228,28 +229,37 @@ namespace Sage.SData.Client.Core
 
             try
             {
-                if (BatchProcess.Instance.Requests.Count > 0)
+                var batchItem = new SDataBatchRequestItem
+                                {
+                                    Url = url,
+                                    Method = HttpMethod.Post,
+                                    Entry = entry
+                                };
+
+                if (BatchProcess.Instance.AddToBatch(batchItem))
                 {
-                    var batchRequest = new SDataBatchRequestItem
-                                       {
-                                           Url = url,
-                                           Method = HttpMethod.Post,
-                                           Entry = entry
-                                       };
-                    BatchProcess.Instance.AddToBatch(batchRequest);
                     return null;
                 }
 
                 var operation = new RequestOperation(HttpMethod.Post, entry);
-                var response = ExecuteRequest(url, operation, MediaType.AtomEntry);
-                entry = (AtomEntry) response.Content;
+                var response = ExecuteRequest(url, operation, MediaType.AtomEntry, MediaType.Xml);
+                var result = response.Content as AtomEntry;
 
-                if (!string.IsNullOrEmpty(response.ETag))
+                if (result == null)
                 {
-                    entry.SetSDataHttpETag(response.ETag);
+                    var feedResult = response.Content as AtomFeed;
+                    if (feedResult != null)
+                    {
+                        result = feedResult.Entries.FirstOrDefault();
+                    }
                 }
 
-                return entry;
+                if (!string.IsNullOrEmpty(response.ETag) && result != null)
+                {
+                    result.SetSDataHttpETag(response.ETag);
+                }
+
+                return result;
             }
             catch (Exception ex)
             {
@@ -293,7 +303,7 @@ namespace Sage.SData.Client.Core
             try
             {
                 var operation = new RequestOperation(HttpMethod.Delete);
-                var response = ExecuteRequest(url, operation, null);
+                var response = ExecuteRequest(url, operation, MediaType.Xml);
                 return response.StatusCode == HttpStatusCode.OK;
             }
             catch (Exception ex)
@@ -329,21 +339,20 @@ namespace Sage.SData.Client.Core
             try
             {
                 var eTag = entry != null ? entry.GetSDataHttpETag() : null;
+                var batchItem = new SDataBatchRequestItem
+                                {
+                                    Url = url,
+                                    Method = HttpMethod.Delete,
+                                    ETag = eTag
+                                };
 
-                if (BatchProcess.Instance.Requests.Count > 0)
+                if (BatchProcess.Instance.AddToBatch(batchItem))
                 {
-                    var batchRequest = new SDataBatchRequestItem
-                                       {
-                                           Url = url,
-                                           Method = HttpMethod.Delete,
-                                           ETag = eTag
-                                       };
-                    BatchProcess.Instance.AddToBatch(batchRequest);
                     return true;
                 }
 
                 var operation = new RequestOperation(HttpMethod.Delete) {ETag = eTag};
-                var response = ExecuteRequest(url, operation, null);
+                var response = ExecuteRequest(url, operation, MediaType.AtomEntry, MediaType.Xml);
                 return response.StatusCode == HttpStatusCode.OK;
             }
             catch (Exception ex)
@@ -364,7 +373,7 @@ namespace Sage.SData.Client.Core
             try
             {
                 var operation = new RequestOperation(HttpMethod.Get);
-                var response = ExecuteRequest(url, operation, null);
+                var response = ExecuteRequest(url, operation, MediaType.Xml);
                 var text = response.Content as string;
 
                 if (text != null && response.ContentType == MediaType.Xml)
@@ -421,7 +430,7 @@ namespace Sage.SData.Client.Core
             {
                 var requestUrl = request.ToString();
                 var operation = new RequestOperation(HttpMethod.Get) {ETag = eTag};
-                var response = ExecuteRequest(requestUrl, operation, MediaType.Atom);
+                var response = ExecuteRequest(requestUrl, operation, MediaType.Atom, MediaType.Xml);
                 eTag = response.ETag;
                 return (AtomFeed) response.Content;
             }
@@ -455,21 +464,20 @@ namespace Sage.SData.Client.Core
             {
                 var requestUrl = request.ToString();
                 var eTag = entry != null ? entry.GetSDataHttpETag() : null;
+                var batchItem = new SDataBatchRequestItem
+                                {
+                                    Url = requestUrl,
+                                    Method = HttpMethod.Get,
+                                    ETag = eTag
+                                };
 
-                if (BatchProcess.Instance.Requests.Count > 0)
+                if (BatchProcess.Instance.AddToBatch(batchItem))
                 {
-                    var batchRequest = new SDataBatchRequestItem
-                                       {
-                                           Url = requestUrl,
-                                           Method = HttpMethod.Get,
-                                           ETag = eTag
-                                       };
-                    BatchProcess.Instance.AddToBatch(batchRequest);
                     return null;
                 }
 
                 var operation = new RequestOperation(HttpMethod.Get) {ETag = eTag};
-                var response = ExecuteRequest(requestUrl, operation, MediaType.AtomEntry);
+                var response = ExecuteRequest(requestUrl, operation, MediaType.AtomEntry, MediaType.Xml);
                 entry = (AtomEntry) response.Content;
 
                 if (!string.IsNullOrEmpty(response.ETag))
@@ -500,7 +508,7 @@ namespace Sage.SData.Client.Core
                 var operation = new RequestOperation(HttpMethod.Get);
                 var response = ExecuteRequest(requestUrl, operation, MediaType.Xml);
                 var targetElementName = !string.IsNullOrEmpty(response.Location)
-                                            ? new Uri(response.Location).Fragment
+                                            ? new Uri(response.Location).Fragment.TrimStart('#')
                                             : null;
 
                 using (var reader = new StringReader((string) response.Content))
@@ -534,22 +542,21 @@ namespace Sage.SData.Client.Core
             try
             {
                 var eTag = entry.GetSDataHttpETag();
+                var batchItem = new SDataBatchRequestItem
+                                {
+                                    Url = url,
+                                    Method = HttpMethod.Put,
+                                    Entry = entry,
+                                    ETag = eTag
+                                };
 
-                if (BatchProcess.Instance.Requests.Count > 0)
+                if (BatchProcess.Instance.AddToBatch(batchItem))
                 {
-                    var batchRequest = new SDataBatchRequestItem
-                                       {
-                                           Url = url,
-                                           Method = HttpMethod.Put,
-                                           Entry = entry,
-                                           ETag = eTag
-                                       };
-                    BatchProcess.Instance.AddToBatch(batchRequest);
                     return null;
                 }
 
                 var operation = new RequestOperation(HttpMethod.Put, entry) {ETag = eTag};
-                var response = ExecuteRequest(url, operation, MediaType.AtomEntry);
+                var response = ExecuteRequest(url, operation, MediaType.AtomEntry, MediaType.Xml);
                 entry = (AtomEntry) response.Content;
 
                 if (!string.IsNullOrEmpty(response.ETag))
@@ -614,7 +621,7 @@ namespace Sage.SData.Client.Core
         {
         }
 
-        private SDataResponse ExecuteRequest(string url, RequestOperation operation, MediaType? accept)
+        protected internal virtual ISDataResponse ExecuteRequest(string url, RequestOperation operation, params MediaType[] accept)
         {
             var request = new SDataRequest(url, operation)
                           {

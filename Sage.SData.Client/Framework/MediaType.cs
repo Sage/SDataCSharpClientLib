@@ -84,8 +84,18 @@ namespace Sage.SData.Client.Framework
         [XmlEnum(MediaTypeNames.JsonMediaType)] Json,
 
         /// <summary>
+        /// BSON format
+        /// </summary>
+        [XmlEnum(MediaTypeNames.BsonMediaType)] Bson,
+
+        /// <summary>
         /// Form format
         /// </summary>
         [XmlEnum(MediaTypeNames.FormMediaType)] Form,
+
+        /// <summary>
+        /// Multipart format
+        /// </summary>
+        Multipart
     }
 }

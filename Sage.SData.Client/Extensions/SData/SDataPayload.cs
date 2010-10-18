@@ -188,6 +188,16 @@ namespace Sage.SData.Client.Extensions
 
         internal void WriteTo(string name, string ns, XmlWriter writer, string xmlNamespace)
         {
+            if (!string.IsNullOrEmpty(ResourceName))
+            {
+                name = ResourceName;
+            }
+
+            if (!string.IsNullOrEmpty(ns))
+            {
+                ns = Namespace;
+            }
+
             writer.WriteStartElement(name, ns);
 
             if (Key != null) writer.WriteAttributeString("key", xmlNamespace, Key);
@@ -225,8 +235,84 @@ namespace Sage.SData.Client.Extensions
             }
             else
             {
-                writer.WriteElementString(name, Namespace, value.ToString());
+                writer.WriteElementString(name, Namespace, ValueToString(value));
             }
+        }
+
+        private static string ValueToString(object value)
+        {
+            if (value is byte)
+            {
+                return XmlConvert.ToString((byte) value);
+            }
+            if (value is sbyte)
+            {
+                return XmlConvert.ToString((sbyte) value);
+            }
+            if (value is short)
+            {
+                return XmlConvert.ToString((short) value);
+            }
+            if (value is ushort)
+            {
+                return XmlConvert.ToString((ushort) value);
+            }
+            if (value is int)
+            {
+                return XmlConvert.ToString((int) value);
+            }
+            if (value is uint)
+            {
+                return XmlConvert.ToString((uint) value);
+            }
+            if (value is long)
+            {
+                return XmlConvert.ToString((long) value);
+            }
+            if (value is ulong)
+            {
+                return XmlConvert.ToString((ulong) value);
+            }
+
+            if (value is bool)
+            {
+                return XmlConvert.ToString((bool) value);
+            }
+            if (value is char)
+            {
+                return XmlConvert.ToString((char) value);
+            }
+            if (value is float)
+            {
+                return XmlConvert.ToString((float) value);
+            }
+            if (value is double)
+            {
+                return XmlConvert.ToString((double) value);
+            }
+            if (value is decimal)
+            {
+                return XmlConvert.ToString((decimal) value);
+            }
+
+            if (value is Guid)
+            {
+                return XmlConvert.ToString((Guid) value);
+            }
+            if (value is DateTime)
+            {
+                return XmlConvert.ToString((DateTime) value, XmlDateTimeSerializationMode.RoundtripKind);
+            }
+            if (value is DateTimeOffset)
+            {
+                return XmlConvert.ToString((DateTimeOffset) value);
+            }
+            if (value is TimeSpan)
+            {
+                return XmlConvert.ToString((TimeSpan) value);
+            }
+
+            return value.ToString();
         }
     }
 }

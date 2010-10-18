@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sage (UK) Limited 2007. All rights reserved.
+// Copyright (c) Sage (UK) Limited 2007. All rights reserved.
 // This code may not be copied or used, except as set out in a written licence agreement
 // between the user and Sage (UK) Limited, which specifically permits the user to use
 // this code. Please contact [email@sage.com] if you do not have such a licence.
@@ -16,7 +16,7 @@ namespace Sage.SData.Client.Metadata
     /// <summary>
     /// Provides helper methods for discovering information about a <see cref="Type"/> .
     /// </summary>
-    public static class TypeInfoHelper
+    internal static class TypeInfoHelper
     {
         #region Fields
 
@@ -26,8 +26,8 @@ namespace Sage.SData.Client.Metadata
         static TypeInfoHelper()
         {
             _oXSDataTypeToSMEType = new Dictionary<string, ConstructorInfo>(StringComparer.InvariantCultureIgnoreCase);
-            _oXSDataTypeToSMEType[XSDataTypes.String] = typeof (SMEMultiLineStringProperty).GetConstructor(Type.EmptyTypes);
-            _oXSDataTypeToSMEType[XSDataTypes.NormalizedString] = typeof (SMEStringProperty).GetConstructor(Type.EmptyTypes);
+            _oXSDataTypeToSMEType[XSDataTypes.String] = typeof (SMEStringProperty).GetConstructor(Type.EmptyTypes);
+            _oXSDataTypeToSMEType[XSDataTypes.NormalizedString] = typeof (SMENormalizedStringProperty).GetConstructor(Type.EmptyTypes);
             _oXSDataTypeToSMEType[XSDataTypes.Token] = typeof (SMETokenProperty).GetConstructor(Type.EmptyTypes);
             _oXSDataTypeToSMEType[XSDataTypes.Boolean] = typeof (SMEBoolProperty).GetConstructor(Type.EmptyTypes);
             _oXSDataTypeToSMEType[XSDataTypes.Decimal] = typeof (SMEDecimalProperty).GetConstructor(Type.EmptyTypes);
@@ -50,8 +50,9 @@ namespace Sage.SData.Client.Metadata
             _oXSDataTypeToSMEType[XSDataTypes.HexBinary] = typeof (SMEHexBinaryProperty).GetConstructor(Type.EmptyTypes);
 
             _oSMETypeToXSDataType = new Dictionary<Type, string>();
-            _oSMETypeToXSDataType[typeof (SMEStringProperty)] = XSDataTypes.NormalizedString;
+            _oSMETypeToXSDataType[typeof (SMEStringProperty)] = XSDataTypes.String;
             _oSMETypeToXSDataType[typeof (SMEMultiLineStringProperty)] = XSDataTypes.String;
+            _oSMETypeToXSDataType[typeof (SMENormalizedStringProperty)] = XSDataTypes.NormalizedString;
             _oSMETypeToXSDataType[typeof (SMETokenProperty)] = XSDataTypes.Token;
             _oSMETypeToXSDataType[typeof (SMEBoolProperty)] = XSDataTypes.Boolean;
             _oSMETypeToXSDataType[typeof (SMEDecimalProperty)] = XSDataTypes.Decimal;

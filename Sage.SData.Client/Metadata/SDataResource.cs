@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sage (UK) Limited 2007. All rights reserved.
+// Copyright (c) Sage (UK) Limited 2007. All rights reserved.
 // This code may not be copied or used, except as fset out in a written licence agreement
 // between the user and Sage (UK) Limited, which specifically permits the user to use
 // this code. Please contact [email@sage.com] if you do not have such a licence.
@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using Sage.SData.Client.Atom;
@@ -25,11 +26,14 @@ namespace Sage.SData.Client.Metadata
         {
             public const string Element = "element";
             public const string Name = "name";
+            public const string Sequence = "sequence";
             public const string Type = "type";
             public const string SingleSuffix = "--type";
             public const string ListSuffix = "--list";
             public const string EnumSuffix = "--enum";
+            public const string ComplexType = "complexType";
             public const string Base = "base";
+            public const string All = "all";
             public const string SimpleType = "simpleType";
             public const string Restriction = "restriction";
             public const string MaxLength = "maxLength";
@@ -65,6 +69,13 @@ namespace Sage.SData.Client.Metadata
                                  suffix);
         }
 
+        private static string FormatListType(string name)
+        {
+            return String.Format("{0}{1}",
+                                 name,
+                                 XmlConstants.ListSuffix);
+        }
+
         #endregion
 
         #region Fields
@@ -93,12 +104,13 @@ namespace Sage.SData.Client.Metadata
         /// by cloning the details of the specified instance.
         /// </summary>
         /// <param name="source">Instance of the <see cref="SDataResource"/> to clone.</param>
-        public SDataResource(SDataResource source) :
+        private SDataResource(SDataResource source) :
             base(source)
         {
+            // Back casting, yuck!
             _oSource = source;
 
-            if (_oSource != null && _oSource.IsLoading)
+            if (_oSource != null && _oSource._bLoading)
                 _oSource.Loaded += Clone_Loaded;
             else
                 Clone(_oSource);
@@ -198,7 +210,7 @@ namespace Sage.SData.Client.Metadata
             OnLoaded();
         }
 
-        internal void AddProperty(SMEProperty property)
+        private void AddProperty(SMEProperty property)
         {
             _oProperties.Add(property);
             _oNameToProperty[property.Name] = property;
@@ -306,7 +318,7 @@ namespace Sage.SData.Client.Metadata
             var particle = complexType.Particle;
 
             if (complexType.Attributes.Count > 0)
-                LoadAttributes(properties, complexType.Attributes, schemaSet);
+                LoadAttributes(properties, complexType.Attributes, schemaSet, Namespace);
 
             // Load base type information if any is present
             if (complexContent != null)
@@ -327,7 +339,7 @@ namespace Sage.SData.Client.Metadata
                     particle = complexExtension.Particle;
 
                     if (complexExtension.Attributes.Count > 0)
-                        LoadAttributes(properties, complexExtension.Attributes, schemaSet);
+                        LoadAttributes(properties, complexExtension.Attributes, schemaSet, Namespace);
                 }
             }
 
@@ -341,7 +353,7 @@ namespace Sage.SData.Client.Metadata
                         _oBaseType = GetXSDMetadataProperty(simpleExtension.BaseTypeName, simpleExtension.BaseTypeName);
 
                     if (simpleExtension.Attributes.Count > 0)
-                        LoadAttributes(properties, simpleExtension.Attributes, schemaSet);
+                        LoadAttributes(properties, simpleExtension.Attributes, schemaSet, Namespace);
                 }
             }
 
@@ -355,7 +367,7 @@ namespace Sage.SData.Client.Metadata
             return particle;
         }
 
-        private void LoadAttributes(IList<SMEProperty> properties, XmlSchemaObjectCollection schemaProperties, XmlSchemaSet schemaSet)
+        private void LoadAttributes(IList<SMEProperty> properties, XmlSchemaObjectCollection schemaProperties, XmlSchemaSet schemaSet, string defaultNamespace)
         {
             foreach (var item in schemaProperties)
             {
@@ -366,7 +378,7 @@ namespace Sage.SData.Client.Metadata
                     var attrs = GetSchemaObject(groupRef.RefName, schemaSet) as XmlSchemaAttributeGroup;
 
                     if (attrs != null)
-                        LoadAttributes(properties, attrs.Attributes, schemaSet);
+                        LoadAttributes(properties, attrs.Attributes, schemaSet, defaultNamespace);
                 }
                 else
                 {
@@ -391,7 +403,7 @@ namespace Sage.SData.Client.Metadata
                         if (metaDataProperty != null)
                         {
                             metaDataProperty.IsAttribute = true;
-                            metaDataProperty.Namespace = attr.QualifiedName.Namespace;
+                            metaDataProperty.Namespace = !string.IsNullOrEmpty(attr.QualifiedName.Namespace) ? attr.QualifiedName.Namespace : defaultNamespace;
                             properties.Add(metaDataProperty);
                         }
                     }
@@ -471,10 +483,9 @@ namespace Sage.SData.Client.Metadata
                 // Create a delegate property
                 metaDataProperty = new SDataResource(existing);
 
-                // Change the relevant properties
+                // Change the relevant properties (name and namespace)
                 metaDataProperty.Name = name.Name;
-                if (string.IsNullOrEmpty(metaDataProperty.Namespace))
-                    metaDataProperty.Namespace = name.Namespace;
+                metaDataProperty.Namespace = name.Namespace;
             }
             else
             {
@@ -580,7 +591,6 @@ namespace Sage.SData.Client.Metadata
         public SMEResource ResourceInformation
         {
             get { return _oResourceInfo; }
-            internal set { _oResourceInfo = value; }
         }
 
         /// <summary>
@@ -682,7 +692,82 @@ namespace Sage.SData.Client.Metadata
 
         #region Overrides
 
-        internal static string NormaliseName(string name)
+        /// <summary>
+        /// Returns the XS Data Type for this property.
+        /// </summary>
+        protected override string GetXSDType()
+        {
+            if (!String.IsNullOrEmpty(TypeName))
+            {
+                var xsdType = TypeName;
+
+                if (!xsdType.EndsWith(XmlConstants.SingleSuffix) && !xsdType.EndsWith(XmlConstants.ListSuffix))
+                {
+                    if (_oRelationshipInformation == null || !_oRelationshipInformation.IsCollection)
+                        xsdType = FormatSingleType(xsdType, Suffix);
+                    else
+                        xsdType = FormatListType(xsdType);
+                }
+
+                return xsdType;
+            }
+
+            return FormatSingleType(Name, Suffix);
+        }
+
+        /// <summary>
+        /// Formats the schema for this property.
+        /// </summary>
+        /// <param name="relatedTypes">Contains the schema details for any related types.</param>
+        /// <param name="isInline">Indicates that the generated schema is to be inlined.</param>
+        /// <param name="isRoot">Indicates that the current property is the root resource in the schema.</param>
+        /// <returns>The schema for this property.</returns>
+        public string GetSchema(IDictionary<string, string> relatedTypes, bool isInline, bool isRoot)
+        {
+            return OnGetSchema(relatedTypes, isInline, isRoot);
+        }
+
+        /// <summary>
+        /// Formats the schema for this property.
+        /// </summary>
+        /// <param name="relatedTypes">Contains the schema details for any related types.</param>
+        /// <returns>The schema for this property.</returns>
+        protected override string OnGetSchema(IDictionary<string, string> relatedTypes)
+        {
+            return OnGetSchema(relatedTypes, true, true);
+        }
+
+        /// <summary>
+        /// Formats the schema for this property.
+        /// </summary>
+        /// <param name="relatedTypes">Contains the schema details for any related types.</param>
+        /// <param name="isInline">Indicates that the generated schema is to be inlined.</param>
+        /// <param name="isRoot">Indicates that the current property is the root resource in the schema.</param>
+        /// <returns>The schema for this property.</returns>
+        protected virtual string OnGetSchema(IDictionary<string, string> relatedTypes, bool isInline, bool isRoot)
+        {
+            var prefix = Namespaces.LookupPrefix(Namespace);
+            var xsdType = GetXSDType();
+            var prefixXSDType = FormatWithPrefix(prefix, xsdType);
+            var relationshipSchema = SMERelationshipProperty.GetSchemaAttributes(_oRelationshipInformation, _oResourceInfo);
+
+            if (relationshipSchema.Length > 0)
+                relationshipSchema = " " + relationshipSchema;
+
+            var schema = String.Format("<{0} {1}=\"{2}\" {3}=\"{4}\"{5}/>",
+                                       TypeInfoHelper.FormatXS(XmlConstants.Element),
+                                       XmlConstants.Name,
+                                       NormaliseName(Name),
+                                       XmlConstants.Type,
+                                       prefixXSDType,
+                                       relationshipSchema);
+
+            OnGetRelatedSchemaTypes(NormaliseName(_oSource == null ? TypeName : _oSource.TypeName), relatedTypes, isInline, isRoot);
+
+            return schema;
+        }
+
+        private static string NormaliseName(string name)
         {
             if (name.EndsWith(XmlConstants.ListSuffix))
                 name = name.Substring(0, name.Length - XmlConstants.ListSuffix.Length);
@@ -690,6 +775,170 @@ namespace Sage.SData.Client.Metadata
                 name = name.Substring(0, name.Length - XmlConstants.SingleSuffix.Length);
 
             return name;
+        }
+
+        private string GetElementName()
+        {
+            var name = Name;
+
+            if (_oSource != null)
+            {
+                var possibleName = _oSource.Name;
+
+                // If the name is the default name as specified by the framework, we
+                // will just use the name as specified on the instance
+                if (!Framework.Common.IsFrameworkNamespace(_oSource.Namespace))
+                {
+                    if (_oSource._oSource == null ||
+                        _oSource.Name != _oSource.BaseType.Name)
+                    {
+                        name = possibleName;
+                    }
+                }
+            }
+
+            return NormaliseName(name);
+        }
+
+        /// <summary>
+        /// Returns the related types for this property.
+        /// </summary>
+        /// <param name="relatedTypes">On exit contains the schema details for any related types.</param>
+        protected override void OnGetRelatedSchemaTypes(string xsdType, IDictionary<string, string> relatedTypes)
+        {
+            OnGetRelatedSchemaTypes(xsdType, relatedTypes, true, true);
+        }
+
+        /// <summary>
+        /// Returns the related types for this property.
+        /// </summary>
+        /// <param name="relatedTypes">On exit contains the schema details for any related types.</param>
+        /// <param name="isInline">Indicates that the generated schema is to be inlined.</param>
+        /// <param name="isRoot">Indicates that the current property is the root resource in the schema.</param>
+        protected virtual void OnGetRelatedSchemaTypes(string xsdType, IDictionary<string, string> relatedTypes, bool isInline, bool isRoot)
+        {
+            if (relatedTypes.ContainsKey(xsdType))
+                return; // Nothing to do...
+
+            // Add a blank entry to stop recursion...
+            relatedTypes[xsdType] = String.Empty;
+
+            // At this point we create the following
+            // 1) The element for the single type
+            // 2) The complex type for the single type
+            // 3) The complex type for the list type
+            string resourceSchema;
+
+            if (_oResourceInfo != null)
+            {
+                resourceSchema = SMEResource.GetSchemaAttributes(_oResourceInfo);
+
+                if (resourceSchema.Length > 0)
+                    resourceSchema = " " + resourceSchema;
+            }
+            else
+            {
+                resourceSchema = String.Empty;
+            }
+
+            var prefix = Namespaces.LookupPrefix(Namespace);
+            var builder = new StringBuilder();
+            var singleType = FormatSingleType(xsdType, Suffix);
+            var listType = FormatListType(xsdType);
+            var prefixSingleType = FormatWithPrefix(prefix, singleType);
+            var name = GetElementName();
+
+            if (!isInline || isRoot)
+            {
+                // ### Element for single type
+
+                // <xs:element name="x" type="x" sme:resource.../>
+                builder.AppendFormat("<{0} {1}=\"{2}\" {3}=\"{4}\"{5}/>",
+                                     TypeInfoHelper.FormatXS(XmlConstants.Element),
+                                     XmlConstants.Name,
+                                     name,
+                                     XmlConstants.Type,
+                                     prefixSingleType,
+                                     resourceSchema);
+
+                // ###Complex type for the list type
+
+                if (ResourceInformation.Role == RoleType.ResourceKind && !isInline)
+                {
+                    // <xs:complexType name="x">
+                    builder.AppendFormat("<{0} {1}=\"{2}\">",
+                                         TypeInfoHelper.FormatXS(XmlConstants.ComplexType),
+                                         XmlConstants.Name,
+                                         listType);
+
+                    // <xs:sequence>
+                    builder.AppendFormat("<{0}>", TypeInfoHelper.FormatXS(XmlConstants.Sequence));
+
+                    // <xs:element minOccurs="0" maxOccurs="unbounded" name="x" type="x" />
+                    builder.AppendFormat("<{0} {1}=\"{2}\" {3}=\"{4}\" {5}=\"{6}\" {7}=\"{8}\"/>",
+                                         TypeInfoHelper.FormatXS(XmlConstants.Element),
+                                         XmlConstants.MinOccurs, 0,
+                                         XmlConstants.MaxOccurs, XmlConstants.Unbounded,
+                                         XmlConstants.Name, Name,
+                                         XmlConstants.Type, prefixSingleType);
+
+                    // </xs:sequence>
+                    builder.AppendFormat("</{0}>", TypeInfoHelper.FormatXS(XmlConstants.Sequence));
+
+                    //</xs:complexType>
+                    builder.AppendFormat("</{0}>", TypeInfoHelper.FormatXS(XmlConstants.ComplexType));
+                }
+            }
+
+            // ###Complex type for the single type
+
+            // <xs:complexType name="x">
+            builder.AppendFormat("<{0} {1}=\"{2}\">",
+                                 TypeInfoHelper.FormatXS(XmlConstants.ComplexType),
+                                 XmlConstants.Name,
+                                 singleType);
+
+            // <xs:all>
+            builder.AppendFormat("<{0}>", TypeInfoHelper.FormatXS(XmlConstants.All));
+
+            foreach (var metaData in MetadataManager.GetMetadataChain(this))
+            {
+                foreach (var property in metaData.Properties)
+                {
+                    // Suppress properties declared within the Atom, Http or SData namespace
+                    if (Framework.Common.IsFrameworkNamespace(property.Namespace))
+                        continue;
+
+                    var obj = property as SDataResource;
+
+                    if (obj != null)
+                        builder.Append(obj.GetSchema(relatedTypes, isInline, false));
+                    else
+                        builder.Append(property.GetSchema(relatedTypes));
+                }
+            }
+
+            // </xs:all>
+            builder.AppendFormat("</{0}>", TypeInfoHelper.FormatXS(XmlConstants.All));
+
+            //</xs:complexType>
+            builder.AppendFormat("</{0}>", TypeInfoHelper.FormatXS(XmlConstants.ComplexType));
+
+            relatedTypes[xsdType] = builder.ToString();
+        }
+
+        private static string FormatWithPrefix(string prefix, string name)
+        {
+            return String.IsNullOrEmpty(prefix) ? name : prefix + ":" + name;
+        }
+
+        /// <summary>
+        /// Returns a value indicating if the property schema has facets.
+        /// </summary>
+        /// <value><b>true</b> if the property schema has facets; otherwise, <b>false</b>.</value>
+        protected override bool HasFacets
+        {
+            get { return false; }
         }
 
         protected override void OnLoadUnhandledAttribute(XmlAttribute attribute)
@@ -708,7 +957,7 @@ namespace Sage.SData.Client.Metadata
         /// <param name="value">The value to validate.</param>
         protected override void OnValidate(object value)
         {
-            base.OnValidate(value, value == null ? null : value.GetType());
+            OnValidate(value, value == null ? null : value.GetType());
 
             if (_oRelationshipInformation != null && _oRelationshipInformation.IsCollection)
             {
@@ -743,16 +992,11 @@ namespace Sage.SData.Client.Metadata
 
         #region Delayed Loading
 
-        internal bool IsLoading
-        {
-            get { return _bLoading; }
-        }
-
         internal delegate void LoadedEventDelegate(SDataResource metadata);
 
         internal event LoadedEventDelegate Loaded;
 
-        protected void OnLoaded()
+        private void OnLoaded()
         {
             _bLoading = false;
 
@@ -773,7 +1017,7 @@ namespace Sage.SData.Client.Metadata
             _strTypeName = source.TypeName;
             _oBaseType = source.BaseType;
 
-            if (source.RelationshipInformation != null)
+            if (source.RelationshipInformation != null && _oRelationshipInformation == null)
                 _oRelationshipInformation = new SMERelationshipProperty(source.RelationshipInformation);
 
             if (source.ResourceInformation != null)

@@ -8,12 +8,13 @@ namespace Sage.SData.Client.Test.Core
     public class SDataServiceOperationRequestTests : AssertionHelper
     {
         private ISDataService _service;
+        private Mock<SDataService> _mock;
 
         [TestFixtureSetUp]
         public void Setup()
         {
-            var mock = new Mock<SDataService>(MockBehavior.Strict, "http://localhost:59213/sdata/aw/dynamic/-/", "lee", "abc123");
-            _service = mock.Object;
+            _mock = new Mock<SDataService>(MockBehavior.Strict, "http://localhost:59213/sdata/aw/dynamic/-/", "lee", "abc123");
+            _service = _mock.Object;
         }
 
         [Test]
@@ -27,5 +28,6 @@ namespace Sage.SData.Client.Test.Core
             var url = request.ToString();
             Expect(url, Is.EqualTo("http://localhost:59213/sdata/aw/dynamic/-/employees/$service/getStats"));
         }
+
     }
 }

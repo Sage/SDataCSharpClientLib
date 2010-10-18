@@ -8,7 +8,7 @@ namespace Sage.SData.Client.Metadata
     public class SMEMultiLineStringProperty : SMEStringProperty
     {
         /// <summary>
-        /// Initialises a new instance of the <see cref="SMEStringPropertyAttribute"/> class
+        /// Initialises a new instance of the <see cref="SMEStringProperty"/> class
         /// with the specified maximum length and label,
         /// </summary>
         /// <param name="maxLength">Maximum length of the data.</param>
@@ -19,7 +19,7 @@ namespace Sage.SData.Client.Metadata
         }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="SMEStringPropertyAttribute"/> class
+        /// Initialises a new instance of the <see cref="SMEStringProperty"/> class
         /// with the specified maximum length.
         /// </summary>
         /// <param name="maxLength">Maximum length of the data.</param>
@@ -29,7 +29,7 @@ namespace Sage.SData.Client.Metadata
         }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="SMEStringPropertyAttribute"/> class.
+        /// Initialises a new instance of the <see cref="SMEStringProperty"/> class.
         /// </summary>
         /// <param name="label">The label for the property.</param>
         public SMEMultiLineStringProperty(string label) :
@@ -38,7 +38,7 @@ namespace Sage.SData.Client.Metadata
         }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="SMEStringPropertyAttribute"/> class.
+        /// Initialises a new instance of the <see cref="SMEStringProperty"/> class.
         /// </summary>
         public SMEMultiLineStringProperty() :
             base(String.Empty)

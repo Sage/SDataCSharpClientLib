@@ -65,6 +65,9 @@ namespace SDataClientApp
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.atomEntryGrid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numStartIndex)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numCount)).BeginInit();
             this.SuspendLayout();
             // 
             // label23
@@ -351,6 +354,9 @@ namespace SDataClientApp
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);
             splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.atomEntryGrid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numStartIndex)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numCount)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

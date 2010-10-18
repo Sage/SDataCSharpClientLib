@@ -147,7 +147,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;statusStrip.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="resourceProperties1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -181,7 +181,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabResourceProperties.Size" type="System.Drawing.Size, System.Drawing">
-    <value>776, 536</value>
+    <value>776, 514</value>
   </data>
   <data name="tabResourceProperties.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -232,7 +232,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabSchema.Size" type="System.Drawing.Size, System.Drawing">
-    <value>776, 536</value>
+    <value>776, 514</value>
   </data>
   <data name="tabSchema.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -283,7 +283,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabTemplate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>776, 536</value>
+    <value>776, 514</value>
   </data>
   <data name="tabTemplate.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -334,7 +334,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabSingle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>776, 536</value>
+    <value>776, 514</value>
   </data>
   <data name="tabSingle.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -385,7 +385,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabCollection.Size" type="System.Drawing.Size, System.Drawing">
-    <value>776, 536</value>
+    <value>776, 514</value>
   </data>
   <data name="tabCollection.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -412,7 +412,7 @@
     <value>3, 3</value>
   </data>
   <data name="serviceConfig1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>770, 530</value>
+    <value>770, 508</value>
   </data>
   <data name="serviceConfig1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -436,7 +436,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabService.Size" type="System.Drawing.Size, System.Drawing">
-    <value>776, 536</value>
+    <value>776, 514</value>
   </data>
   <data name="tabService.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -463,7 +463,7 @@
     <value>0, 0</value>
   </data>
   <data name="tabControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 562</value>
+    <value>784, 540</value>
   </data>
   <data name="tabControl1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -478,7 +478,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;tabControl1.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

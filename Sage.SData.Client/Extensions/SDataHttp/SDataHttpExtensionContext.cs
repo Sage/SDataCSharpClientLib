@@ -25,7 +25,7 @@ namespace Sage.SData.Client.Extensions
         /// <summary>
         /// Http Status
         /// </summary>
-        public int? HttpStatus { get; set; }
+        public HttpStatusCode? HttpStatus { get; set; }
 
         /// <summary>
         /// Http Message
@@ -89,7 +89,7 @@ namespace Sage.SData.Client.Extensions
                 var httpStatusNavigator = source.SelectSingleNode("http:httpStatus", manager);
                 if (httpStatusNavigator != null && !string.IsNullOrEmpty(httpStatusNavigator.Value))
                 {
-                    HttpStatus = (int) (HttpStatusCode) Enum.Parse(typeof (HttpStatusCode), httpStatusNavigator.Value, true);
+                    HttpStatus = (HttpStatusCode) Enum.Parse(typeof (HttpStatusCode), httpStatusNavigator.Value, true);
                     wasLoaded = true;
                 }
 
@@ -156,7 +156,7 @@ namespace Sage.SData.Client.Extensions
 
             if (HttpStatus != null)
             {
-                writer.WriteElementString("httpStatus", xmlNamespace, HttpStatus.ToString());
+                writer.WriteElementString("httpStatus", xmlNamespace, ((int) HttpStatus).ToString());
             }
 
             if (!string.IsNullOrEmpty(HttpMessage))

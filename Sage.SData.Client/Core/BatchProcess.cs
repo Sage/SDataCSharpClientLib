@@ -35,7 +35,8 @@ namespace Sage.SData.Client.Core
         /// Adds a url to the batch for processing
         /// </summary>
         /// <param name="item">url for batch item</param>
-        public void AddToBatch(SDataBatchRequestItem item)
+        /// <returns>True if an appropriate pending batch operation was found</returns>
+        public bool AddToBatch(SDataBatchRequestItem item)
         {
             Guard.ArgumentNotNull(item, "item");
 
@@ -45,20 +46,22 @@ namespace Sage.SData.Client.Core
                           Query = null
                       };
 
-            if (uri.PathSegments.Length > 3)
+            if (uri.PathSegments.Length > 4)
             {
-                uri.PathSegments = uri.PathSegments.Take(3).ToArray();
+                uri.TrimRange(4, uri.PathSegments.Length - 4);
             }
 
+            uri.AppendPath("$batch");
             var baseUri = uri.ToString();
-            var request = _requests.LastOrDefault(x => x.ToString() == baseUri);
+            var request = _requests.LastOrDefault(x => string.Equals(x.ToString(), baseUri, StringComparison.InvariantCultureIgnoreCase));
 
-            if (request == null)
+            if (request != null)
             {
-                throw new InvalidOperationException("Unable to find an appropriate batch request in progress");
+                request.Items.Add(item);
+                return true;
             }
 
-            request.Requests.Add(item);
+            return false;
         }
     }
 }

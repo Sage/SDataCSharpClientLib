@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Framework;
 
@@ -26,7 +27,7 @@ namespace Sage.SData.Client.Extensions
         /// </summary>
         /// <param name="entry"></param>
         /// <returns></returns>
-        public static int? GetSDataHttpStatus(this AtomEntry entry)
+        public static HttpStatusCode? GetSDataHttpStatus(this AtomEntry entry)
         {
             var context = GetContext(entry, false);
             return context != null ? context.HttpStatus : null;
@@ -91,7 +92,7 @@ namespace Sage.SData.Client.Extensions
         /// </summary>
         /// <param name="entry"></param>
         /// <param name="value"></param>
-        public static void SetSDataHttpStatus(this AtomEntry entry, int? value)
+        public static void SetSDataHttpStatus(this AtomEntry entry, HttpStatusCode? value)
         {
             GetContext(entry, true).HttpStatus = value;
         }

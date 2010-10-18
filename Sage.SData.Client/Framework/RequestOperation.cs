@@ -5,6 +5,7 @@
 // appropriate legal action against those who make unauthorised use of this code.
 
 using System;
+using System.Collections.Generic;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
 
@@ -15,6 +16,8 @@ namespace Sage.SData.Client.Framework
     /// </summary>
     public class RequestOperation
     {
+        private IList<AttachedFile> _files;
+
         /// <summary>
         /// Initialises a new instance of the <see cref="RequestOperation"/> class.
         /// </summary>
@@ -82,6 +85,14 @@ namespace Sage.SData.Client.Framework
         /// </summary>
         /// <value>The ETag value for the request.</value>
         public string ETag { get; set; }
+
+        /// <summary>
+        /// Gets the files that will be attached to the request content.
+        /// </summary>
+        public IList<AttachedFile> Files
+        {
+            get { return _files ?? (_files = new List<AttachedFile>()); }
+        }
 
         #endregion
     }
