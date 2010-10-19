@@ -69,6 +69,24 @@ namespace Sage.SData.Client.Extensions
                     return false;
                 }
 
+                if (SDataPayload.InferItemType(item) == SDataPayload.ItemType.Property)
+                {
+                    string nilValue;
+                    object value;
+
+                    if (item.TryGetAttribute("nil", Framework.Common.XSI.Namespace, out nilValue) && XmlConvert.ToBoolean(nilValue))
+                    {
+                        value = null;
+                    }
+                    else
+                    {
+                        value = item.Value;
+                    }
+
+                    child.Values.Add(new KeyValuePair<string, object>(item.LocalName, value));
+                    break;
+                }
+
                 Add(child);
 
                 if (string.IsNullOrEmpty(ResourceName))

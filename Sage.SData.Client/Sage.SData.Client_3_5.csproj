@@ -123,6 +123,7 @@
     <Compile Include="Extensions\SData\SDataPayload.cs" />
     <Compile Include="Extensions\SData\SDataPayloadCollection.cs" />
     <Compile Include="Extensions\SData\SDataPayloadTypeDescriptionProvider.cs" />
+    <Compile Include="Extensions\SData\SDataSimpleCollection.cs" />
     <Compile Include="Extensions\SData\XPathNavigatorExtensions.cs" />
     <Compile Include="Extensions\SimpleList\SimpleListDataType.cs" />
     <Compile Include="Extensions\SimpleList\SimpleListGroup.cs" />
