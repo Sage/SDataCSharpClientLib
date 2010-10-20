@@ -31,7 +31,7 @@
     <link href="http://localhost:8001/sdata/aw/dynamic/-/employees?startIndex=1&amp;count=2" rel="via" type="application/atom+xml" title="" />
     <published>0001-01-01T00:00:00+00:00</published>
     <sdata:payload>
-      <Employee>
+      <Employee xmlns="http://schemas.sage.com/dynamic/2007">
         <Title>Production Technician - WC60</Title>
       </Employee>
     </sdata:payload>
@@ -39,7 +39,7 @@
     <title>14417807</title>
     <updated>0001-01-01T00:00:00+00:00</updated>
     <sdata:payload>
-      <Employee>
+      <Employee xmlns="http://schemas.sage.com/dynamic/2007">
         <NationalIdNumber>14417807</NationalIdNumber>
         <ContactId>1209</ContactId>
         <LoginId>adventure-works\guy1</LoginId>
@@ -70,7 +70,7 @@
     <link href="http://localhost:8001/sdata/aw/dynamic/-/employees?startIndex=1&amp;count=2" rel="via" type="application/atom+xml" title="" />
     <published>0001-01-01T00:00:00+00:00</published>
     <sdata:payload>
-      <Employee>
+      <Employee xmlns="http://schemas.sage.com/dynamic/2007">
         <Title>Marketing Assistant</Title>
       </Employee>
     </sdata:payload>
@@ -78,7 +78,7 @@
     <title>253022876</title>
     <updated>0001-01-01T00:00:00+00:00</updated>
     <sdata:payload>
-      <Employee>
+      <Employee xmlns="http://schemas.sage.com/dynamic/2007">
         <NationalIdNumber>253022876</NationalIdNumber>
         <ContactId>1030</ContactId>
         <LoginId>adventure-works\kevin0</LoginId>

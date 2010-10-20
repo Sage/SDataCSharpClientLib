@@ -114,16 +114,14 @@ namespace Sage.SData.Client.Extensions
                         value = collection;
                         break;
                     }
-
                     case ItemType.SimpleCollection:
                     {
                         var collection = new SDataSimpleCollection();
 
-                        if (!collection.Load(item, manager))
+                        if (!collection.Load(item))
                             return false;
 
                         value = collection;
-                            
                         break;
                     }
                     default:
@@ -153,10 +151,16 @@ namespace Sage.SData.Client.Extensions
             }
 
             if (item.HasAttribute("url", Framework.Common.SData.Namespace) ||
-                item.HasAttribute("deleteMissing", Framework.Common.SData.Namespace) ||
-                item.IsEmptyElement)
+                item.HasAttribute("uri", Framework.Common.SData.Namespace) ||
+                item.HasAttribute("deleteMissing", Framework.Common.SData.Namespace))
             {
                 return ItemType.PayloadCollection;
+            }
+
+            if (item.IsEmptyElement)
+            {
+                // workaround: Older versions of the SIF generate payload collections as empty namespace-less elements 
+                return string.IsNullOrEmpty(item.NamespaceURI) ? ItemType.PayloadCollection : ItemType.Property;
             }
 
             var children = item.SelectChildren(XPathNodeType.Element).Cast<XPathNavigator>();
@@ -167,16 +171,16 @@ namespace Sage.SData.Client.Extensions
                 return ItemType.Property;
             }
 
-            if (children.Select(child => child.LocalName).Distinct().Count() == 1 &&
-                children.All(child => InferItemType(child) == ItemType.Object))
+            if (children.Select(child => child.LocalName).Distinct().Count() == 1)
             {
-                return ItemType.PayloadCollection;
-            }
-
-            if (children.Select(child => child.LocalName).Distinct().Count() == 1 &&
-                children.All(child => InferItemType(child) == ItemType.Property))
-            {
-                return ItemType.SimpleCollection;
+                if (children.All(child => InferItemType(child) == ItemType.Object))
+                {
+                    return ItemType.PayloadCollection;
+                }
+                if (children.All(child => InferItemType(child) == ItemType.Property))
+                {
+                    return ItemType.SimpleCollection;
+                }
             }
 
             return ItemType.Object;
@@ -254,8 +258,8 @@ namespace Sage.SData.Client.Extensions
             }
             else if (value is SDataSimpleCollection)
             {
-                var children = (SDataSimpleCollection)value;
-                children.WriteTo(name, ns, writer, xmlNamespace);
+                var children = (SDataSimpleCollection) value;
+                children.WriteTo(name, ns, writer);
             }
             else
             {

@@ -99,6 +99,24 @@ namespace Sage.SData.Client.Test.Extensions
         }
 
         [Test]
+        public void Empty_Collection_Property_Without_Attributes_Or_Namespace()
+        {
+            var xml = @"<x:salesOrder xmlns:x=""http://schemas.sage.com/dynamic/2007"">
+                          <orderLines />
+                        </x:salesOrder>";
+            var payload = LoadPayload(xml);
+
+            Assert.That(payload.ResourceName, Is.EqualTo("salesOrder"));
+            Assert.That(payload.Values.Count, Is.EqualTo(1));
+
+            object value;
+            Assert.IsTrue(payload.Values.TryGetValue("orderLines", out value));
+            Assert.IsInstanceOf<SDataPayloadCollection>(value);
+            var col = (SDataPayloadCollection) value;
+            CollectionAssert.IsEmpty(col);
+        }
+
+        [Test]
         public void Collection_Of_One_Property_Without_Attributes()
         {
             var xml = @"<salesOrder xmlns:sdata=""http://schemas.sage.com/sdata/2008/1"">
