@@ -63,6 +63,7 @@
     <Compile Include="Framework\UriFormatterTests.cs" />
     <Compile Include="Framework\UriPathParserTests.cs" />
     <Compile Include="Framework\W3CDateTimeTests.cs" />
+    <Compile Include="Metadata\SDataSchemaTests.cs" />
     <Compile Include="Metadata\SMEIntegerPropertyAttributeTests.cs" />
     <Compile Include="Mime\MimeMessageTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

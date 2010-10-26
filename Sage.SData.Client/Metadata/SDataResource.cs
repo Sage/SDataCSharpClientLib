@@ -415,8 +415,15 @@ namespace Sage.SData.Client.Metadata
         {
             SMEProperty metaDataProperty = null;
 
-            // First check for an xs data type
-            if (type.Namespace == Framework.Common.XS.Namespace)
+            if (string.IsNullOrEmpty(type.Namespace) && string.IsNullOrEmpty(type.Name))
+            {
+                metaDataProperty = new SMEProperty
+                                   {
+                                       Name = name.Name,
+                                       Namespace = name.Namespace
+                                   };
+            }
+            else if (type.Namespace == Framework.Common.XS.Namespace)
             {
                 metaDataProperty = GetXSDMetadataProperty(type, name);
             }

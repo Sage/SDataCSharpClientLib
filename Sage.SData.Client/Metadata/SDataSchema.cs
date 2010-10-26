@@ -33,7 +33,6 @@ namespace Sage.SData.Client.Metadata
 
             var schemaSet = new XmlSchemaSet();
             schemaSet.Add(xsd);
-            schemaSet.Compile();
 
             var resources = new Dictionary<string, SDataResource>();
 

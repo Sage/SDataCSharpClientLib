@@ -10,7 +10,7 @@ namespace Sage.SData.Client.Metadata
     /// <summary>
     /// Common properties for providing Metadata against objects.
     /// </summary>
-    public abstract class SMEProperty
+    public class SMEProperty
     {
         #region Constants
 
@@ -73,7 +73,7 @@ namespace Sage.SData.Client.Metadata
         /// <summary>
         /// Initialises a new instance of the <see cref="SMEProperty"/> class.
         /// </summary>
-        protected SMEProperty() :
+        protected internal SMEProperty() :
             this(String.Empty)
         {
         }
@@ -363,7 +363,9 @@ namespace Sage.SData.Client.Metadata
         /// Validates the specified value against the constraints of the property.
         /// </summary>
         /// <param name="value">The value to validate.</param>
-        protected abstract void OnValidate(object value);
+        protected virtual void OnValidate(object value)
+        {
+        }
 
         /// <summary>
         /// Validates the specified value against the constraints of the property.
@@ -488,7 +490,10 @@ namespace Sage.SData.Client.Metadata
         /// Returns the default average length (in characters) to use for this property.
         /// </summary>
         /// <returns>The default average length (in characters) to use for this property.</returns>
-        protected abstract int GetDefaultAverageLength();
+        protected virtual int GetDefaultAverageLength()
+        {
+            return 0;
+        }
 
         /// <summary>
         /// Returns a value indicating if the property schema has facets.
