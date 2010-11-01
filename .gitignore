@@ -30,7 +30,11 @@ obj/
 _ReSharper*/
 *.resharper.user
 [Tt]est[Rr]esult*
+*.ReSharper
 
 #OS junk files
 Thumbs.db
 *.DS_Store
+
+#VIM junk
+*.swp
