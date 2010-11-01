@@ -120,6 +120,7 @@
     <Compile Include="Extensions\SData\SDataPayload.cs" />
     <Compile Include="Extensions\SData\SDataPayloadCollection.cs" />
     <Compile Include="Extensions\SData\SDataPayloadTypeDescriptionProvider.cs" />
+	<Compile Include="Extensions\SData\SDataSimpleCollection.cs" />
     <Compile Include="Extensions\SData\XPathNavigatorExtensions.cs" />
     <Compile Include="Extensions\SimpleList\SimpleListDataType.cs" />
     <Compile Include="Extensions\SimpleList\SimpleListGroup.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Extensions\SyndicationExtension.cs" />
     <Compile Include="Extensions\SyndicationExtensionAdapter.cs" />
     <Compile Include="Extensions\SyndicationExtensionLoadedEventArgs.cs" />
+	<Compile Include="Framework\AttachedFile.cs" />
     <Compile Include="Framework\Common.cs" />
     <Compile Include="Framework\Diagnosis.cs" />
     <Compile Include="Framework\Digest.cs" />
@@ -202,7 +204,10 @@
     <Compile Include="Metadata\SMEUnsignedShortProperty.cs" />
     <Compile Include="Metadata\SMEUriProperty.cs" />
     <Compile Include="Metadata\TypeInfoHelper.cs" />
-    <Compile Include="Metadata\XDataTypes.cs" />
+    <Compile Include="Metadata\XSDataTypes.cs" />
+    <Compile Include="Mime\MimeHelper.cs" />
+    <Compile Include="Mime\MimeMessage.cs" />
+    <Compile Include="Mime\MimePart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Examplecs.cs" />
     <None Include="LinqBridge\Enumerable.g.tt">
