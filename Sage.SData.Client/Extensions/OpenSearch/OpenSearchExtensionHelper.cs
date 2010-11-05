@@ -1,5 +1,6 @@
 using System.Linq;
 using Sage.SData.Client.Atom;
+using Sage.SData.Client.Common;
 
 namespace Sage.SData.Client.Extensions
 {
@@ -76,6 +77,7 @@ namespace Sage.SData.Client.Extensions
 
         private static OpenSearchExtensionContext GetContext(IExtensibleSyndicationObject entry, bool createIfMissing)
         {
+            Guard.ArgumentNotNull(entry, "entry");
             var extension = entry.Extensions.OfType<OpenSearchExtension>().FirstOrDefault();
 
             if (extension == null)

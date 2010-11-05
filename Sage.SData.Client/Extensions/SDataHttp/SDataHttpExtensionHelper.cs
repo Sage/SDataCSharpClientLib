@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using Sage.SData.Client.Atom;
+using Sage.SData.Client.Common;
 using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Extensions
@@ -139,6 +140,7 @@ namespace Sage.SData.Client.Extensions
 
         private static SDataHttpExtensionContext GetContext(IExtensibleSyndicationObject entry, bool createIfMissing)
         {
+            Guard.ArgumentNotNull(entry, "entry");
             var extension = entry.Extensions.OfType<SDataHttpExtension>().FirstOrDefault();
 
             if (extension == null)

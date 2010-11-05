@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using System.Windows.Forms;
 using Sage.SData.Client.Core;
 using Sage.SData.Client.Extensions;
@@ -97,7 +98,7 @@ namespace SDataClientApp
                 foreach (var atomentry in feed.Entries)
                 {
                     var dr = table.NewRow();
-                    dr[0] = atomentry.Authors[0].Name;
+                    dr[0] = atomentry.Authors.Select(author => author.Name).FirstOrDefault();
                     dr[1] = atomentry.Id.Uri.AbsoluteUri;
                     dr[2] = atomentry.Title.Content;
 

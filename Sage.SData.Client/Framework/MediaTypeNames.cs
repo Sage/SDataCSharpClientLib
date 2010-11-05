@@ -43,6 +43,11 @@ namespace Sage.SData.Client.Framework
         public const string XmlMediaType = "application/xml";
 
         /// <summary>
+        /// Legacy XML content type.
+        /// </summary>
+        public const string LegacyXmlMediaType = "text/xml";
+
+        /// <summary>
         /// HTML content type.
         /// </summary>
         public const string HtmlMediaType = "text/html";
@@ -227,6 +232,7 @@ namespace Sage.SData.Client.Framework
             NameToMediaType[new ContentType(AtomEntryMediaType)] = MediaType.AtomEntry;
             NameToMediaType[new ContentType(RssMediaType)] = MediaType.Rss;
             NameToMediaType[new ContentType(XmlMediaType)] = MediaType.Xml;
+            NameToMediaType[new ContentType(LegacyXmlMediaType)] = MediaType.Xml;
             NameToMediaType[new ContentType(ImagePngMediaType)] = MediaType.ImagePng;
             NameToMediaType[new ContentType(ImageJpegMediaType)] = MediaType.ImageJpeg;
             NameToMediaType[new ContentType(ImageGifMediaType)] = MediaType.ImageGif;

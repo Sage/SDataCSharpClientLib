@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Sage.SData.Client.Atom;
+using Sage.SData.Client.Common;
 using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Extensions
@@ -78,6 +79,7 @@ namespace Sage.SData.Client.Extensions
 
         private static SDataExtensionContext GetContext(IExtensibleSyndicationObject entry, bool createIfMissing)
         {
+            Guard.ArgumentNotNull(entry, "entry");
             var extension = entry.Extensions.OfType<SDataExtension>().FirstOrDefault();
 
             if (extension == null)
