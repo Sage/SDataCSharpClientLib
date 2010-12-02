@@ -46,6 +46,11 @@ namespace Sage.SData.Client.Framework
         /// The response content.
         /// </summary>
         object Content { get; }
+
+        /// <summary>
+        /// Gets the files attached to the response.
+        /// </summary>
+        IList<AttachedFile> Files { get; }
     }
 
     /// <summary>

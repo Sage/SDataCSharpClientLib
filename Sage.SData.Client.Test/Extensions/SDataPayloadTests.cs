@@ -213,7 +213,7 @@ namespace Sage.SData.Client.Test.Extensions
         }
 
         [Test]
-        public void Loaded_Collection_Infers_Item_Resouce_Name()
+        public void Loaded_Collection_Infers_Item_Resource_Name()
         {
             var xml = @"<salesOrder xmlns:sdata=""http://schemas.sage.com/sdata/2008/1"">
                           <orderLines>
@@ -303,6 +303,20 @@ namespace Sage.SData.Client.Test.Extensions
             assertDoesNotThrow("DateTime", x => XmlConvert.ToDateTime(x, XmlDateTimeSerializationMode.RoundtripKind));
             assertDoesNotThrow("DateTimeOffset", x => XmlConvert.ToDateTimeOffset(x));
             assertDoesNotThrow("TimeSpan", x => XmlConvert.ToTimeSpan(x));
+        }
+
+        [Test]
+        public void Written_Reference_Uses_Property_Name()
+        {
+            var payload = new SDataPayload
+                          {
+                              ResourceName = "salesOrderLine",
+                              Namespace = "",
+                              Values = {{"order", new SDataPayload {ResourceName = "salesOrder"}}}
+                          };
+            var nav = WritePayload(payload);
+            var node = nav.SelectSingleNode("*/salesOrderLine/order");
+            Assert.That(node, Is.Not.Null);
         }
 
         private static SDataPayload LoadPayload(string xml)
