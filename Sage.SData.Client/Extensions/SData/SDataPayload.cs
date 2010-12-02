@@ -216,7 +216,7 @@ namespace Sage.SData.Client.Extensions
                 name = ResourceName;
             }
 
-            if (!string.IsNullOrEmpty(ns))
+            if (string.IsNullOrEmpty(ns))
             {
                 ns = Namespace;
             }
