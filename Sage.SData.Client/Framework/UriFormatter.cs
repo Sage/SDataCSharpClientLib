@@ -62,9 +62,9 @@ namespace Sage.SData.Client.Framework
         public const string PathSegmentPrefix = "/";
 
         /// <summary>
-        /// Returns the <see cref="string"/> used to prefix the frament part of a <see cref="Uri"/>.
+        /// Returns the <see cref="string"/> used to prefix the fragment part of a <see cref="Uri"/>.
         /// </summary>
-        /// <value>A <see cref="string"/> used to prefix the frament part of a <see cref="Uri"/>.</value>
+        /// <value>A <see cref="string"/> used to prefix the fragment part of a <see cref="Uri"/>.</value>
         public const string FragmentPrefix = "#";
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Sage.SData.Client.Framework
         private bool _requiresRebuildPath;
         private List<UriPathSegment> _pathSegments;
 
-        private IDictionary<string, string> _queryArgs;
+        private QueryArgsDictionary _queryArgs;
 
         #endregion
 
@@ -200,7 +200,7 @@ namespace Sage.SData.Client.Framework
             }
 
             if (uri._queryArgs != null)
-                _queryArgs = new Dictionary<string, string>(uri._queryArgs, StringComparer.InvariantCultureIgnoreCase);
+                _queryArgs = new QueryArgsDictionary(this, uri._queryArgs);
         }
 
         #region Properties
@@ -284,7 +284,7 @@ namespace Sage.SData.Client.Framework
         /// <summary>
         /// Gets or sets the path prefix for the <see cref="Uri"/>.
         /// </summary>
-        /// <remarks>Reprents the virtual root when hosting in IIS; otherwise empty.</remarks>
+        /// <remarks>Represents the virtual root when hosting in IIS; otherwise empty.</remarks>
         public string PathPrefix
         {
             get
@@ -421,10 +421,8 @@ namespace Sage.SData.Client.Framework
 
                 if (string.IsNullOrEmpty(value))
                     _queryArgs = null;
-                else if (value.StartsWith(QueryPrefix))
-                    _queryArgs = UriQueryParser.Parse(value.Substring(QueryPrefix.Length));
                 else
-                    _queryArgs = UriQueryParser.Parse(value);
+                    _queryArgs = new QueryArgsDictionary(this, value);
 
                 RequiresRebuildUri = true;
             }
@@ -436,7 +434,7 @@ namespace Sage.SData.Client.Framework
         /// <value>A <see cref="IDictionary{TKey, TValue}"/> containing the query arguments for the <see cref="Uri"/></value>
         public IDictionary<string, string> QueryArgs
         {
-            get { return _queryArgs ?? (_queryArgs = new Dictionary<string, string>()); }
+            get { return _queryArgs ?? (_queryArgs = new QueryArgsDictionary(this)); }
         }
 
         /// <summary>
@@ -555,7 +553,7 @@ namespace Sage.SData.Client.Framework
         /// <summary>
         /// Returns a flag indicating if the <see cref="Uri"/> is empty.
         /// </summary>
-        /// <value><b>true</b> if the <see cref="Uri"/> is empty; otherwiser, <b>false</b>.</value>
+        /// <value><b>true</b> if the <see cref="Uri"/> is empty; otherwise, <b>false</b>.</value>
         public bool IsEmpty
         {
             get { return _uri == null; }
@@ -834,7 +832,7 @@ namespace Sage.SData.Client.Framework
         }
 
         /// <summary>
-        /// Returns the haskcode for the <see cref="UriPathSegment"/>.
+        /// Returns the hashcode for the <see cref="UriPathSegment"/>.
         /// </summary>
         /// <returns>The hashcode for the <see cref="UriPathSegment"/>.</returns>
         public override int GetHashCode()
@@ -1018,13 +1016,10 @@ namespace Sage.SData.Client.Framework
                 if (_fragment.StartsWith(FragmentPrefix))
                     _fragment = _fragment.Substring(FragmentPrefix.Length);
 
-                if (PathInternal != null && PathInternal.StartsWith(PathSegmentPrefix))
+                if (PathInternal.StartsWith(PathSegmentPrefix))
                     PathInternal = PathInternal.Substring(PathSegmentPrefix.Length);
 
-                if (_uri.Query != null && _uri.Query.StartsWith(QueryPrefix))
-                    _queryArgs = UriQueryParser.Parse(_uri.Query.Substring(QueryPrefix.Length));
-                else
-                    _queryArgs = UriQueryParser.Parse(_uri.Query);
+                _queryArgs = new QueryArgsDictionary(this, _uri.Query);
             }
         }
 
@@ -1152,6 +1147,98 @@ namespace Sage.SData.Client.Framework
 
             if (uri != null)
                 info.AddValue(UriName, uri.ToString());
+        }
+
+        #endregion
+
+        #region Nested type: QueryArgsDictionary
+
+        private class QueryArgsDictionary : Dictionary<string, string>, IDictionary<string, string>
+        {
+            private readonly UriFormatter _uri;
+
+            public QueryArgsDictionary(UriFormatter uri)
+                : base(StringComparer.InvariantCultureIgnoreCase)
+            {
+                _uri = uri;
+            }
+
+            public QueryArgsDictionary(UriFormatter uri, string query)
+                : this(uri, Parse(query))
+            {
+            }
+
+            public QueryArgsDictionary(UriFormatter uri, IDictionary<string, string> items)
+                : base(items, StringComparer.InvariantCultureIgnoreCase)
+            {
+                _uri = uri;
+            }
+
+            private static IDictionary<string, string> Parse(string query)
+            {
+                if (query.StartsWith(QueryPrefix))
+                    query = query.Substring(QueryPrefix.Length);
+
+                return UriQueryParser.Parse(query);
+            }
+
+            #region IDictionary Members
+
+            string IDictionary<string, string>.this[string key]
+            {
+                get { return this[key]; }
+                set
+                {
+                    this[key] = value;
+                    _uri.RequiresRebuildUri = true;
+                }
+            }
+
+            void IDictionary<string, string>.Add(string key, string value)
+            {
+                Add(key, value);
+                _uri.RequiresRebuildUri = true;
+            }
+
+            bool IDictionary<string, string>.Remove(string key)
+            {
+                if (Remove(key))
+                {
+                    _uri.RequiresRebuildUri = true;
+                    return true;
+                }
+
+                return false;
+            }
+
+            #endregion
+
+            #region ICollection Members
+
+            void ICollection<KeyValuePair<string, string>>.Add(KeyValuePair<string, string> item)
+            {
+                Add(item.Key, item.Value);
+                _uri.RequiresRebuildUri = true;
+            }
+
+            bool ICollection<KeyValuePair<string, string>>.Remove(KeyValuePair<string, string> item)
+            {
+                if (Remove(item.Key))
+                {
+                    _uri.RequiresRebuildUri = true;
+                    return true;
+                }
+
+                return false;
+            }
+
+            void ICollection<KeyValuePair<string, string>>.Clear()
+            {
+                Clear();
+                _uri.RequiresRebuildUri = true;
+            }
+
+            #endregion
         }
 
         #endregion

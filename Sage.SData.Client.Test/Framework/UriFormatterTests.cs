@@ -61,5 +61,31 @@ namespace Sage.SData.Client.Test.Framework
             Assert.That(uri["a"], Is.EqualTo("&"));
             Assert.That(uri["b"], Is.EqualTo("&"));
         }
+
+        /// <summary>
+        /// Modifying the QueryArgs dictionary should cause the Query property
+        /// and ToString method to update accordingly.
+        /// </summary>
+        [Test]
+        public void Modifying_QueryArgs_Should_Update_Query_And_ToString_Test()
+        {
+            var uri = new UriFormatter("http://localhost");
+
+            Assert.That(string.IsNullOrEmpty(uri.Query));
+            Assert.That(uri.QueryArgs.Count == 0);
+            Assert.That(uri.ToString() == "http://localhost/");
+
+            uri.QueryArgs.Add("orderBy", "name");
+
+            Assert.That(uri.Query == "orderBy=name");
+            Assert.That(uri.QueryArgs.Count == 1);
+            Assert.That(uri.ToString() == "http://localhost/?orderBy=name");
+
+            uri.QueryArgs.Clear();
+
+            Assert.That(string.IsNullOrEmpty(uri.Query));
+            Assert.That(uri.QueryArgs.Count == 0);
+            Assert.That(uri.ToString() == "http://localhost/");
+        }
     }
 }
