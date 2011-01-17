@@ -386,7 +386,8 @@ namespace Sage.SData.Client.Core
                     {
                         try
                         {
-                            return SDataSchema.Read(reader, targetElementName);
+                            var schema = SDataSchema.Read(reader);
+                            return targetElementName != null ? schema.ResourceTypes[targetElementName] : (object) schema;
                         }
                         catch (XmlException)
                         {
@@ -498,7 +499,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="request">url for the syndication resource to get information for.</param>
         /// <returns>SDataSchema</returns>
-        public virtual SDataSchema ReadSchema(SDataResourceSchemaRequest request)
+        public virtual SDataSchemaObject ReadSchema(SDataResourceSchemaRequest request)
         {
             Guard.ArgumentNotNull(request, "request");
 
@@ -513,7 +514,8 @@ namespace Sage.SData.Client.Core
 
                 using (var reader = new StringReader((string) response.Content))
                 {
-                    return SDataSchema.Read(reader, targetElementName);
+                    var schema = SDataSchema.Read(reader);
+                    return targetElementName != null ? (SDataSchemaObject) schema.ResourceTypes[targetElementName] : schema;
                 }
             }
             catch (Exception ex)

@@ -135,7 +135,7 @@ namespace Sage.SData.Client.Core
 
             if (index + _itemsAvailable > entries.Length)
             {
-                throw new ArgumentException("Target array is not large enought", "entries");
+                throw new ArgumentException("Target array is not large enough", "entries");
             }
 
             foreach (var entry in this)

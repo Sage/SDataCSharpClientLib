@@ -114,7 +114,7 @@ namespace Sage.SData.Client.Core
         AtomEntry CreateEntry(SDataBaseRequest request, AtomEntry entry);
 
         /// <summary>
-        /// Adds new sydication resource to the data source returning an AtomFeed
+        /// Adds new syndication resource to the data source returning an AtomFeed
         /// </summary>
         /// <param name="request">The request that identifies the resource within the syndication data source.</param>
         /// <param name="feed">The <see cref="ISyndicationResource"/> to be created within the data source.</param>
@@ -122,7 +122,7 @@ namespace Sage.SData.Client.Core
         AtomFeed CreateFeed(SDataBaseRequest request, AtomFeed feed);
 
         /// <summary>
-        /// Adds new sydication resource to the data source returning an AtomFeed
+        /// Adds new syndication resource to the data source returning an AtomFeed
         /// </summary>
         /// <param name="request"></param>
         /// <param name="feed"></param>
@@ -155,7 +155,7 @@ namespace Sage.SData.Client.Core
         /// Removes a resource from the syndication data source.
         /// </summary>
         /// <param name="request">The request from the syndication data source for the resource to be removed.</param>
-        /// <param name="entry">The resourc that is being deleted</param>
+        /// <param name="entry">The resource that is being deleted</param>
         /// <returns><b>true</b> if the syndication resource was successfully deleted; otherwise, <b>false</b>.</returns>
         bool DeleteEntry(SDataBaseRequest request, AtomEntry entry);
 
@@ -200,8 +200,8 @@ namespace Sage.SData.Client.Core
         /// Reads xsd from a $schema request
         /// </summary>
         /// <param name="request">url for the syndication resource to get information for.</param>
-        /// <returns>XmlSchema </returns>
-        SDataSchema ReadSchema(SDataResourceSchemaRequest request);
+        /// <returns>A schema or a schema resource</returns>
+        SDataSchemaObject ReadSchema(SDataResourceSchemaRequest request);
 
         /// <summary>
         /// Updates information about a syndication resource in the data source.
