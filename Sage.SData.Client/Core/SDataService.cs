@@ -373,7 +373,7 @@ namespace Sage.SData.Client.Core
             try
             {
                 var operation = new RequestOperation(HttpMethod.Get);
-                var response = ExecuteRequest(url, operation, MediaType.Xml);
+                var response = ExecuteRequest(url, operation);
                 var text = response.Content as string;
 
                 if (text != null && response.ContentType == MediaType.Xml)
