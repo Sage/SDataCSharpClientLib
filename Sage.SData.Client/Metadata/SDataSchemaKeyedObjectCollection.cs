@@ -24,13 +24,23 @@ namespace Sage.SData.Client.Metadata
         {
             get
             {
+                Guard.ArgumentNotNull(key, "key");
                 T item;
 
-                if (_keyedItems.TryGetValue(key, out item) && _selectKey(item) != key)
+                if (_keyedItems.TryGetValue(key, out item))
                 {
-                    _keyedItems[_selectKey(item)] = item;
-                    _keyedItems.Remove(key);
-                    item = null;
+                    var actualKey = _selectKey(item);
+
+                    if (actualKey != key)
+                    {
+                        if (actualKey != null)
+                        {
+                            _keyedItems[actualKey] = item;
+                        }
+
+                        _keyedItems.Remove(key);
+                        item = null;
+                    }
                 }
 
                 if (item == null)
@@ -50,7 +60,13 @@ namespace Sage.SData.Client.Metadata
         protected override void InsertItem(int index, T item)
         {
             Guard.ArgumentNotNull(item, "item");
-            _keyedItems[_selectKey(item)] = item;
+
+            var key = _selectKey(item);
+            if (key != null)
+            {
+                _keyedItems[key] = item;
+            }
+
             item.Parent = _owner;
             base.InsertItem(index, item);
         }
@@ -58,8 +74,19 @@ namespace Sage.SData.Client.Metadata
         protected override void SetItem(int index, T item)
         {
             Guard.ArgumentNotNull(item, "item");
-            _keyedItems.Remove(_selectKey(this[index]));
-            _keyedItems[_selectKey(item)] = item;
+
+            var key = _selectKey(this[index]);
+            if (key != null)
+            {
+                _keyedItems.Remove(key);
+            }
+
+            key = _selectKey(item);
+            if (key != null)
+            {
+                _keyedItems[key] = item;
+            }
+
             this[index].Parent = null;
             item.Parent = _owner;
             base.SetItem(index, item);
@@ -67,7 +94,12 @@ namespace Sage.SData.Client.Metadata
 
         protected override void RemoveItem(int index)
         {
-            _keyedItems.Remove(_selectKey(this[index]));
+            var key = _selectKey(this[index]);
+            if (key != null)
+            {
+                _keyedItems.Remove(key);
+            }
+
             this[index].Parent = null;
             base.RemoveItem(index);
         }

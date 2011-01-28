@@ -13,6 +13,8 @@ namespace Sage.SData.Client.Metadata
             get { return _types ?? (_types = new List<SDataSchemaChoiceItem>()); }
         }
 
+        public decimal? MaxOccurs { get; set; }
+
         protected internal override void Read(XmlSchemaObject obj)
         {
             var type = (XmlSchemaComplexType) obj;
@@ -22,6 +24,8 @@ namespace Sage.SData.Client.Metadata
             {
                 throw new NotSupportedException();
             }
+
+            MaxOccurs = !string.IsNullOrEmpty(choice.MaxOccursString) ? choice.MaxOccurs : (decimal?) null;
 
             foreach (var item in choice.Items)
             {
@@ -44,6 +48,11 @@ namespace Sage.SData.Client.Metadata
         {
             var type = (XmlSchemaComplexType) obj;
             var choice = new XmlSchemaChoice {MinOccurs = 0};
+
+            if (MaxOccurs != null)
+            {
+                choice.MaxOccurs = MaxOccurs.Value;
+            }
 
             foreach (var choiceType in Types)
             {

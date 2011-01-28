@@ -31,6 +31,12 @@ namespace Sage.SData.Client.Metadata
         /// </summary>
         public bool IsMandatory { get; set; }
 
+        /// <summary>
+        /// Is the property read-only?
+        /// For example, an ID set by the provider or a calculated property.
+        /// </summary>
+        public bool IsReadOnly { get; set; }
+
         public override IEnumerable<SDataSchemaObject> Children
         {
             get { return Type != null ? new[] {Type} : base.Children; }
@@ -52,6 +58,9 @@ namespace Sage.SData.Client.Metadata
             {
                 case "isMandatory":
                     IsMandatory = XmlConvert.ToBoolean(attribute.Value);
+                    return true;
+                case "isReadOnly":
+                    IsReadOnly = XmlConvert.ToBoolean(attribute.Value);
                     return true;
                 default:
                     return base.ReadSmeAttribute(attribute);
@@ -76,6 +85,7 @@ namespace Sage.SData.Client.Metadata
         protected override void WriteSmeAttributes(ICollection<XmlAttribute> attributes)
         {
             WriteSmeAttribute("isMandatory", IsMandatory, attributes);
+            WriteSmeAttribute("isReadOnly", IsReadOnly, attributes);
             base.WriteSmeAttributes(attributes);
         }
 

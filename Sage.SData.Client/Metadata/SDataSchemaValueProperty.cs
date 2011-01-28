@@ -22,12 +22,6 @@ namespace Sage.SData.Client.Metadata
         public bool CanGroup { get; set; }
 
         /// <summary>
-        /// Is the property read-only?
-        /// For example, an ID set by the provider or a calculated property.
-        /// </summary>
-        public bool IsReadOnly { get; set; }
-
-        /// <summary>
         /// Does the property contain localized text?
         /// </summary>
         public bool IsLocalized { get; set; }
@@ -110,9 +104,6 @@ namespace Sage.SData.Client.Metadata
                 case "canGroup":
                     CanGroup = XmlConvert.ToBoolean(attribute.Value);
                     return true;
-                case "isReadOnly":
-                    IsReadOnly = XmlConvert.ToBoolean(attribute.Value);
-                    return true;
                 case "isLocalized":
                     IsLocalized = XmlConvert.ToBoolean(attribute.Value);
                     return true;
@@ -161,7 +152,6 @@ namespace Sage.SData.Client.Metadata
             WriteSmeAttribute("canSort", CanSort, attributes);
             WriteSmeAttribute("canFilter", CanFilter, attributes);
             WriteSmeAttribute("canGroup", CanGroup, attributes);
-            WriteSmeAttribute("isReadOnly", IsReadOnly, attributes);
             WriteSmeAttribute("isLocalized", IsLocalized, attributes);
             WriteSmeAttribute("isUniqueKey", IsUniqueKey, attributes);
             WriteSmeAttribute("precedence", Precedence, attributes);
