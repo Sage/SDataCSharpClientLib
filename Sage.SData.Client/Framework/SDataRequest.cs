@@ -211,7 +211,7 @@ namespace Sage.SData.Client.Framework
             request.Method = op.Method.ToString().ToUpper();
             request.Timeout = Timeout;
             request.Proxy = Proxy;
-            request.PreAuthenticate = false;
+            request.PreAuthenticate = true;
 
             var httpRequest = request as HttpWebRequest;
             if (httpRequest != null)
