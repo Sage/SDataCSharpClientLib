@@ -27,7 +27,7 @@ namespace Sage.SData.Client.Core
         private readonly SDataUri _uri;
 
         /// <summary>
-        /// Flag set when Service is initialzed
+        /// Flag set when Service is initialized
         /// </summary>
         [Obsolete("Explicit initialization is no longer required.")]
         public bool Initialized
@@ -374,27 +374,18 @@ namespace Sage.SData.Client.Core
             {
                 var operation = new RequestOperation(HttpMethod.Get);
                 var response = ExecuteRequest(url, operation);
-                var text = response.Content as string;
 
-                if (text != null && response.ContentType == MediaType.Xml)
+                if (response.Content is string && response.ContentType == MediaType.Xml)
                 {
-                    var targetElementName = !string.IsNullOrEmpty(response.Location)
-                                                ? new Uri(response.Location).Fragment
-                                                : null;
-
-                    using (var reader = new StringReader(text))
+                    try
                     {
-                        try
-                        {
-                            var schema = SDataSchema.Read(reader);
-                            return targetElementName != null ? schema.ResourceTypes[targetElementName] : (object) schema;
-                        }
-                        catch (XmlException)
-                        {
-                        }
-                        catch (InvalidOperationException)
-                        {
-                        }
+                        return ReadSchema(response);
+                    }
+                    catch (XmlException)
+                    {
+                    }
+                    catch (InvalidOperationException)
+                    {
                     }
                 }
 
@@ -508,19 +499,36 @@ namespace Sage.SData.Client.Core
                 var requestUrl = request.ToString();
                 var operation = new RequestOperation(HttpMethod.Get);
                 var response = ExecuteRequest(requestUrl, operation, MediaType.Xml);
-                var targetElementName = !string.IsNullOrEmpty(response.Location)
-                                            ? new Uri(response.Location).Fragment.TrimStart('#')
-                                            : null;
-
-                using (var reader = new StringReader((string) response.Content))
-                {
-                    var schema = SDataSchema.Read(reader);
-                    return targetElementName != null ? (SDataSchemaObject) schema.ResourceTypes[targetElementName] : schema;
-                }
+                return ReadSchema(response);
             }
             catch (Exception ex)
             {
                 throw new SDataClientException(ex.Message, ex);
+            }
+        }
+
+        private static SDataSchemaObject ReadSchema(ISDataResponse response)
+        {
+            using (var reader = new StringReader((string) response.Content))
+            {
+                var schema = SDataSchema.Read(reader);
+
+                if (!string.IsNullOrEmpty(response.Location))
+                {
+                    var targetElementName = new Uri(response.Location).Fragment.TrimStart('#');
+
+                    if (!string.IsNullOrEmpty(targetElementName))
+                    {
+                        var resource = schema.ResourceTypes[targetElementName];
+
+                        if (resource != null)
+                        {
+                            return resource;
+                        }
+                    }
+                }
+
+                return schema;
             }
         }
 
@@ -623,7 +631,7 @@ namespace Sage.SData.Client.Core
         {
         }
 
-        protected internal virtual ISDataResponse ExecuteRequest(string url, RequestOperation operation, params MediaType[] accept)
+        protected virtual ISDataResponse ExecuteRequest(string url, RequestOperation operation, params MediaType[] accept)
         {
             var request = new SDataRequest(url, operation)
                           {
