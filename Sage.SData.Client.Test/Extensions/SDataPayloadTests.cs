@@ -120,7 +120,7 @@ namespace Sage.SData.Client.Test.Extensions
         public void Collection_Of_One_Property_Without_Attributes()
         {
             var xml = @"<salesOrder xmlns:sdata=""http://schemas.sage.com/sdata/2008/1"">
-                          <orderLines>
+                          <orderLines sdata:url=""http://www.example.com/sdata/myApp/myContract/-/salesOrderLines?where=salesOrderID%20eq%2043660"">
                             <salesOrderLine sdata:key=""43660-1"" />
                           </orderLines>
                         </salesOrder>";
@@ -218,6 +218,7 @@ namespace Sage.SData.Client.Test.Extensions
             var xml = @"<salesOrder xmlns:sdata=""http://schemas.sage.com/sdata/2008/1"">
                           <orderLines>
                             <salesOrderLine sdata:key=""43660-1"" />
+                            <salesOrderLine sdata:key=""43660-2"" />
                           </orderLines>
                         </salesOrder>";
             var payload = LoadPayload(xml);
@@ -317,6 +318,21 @@ namespace Sage.SData.Client.Test.Extensions
             var nav = WritePayload(payload);
             var node = nav.SelectSingleNode("*/salesOrderLine/order");
             Assert.That(node, Is.Not.Null);
+        }
+
+        [Test]
+        public void Object_Property_With_Single_Child_Property()
+        {
+            var xml = @"<productComputeSimplePrice>
+                          <response>
+                            <unitPrice>100</unitPrice>
+                          </response>
+                        </productComputeSimplePrice>";
+            var payload = LoadPayload(xml);
+
+            object value;
+            Assert.That(payload.Values.TryGetValue("response", out value), Is.True);
+            Assert.That(value, Is.InstanceOf<SDataPayload>());
         }
 
         private static SDataPayload LoadPayload(string xml)

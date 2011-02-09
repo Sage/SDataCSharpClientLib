@@ -45,8 +45,8 @@ namespace Sage.SData.Client.Test.Extensions
         {
             var payload = SDataPayloadUtility.LoadPayload(TestCase1);
 
-            var validatorType = (SDataPayloadCollection)payload.Values["validatorType"];
-            var listValidator = validatorType[0];
+            var validatorType = (SDataPayload)payload.Values["validatorType"];
+            var listValidator = (SDataPayload)validatorType.Values["listValidator"];
             Assert.That(listValidator.Values["items"], Is.InstanceOf<SDataSimpleCollection>());
         }
 
@@ -55,8 +55,8 @@ namespace Sage.SData.Client.Test.Extensions
         {
             var payload = SDataPayloadUtility.LoadPayload(TestCase1);
 
-            var validatorType = (SDataPayloadCollection)payload.Values["validatorType"];
-            var listValidator = validatorType[0];
+            var validatorType = (SDataPayload)payload.Values["validatorType"];
+            var listValidator = (SDataPayload)validatorType.Values["listValidator"];
             Assume.That(listValidator.Values["items"], Is.InstanceOf<SDataSimpleCollection>());
 
             var items = (SDataSimpleCollection)listValidator.Values["items"];
@@ -68,8 +68,8 @@ namespace Sage.SData.Client.Test.Extensions
         {
             var payload = SDataPayloadUtility.LoadPayload(TestCase1);
 
-            var validatorType = (SDataPayloadCollection)payload.Values["validatorType"];
-            var listValidator = validatorType[0];
+            var validatorType = (SDataPayload)payload.Values["validatorType"];
+            var listValidator = (SDataPayload)validatorType.Values["listValidator"];
             Assume.That(listValidator.Values["items"], Is.InstanceOf<SDataSimpleCollection>());
 
             var items = (SDataSimpleCollection)listValidator.Values["items"];
