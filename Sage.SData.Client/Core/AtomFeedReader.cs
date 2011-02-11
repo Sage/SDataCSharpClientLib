@@ -161,8 +161,8 @@ namespace Sage.SData.Client.Core
 
         public IEnumerator<AtomEntry> GetEnumerator()
         {
-            return _listPages.Select((page, i) => GetPage(i))
-                .SelectMany(page => page)
+            return Enumerable.Range(0, _listPages.Count)
+                .SelectMany(GetPage)
                 .GetEnumerator();
         }
 
