@@ -7,6 +7,15 @@ namespace Sage.SData.Client.Metadata
     {
         private bool? _isCollection;
 
+        public SDataSchemaRelationshipProperty()
+        {
+        }
+
+        public SDataSchemaRelationshipProperty(string name)
+            : base(name)
+        {
+        }
+
         /// <summary>
         /// Type of relationship.
         /// </summary>
@@ -108,7 +117,7 @@ namespace Sage.SData.Client.Metadata
 
         protected override XmlQualifiedName GetTypeName()
         {
-            if (IsCollection)
+            if (IsCollection && Type != null)
             {
                 var complexType = Type.SchemaType as SDataSchemaComplexType;
 

@@ -5,25 +5,25 @@ using System.Linq;
 
 namespace Sage.SData.Client.Metadata
 {
-    public class SDataSchemaKeyedEnumerable<T> : IEnumerable<T>
+    public class KeyedEnumerable<TKey, TItem> : IEnumerable<TItem>
     {
-        private readonly IEnumerable<T> _objects;
-        private readonly Func<T, string> _selectKey;
+        private readonly IEnumerable<TItem> _objects;
+        private readonly Func<TItem, TKey> _selectKey;
 
-        public SDataSchemaKeyedEnumerable(IEnumerable<T> objects, Func<T, string> selectKey)
+        public KeyedEnumerable(IEnumerable<TItem> objects, Func<TItem, TKey> selectKey)
         {
             _objects = objects;
             _selectKey = selectKey;
         }
 
-        public T this[string name]
+        public TItem this[TKey key]
         {
-            get { return _objects.SingleOrDefault(type => _selectKey(type) == name); }
+            get { return _objects.SingleOrDefault(type => Equals(_selectKey(type), key)); }
         }
 
         #region IEnumerable Members
 
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerator<TItem> GetEnumerator()
         {
             return _objects.GetEnumerator();
         }

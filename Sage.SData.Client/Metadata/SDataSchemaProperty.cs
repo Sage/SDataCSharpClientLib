@@ -1,12 +1,24 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Schema;
 
 namespace Sage.SData.Client.Metadata
 {
+    [DebuggerDisplay("{Name}")]
     public abstract class SDataSchemaProperty : SDataSchemaItem
     {
         private SDataSchemaTypeReference _type;
+
+        public SDataSchemaProperty()
+        {
+        }
+
+        public SDataSchemaProperty(string name)
+        {
+            Name = name;
+            MinOccurs = 0;
+        }
 
         public string Name { get; set; }
         public decimal? MinOccurs { get; set; }
@@ -47,7 +59,7 @@ namespace Sage.SData.Client.Metadata
             var element = (XmlSchemaElement) obj;
             Name = element.Name;
             MinOccurs = element.MinOccursString != null ? element.MinOccurs : (decimal?) null;
-            Type = new SDataSchemaTypeReference(element.SchemaTypeName);
+            Type = element.SchemaTypeName;
             IsNillable = element.IsNillable;
             base.Read(obj);
         }
@@ -91,7 +103,7 @@ namespace Sage.SData.Client.Metadata
 
         protected virtual XmlQualifiedName GetTypeName()
         {
-            return Type.QualifiedName;
+            return Type != null ? Type.QualifiedName : null;
         }
     }
 }

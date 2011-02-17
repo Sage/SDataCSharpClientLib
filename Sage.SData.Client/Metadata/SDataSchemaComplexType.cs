@@ -9,7 +9,16 @@ namespace Sage.SData.Client.Metadata
     public class SDataSchemaComplexType : SDataSchemaType
     {
         private SDataSchemaTypeReference _baseType;
-        private SDataSchemaKeyedObjectCollection<SDataSchemaProperty> _properties;
+        private KeyedObjectCollection<SDataSchemaProperty> _properties;
+
+        public SDataSchemaComplexType()
+        {
+        }
+
+        public SDataSchemaComplexType(string baseName)
+            : base(baseName, "type")
+        {
+        }
 
         public SDataSchemaTypeReference BaseType
         {
@@ -39,19 +48,19 @@ namespace Sage.SData.Client.Metadata
             get { return new XmlQualifiedName(ListName, Schema != null ? Schema.TargetNamespace : null); }
         }
 
-        public SDataSchemaKeyedObjectCollection<SDataSchemaProperty> Properties
+        public KeyedObjectCollection<SDataSchemaProperty> Properties
         {
-            get { return _properties ?? (_properties = new SDataSchemaKeyedObjectCollection<SDataSchemaProperty>(this, prop => prop.Name)); }
+            get { return _properties ?? (_properties = new KeyedObjectCollection<SDataSchemaProperty>(this, prop => prop.Name)); }
         }
 
-        public SDataSchemaKeyedEnumerable<SDataSchemaValueProperty> ValueProperties
+        public KeyedEnumerable<string, SDataSchemaValueProperty> ValueProperties
         {
-            get { return new SDataSchemaKeyedEnumerable<SDataSchemaValueProperty>(Properties.OfType<SDataSchemaValueProperty>(), prop => prop.Name); }
+            get { return new KeyedEnumerable<string, SDataSchemaValueProperty>(Properties.OfType<SDataSchemaValueProperty>(), prop => prop.Name); }
         }
 
-        public SDataSchemaKeyedEnumerable<SDataSchemaRelationshipProperty> RelationshipProperties
+        public KeyedEnumerable<string, SDataSchemaRelationshipProperty> RelationshipProperties
         {
-            get { return new SDataSchemaKeyedEnumerable<SDataSchemaRelationshipProperty>(Properties.OfType<SDataSchemaRelationshipProperty>(), prop => prop.Name); }
+            get { return new KeyedEnumerable<string, SDataSchemaRelationshipProperty>(Properties.OfType<SDataSchemaRelationshipProperty>(), prop => prop.Name); }
         }
 
         protected internal override void Read(XmlSchemaObject obj)
@@ -64,15 +73,20 @@ namespace Sage.SData.Client.Metadata
 
                 if (particle == null && type.ContentModel != null)
                 {
+                    if (type.ContentModel.Content == null)
+                    {
+                        throw new InvalidOperationException(string.Format("Missing content on complex type content model '{0}'", type.Name));
+                    }
+
                     var extension = type.ContentModel.Content as XmlSchemaComplexContentExtension;
 
                     if (extension == null)
                     {
-                        throw new NotSupportedException();
+                        throw new InvalidOperationException(string.Format("Unexpected content type '{0}' on complex type content model '{1}'", type.ContentModel.Content.GetType(), type.Name));
                     }
 
                     AnyAttribute = extension.AnyAttribute;
-                    BaseType = new SDataSchemaTypeReference(extension.BaseTypeName);
+                    BaseType = extension.BaseTypeName;
                     particle = extension.Particle;
                 }
                 else
@@ -86,7 +100,7 @@ namespace Sage.SData.Client.Metadata
 
                     if (all == null)
                     {
-                        throw new NotSupportedException();
+                        throw new InvalidOperationException(string.Format("Unexpected particle type '{0}' on complex type '{1}'", particle.GetType(), type.Name));
                     }
 
                     foreach (var item in all.Items)
@@ -95,7 +109,7 @@ namespace Sage.SData.Client.Metadata
 
                         if (element == null)
                         {
-                            throw new NotSupportedException();
+                            throw new InvalidOperationException(string.Format("Unexpected all item type '{0}' on complex type '{1}'", item.GetType(), type.Name));
                         }
 
                         SDataSchemaProperty prop;

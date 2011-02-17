@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml.Schema;
 
 namespace Sage.SData.Client.Metadata
@@ -7,6 +6,15 @@ namespace Sage.SData.Client.Metadata
     public abstract class SDataSchemaValueType : SDataSchemaType
     {
         private SDataSchemaTypeReference _baseType;
+
+        protected SDataSchemaValueType()
+        {
+        }
+
+        protected SDataSchemaValueType(string baseName, string defaultSuffix)
+            : base(baseName, defaultSuffix)
+        {
+        }
 
         public SDataSchemaTypeReference BaseType
         {
@@ -29,14 +37,8 @@ namespace Sage.SData.Client.Metadata
         protected internal override void Read(XmlSchemaObject obj)
         {
             var simpleType = (XmlSchemaSimpleType) obj;
-            var restriction = simpleType.Content as XmlSchemaSimpleTypeRestriction;
-
-            if (restriction == null)
-            {
-                throw new NotSupportedException();
-            }
-
-            BaseType = new SDataSchemaTypeReference(restriction.BaseTypeName);
+            var restriction = (XmlSchemaSimpleTypeRestriction) simpleType.Content;
+            BaseType = restriction.BaseTypeName;
             base.Read(obj);
         }
 
@@ -44,7 +46,12 @@ namespace Sage.SData.Client.Metadata
         {
             var simpleType = (XmlSchemaSimpleType) obj;
             var restriction = (XmlSchemaSimpleTypeRestriction) simpleType.Content;
-            restriction.BaseTypeName = BaseType.QualifiedName;
+
+            if (BaseType != null)
+            {
+                restriction.BaseTypeName = BaseType.QualifiedName;
+            }
+
             base.Write(obj);
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Xml.Serialization;
+using Sage.SData.Client.Common;
 
 namespace Sage.SData.Client.Metadata
 {
@@ -10,30 +11,21 @@ namespace Sage.SData.Client.Metadata
     {
         public static string Format(object item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException("item");
-            }
+            Guard.ArgumentNotNull(item, "item");
 
             return GetEnumData(item.GetType()).Format(item);
         }
 
         public static string GetDisplayName(object item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException("item");
-            }
+            Guard.ArgumentNotNull(item, "item");
 
             return GetEnumData(item.GetType()).GetDisplayName(item);
         }
 
         public static object Parse(Type type, string value)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException("type");
-            }
+            Guard.ArgumentNotNull(type, "type");
 
             return GetEnumData(type).Parse(value);
         }

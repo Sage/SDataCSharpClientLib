@@ -11,7 +11,17 @@ namespace Sage.SData.Client.Metadata
     {
         private IList<XmlSchemaImport> _imports;
         private IList<XmlQualifiedName> _namespaces;
-        private SDataSchemaKeyedObjectCollection<SDataSchemaType> _types;
+        private KeyedObjectCollection<SDataSchemaType> _types;
+
+        public SDataSchema()
+        {
+        }
+
+        public SDataSchema(string targetNamespace)
+        {
+            TargetNamespace = targetNamespace;
+            ElementFormDefault = XmlSchemaForm.Qualified;
+        }
 
         public string Id { get; set; }
         public string TargetNamespace { get; set; }
@@ -33,39 +43,39 @@ namespace Sage.SData.Client.Metadata
             get { return _imports ?? (_imports = new List<XmlSchemaImport>()); }
         }
 
-        public SDataSchemaKeyedObjectCollection<SDataSchemaType> Types
+        public KeyedObjectCollection<SDataSchemaType> Types
         {
-            get { return _types ?? (_types = new SDataSchemaKeyedObjectCollection<SDataSchemaType>(this, type => type.Name)); }
+            get { return _types ?? (_types = new KeyedObjectCollection<SDataSchemaType>(this, type => type.Name)); }
         }
 
-        public SDataSchemaKeyedEnumerable<SDataSchemaSimpleType> SimpleTypes
+        public KeyedEnumerable<string, SDataSchemaSimpleType> SimpleTypes
         {
-            get { return new SDataSchemaKeyedEnumerable<SDataSchemaSimpleType>(Types.OfType<SDataSchemaSimpleType>(), type => type.Name); }
+            get { return new KeyedEnumerable<string, SDataSchemaSimpleType>(Types.OfType<SDataSchemaSimpleType>(), type => type.Name); }
         }
 
-        public SDataSchemaKeyedEnumerable<SDataSchemaEnumType> EnumTypes
+        public KeyedEnumerable<string, SDataSchemaEnumType> EnumTypes
         {
-            get { return new SDataSchemaKeyedEnumerable<SDataSchemaEnumType>(Types.OfType<SDataSchemaEnumType>(), type => type.Name); }
+            get { return new KeyedEnumerable<string, SDataSchemaEnumType>(Types.OfType<SDataSchemaEnumType>(), type => type.Name); }
         }
 
-        public SDataSchemaKeyedEnumerable<SDataSchemaComplexType> ComplexTypes
+        public KeyedEnumerable<string, SDataSchemaComplexType> ComplexTypes
         {
-            get { return new SDataSchemaKeyedEnumerable<SDataSchemaComplexType>(Types.OfType<SDataSchemaComplexType>(), type => type.Name); }
+            get { return new KeyedEnumerable<string, SDataSchemaComplexType>(Types.OfType<SDataSchemaComplexType>(), type => type.Name); }
         }
 
-        public SDataSchemaKeyedEnumerable<SDataSchemaResourceType> ResourceTypes
+        public KeyedEnumerable<string, SDataSchemaResourceType> ResourceTypes
         {
-            get { return new SDataSchemaKeyedEnumerable<SDataSchemaResourceType>(Types.OfType<SDataSchemaResourceType>(), type => type.ElementName); }
+            get { return new KeyedEnumerable<string, SDataSchemaResourceType>(Types.OfType<SDataSchemaResourceType>(), type => type.ElementName); }
         }
 
-        public SDataSchemaKeyedEnumerable<SDataSchemaServiceOperationType> ServiceOperationTypes
+        public KeyedEnumerable<string, SDataSchemaServiceOperationType> ServiceOperationTypes
         {
-            get { return new SDataSchemaKeyedEnumerable<SDataSchemaServiceOperationType>(Types.OfType<SDataSchemaServiceOperationType>(), type => type.ElementName); }
+            get { return new KeyedEnumerable<string, SDataSchemaServiceOperationType>(Types.OfType<SDataSchemaServiceOperationType>(), type => type.ElementName); }
         }
 
-        public SDataSchemaKeyedEnumerable<SDataSchemaNamedQueryType> NamedQueryTypes
+        public KeyedEnumerable<string, SDataSchemaNamedQueryType> NamedQueryTypes
         {
-            get { return new SDataSchemaKeyedEnumerable<SDataSchemaNamedQueryType>(Types.OfType<SDataSchemaNamedQueryType>(), type => type.ElementName); }
+            get { return new KeyedEnumerable<string, SDataSchemaNamedQueryType>(Types.OfType<SDataSchemaNamedQueryType>(), type => type.ElementName); }
         }
 
         public static SDataSchema Read(Stream stream)
@@ -112,7 +122,7 @@ namespace Sage.SData.Client.Metadata
             return xmlSchema;
         }
 
-        protected internal override void Read(XmlSchemaObject obj)
+        private void Read(XmlSchemaObject obj)
         {
             var xmlSchema = (XmlSchema) obj;
             Id = xmlSchema.Id;
@@ -152,9 +162,10 @@ namespace Sage.SData.Client.Metadata
 
                     if (xmlComplexType.Particle == null || xmlComplexType.Particle is XmlSchemaAll)
                     {
+                        var qualifiedName = new XmlQualifiedName(xmlComplexType.Name, TargetNamespace);
                         SDataSchemaComplexType complexType;
 
-                        if (lastElement != null && lastElement.SchemaTypeName == new XmlQualifiedName(xmlComplexType.Name, TargetNamespace))
+                        if (lastElement != null && lastElement.SchemaTypeName == qualifiedName)
                         {
                             var roleAttr = lastElement.UnhandledAttributes != null
                                                ? lastElement.UnhandledAttributes.FirstOrDefault(attr => attr.NamespaceURI == SmeNamespaceUri && attr.LocalName == "role")
@@ -162,7 +173,7 @@ namespace Sage.SData.Client.Metadata
 
                             if (roleAttr == null)
                             {
-                                throw new NotSupportedException();
+                                throw new InvalidOperationException(string.Format("Role attribute on top level element '{0}' not found", lastElement.Name));
                             }
 
                             switch (roleAttr.Value)
@@ -177,7 +188,7 @@ namespace Sage.SData.Client.Metadata
                                     complexType = new SDataSchemaNamedQueryType();
                                     break;
                                 default:
-                                    throw new NotSupportedException();
+                                    throw new InvalidOperationException(string.Format("Unexpected role attribute value '{0}' on top level element '{1}'", roleAttr.Value, lastElement.Name));
                             }
 
                             complexType.Read(lastElement);
@@ -196,14 +207,19 @@ namespace Sage.SData.Client.Metadata
 
                             if (sequence.Items.Count != 1)
                             {
-                                throw new NotSupportedException();
+                                throw new InvalidOperationException(string.Format("Particle on list complex type '{0}' does not contain exactly one element", lastComplexList.Name));
                             }
 
                             var element = sequence.Items[0] as XmlSchemaElement;
 
-                            if (element == null || element.SchemaTypeName != new XmlQualifiedName(xmlComplexType.Name, TargetNamespace))
+                            if (element == null)
                             {
-                                throw new NotSupportedException();
+                                throw new InvalidOperationException(string.Format("Unexpected sequence item type '{0}' on list complex type '{1}'", sequence.Items[0].GetType(), lastComplexList.Name));
+                            }
+
+                            if (element.SchemaTypeName != qualifiedName)
+                            {
+                                throw new InvalidOperationException(string.Format("List element type '{0}' does not match complex type '{1}'", element.SchemaTypeName, qualifiedName));
                             }
 
                             complexType.ListName = lastComplexList.Name;
@@ -224,14 +240,19 @@ namespace Sage.SData.Client.Metadata
 
                             if (sequence.Items.Count != 1)
                             {
-                                throw new NotSupportedException();
+                                throw new InvalidOperationException(string.Format("Particle on list complex type '{0}' does not contain exactly one element", xmlComplexType.Name));
                             }
 
                             var element = sequence.Items[0] as XmlSchemaElement;
 
-                            if (element == null || element.SchemaTypeName != lastComplexType.QualifiedName)
+                            if (element == null)
                             {
-                                throw new NotSupportedException();
+                                throw new InvalidOperationException(string.Format("Unexpected sequence item type '{0}' on list complex type '{1}'", sequence.Items[0].GetType(), xmlComplexType.Name));
+                            }
+
+                            if (element.SchemaTypeName != lastComplexType.QualifiedName)
+                            {
+                                throw new InvalidOperationException(string.Format("List element type '{0}' does not match complex type '{1}'", element.SchemaTypeName, lastComplexType.QualifiedName));
                             }
 
                             lastComplexType.ListName = xmlComplexType.Name;
@@ -252,7 +273,7 @@ namespace Sage.SData.Client.Metadata
                     }
                     else
                     {
-                        throw new NotSupportedException();
+                        throw new InvalidOperationException(string.Format("Unexpected particle type '{0}' on complex type '{1}'", xmlComplexType.Particle.GetType(), xmlComplexType.Name));
                     }
                 }
                 else if (item is XmlSchemaSimpleType)
@@ -262,7 +283,7 @@ namespace Sage.SData.Client.Metadata
 
                     if (restriction == null)
                     {
-                        throw new NotSupportedException();
+                        throw new InvalidOperationException(string.Format("Unexpected content type '{0}' on simple type '{1}'", simpleType.Content.GetType(), simpleType.Name));
                     }
 
                     if (restriction.Facets.Cast<XmlSchemaObject>().All(facet => facet is XmlSchemaEnumerationFacet))
@@ -276,7 +297,7 @@ namespace Sage.SData.Client.Metadata
                 }
                 else
                 {
-                    throw new NotSupportedException();
+                    throw new InvalidOperationException(string.Format("Unexpected item type '{0}'", item.GetType()));
                 }
 
                 type.Read(item);
@@ -286,7 +307,7 @@ namespace Sage.SData.Client.Metadata
             Compile();
         }
 
-        protected internal override void Write(XmlSchemaObject obj)
+        private void Write(XmlSchemaObject obj)
         {
             var xmlSchema = (XmlSchema) obj;
             xmlSchema.Id = Id;
@@ -380,7 +401,7 @@ namespace Sage.SData.Client.Metadata
                 }
                 else
                 {
-                    throw new NotSupportedException();
+                    throw new InvalidOperationException(string.Format("Unexpected type '{0}'", type.GetType()));
                 }
             }
         }

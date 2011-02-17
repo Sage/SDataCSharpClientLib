@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Sage.SData.Client.Common;
 
 namespace Sage.SData.Client.Metadata
@@ -26,6 +27,41 @@ namespace Sage.SData.Client.Metadata
             get { return _schemas.AsReadOnly(); }
         }
 
+        public KeyedEnumerable<XmlQualifiedName, SDataSchemaType> Types
+        {
+            get { return new KeyedEnumerable<XmlQualifiedName, SDataSchemaType>(_schemas.SelectMany(schema => schema.Types), type => type.QualifiedName); }
+        }
+
+        public KeyedEnumerable<XmlQualifiedName, SDataSchemaSimpleType> SimpleTypes
+        {
+            get { return new KeyedEnumerable<XmlQualifiedName, SDataSchemaSimpleType>(Types.OfType<SDataSchemaSimpleType>(), type => type.QualifiedName); }
+        }
+
+        public KeyedEnumerable<XmlQualifiedName, SDataSchemaEnumType> EnumTypes
+        {
+            get { return new KeyedEnumerable<XmlQualifiedName, SDataSchemaEnumType>(Types.OfType<SDataSchemaEnumType>(), type => type.QualifiedName); }
+        }
+
+        public KeyedEnumerable<XmlQualifiedName, SDataSchemaComplexType> ComplexTypes
+        {
+            get { return new KeyedEnumerable<XmlQualifiedName, SDataSchemaComplexType>(Types.OfType<SDataSchemaComplexType>(), type => type.QualifiedName); }
+        }
+
+        public KeyedEnumerable<XmlQualifiedName, SDataSchemaResourceType> ResourceTypes
+        {
+            get { return new KeyedEnumerable<XmlQualifiedName, SDataSchemaResourceType>(Types.OfType<SDataSchemaResourceType>(), GetTopLevelTypeKey); }
+        }
+
+        public KeyedEnumerable<XmlQualifiedName, SDataSchemaServiceOperationType> ServiceOperationTypes
+        {
+            get { return new KeyedEnumerable<XmlQualifiedName, SDataSchemaServiceOperationType>(Types.OfType<SDataSchemaServiceOperationType>(), GetTopLevelTypeKey); }
+        }
+
+        public KeyedEnumerable<XmlQualifiedName, SDataSchemaNamedQueryType> NamedQueryTypes
+        {
+            get { return new KeyedEnumerable<XmlQualifiedName, SDataSchemaNamedQueryType>(Types.OfType<SDataSchemaNamedQueryType>(), GetTopLevelTypeKey); }
+        }
+
         public SDataSchemaSet Add(params SDataSchema[] schemas)
         {
             return Add((IEnumerable<SDataSchema>) schemas);
@@ -39,7 +75,7 @@ namespace Sage.SData.Client.Metadata
             {
                 if (schema == null)
                 {
-                    throw new NotSupportedException();
+                    throw new ArgumentException("Collection contains null entries", "schemas");
                 }
 
                 _schemas.Add(schema);
@@ -62,7 +98,7 @@ namespace Sage.SData.Client.Metadata
             {
                 if (schema == null)
                 {
-                    throw new NotSupportedException();
+                    throw new ArgumentException("Collection contains null entries", "schemas");
                 }
 
                 _schemas.Remove(schema);
@@ -87,6 +123,11 @@ namespace Sage.SData.Client.Metadata
             {
                 schema.Compile(types);
             }
+        }
+
+        private static XmlQualifiedName GetTopLevelTypeKey(SDataSchemaTopLevelType type)
+        {
+            return new XmlQualifiedName(type.ElementName, type.Schema != null ? type.Schema.TargetNamespace : null);
         }
     }
 }

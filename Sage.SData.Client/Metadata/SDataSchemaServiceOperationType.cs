@@ -7,6 +7,15 @@ namespace Sage.SData.Client.Metadata
     {
         private InvocationMode? _invocationMode;
 
+        public SDataSchemaServiceOperationType()
+        {
+        }
+
+        public SDataSchemaServiceOperationType(string elementName)
+            : base(elementName)
+        {
+        }
+
         /// <summary>
         /// The supported invocation modes.
         /// </summary>

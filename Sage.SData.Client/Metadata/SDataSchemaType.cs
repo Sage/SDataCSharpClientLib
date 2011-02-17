@@ -1,10 +1,21 @@
-﻿using System.Xml;
+﻿using System.Diagnostics;
+using System.Xml;
 using System.Xml.Schema;
 
 namespace Sage.SData.Client.Metadata
 {
+    [DebuggerDisplay("{Name}")]
     public abstract class SDataSchemaType : SDataSchemaItem
     {
+        protected SDataSchemaType()
+        {
+        }
+
+        protected SDataSchemaType(string baseName, string defaultSuffix)
+        {
+            Name = string.Format("{0}--{1}", baseName, defaultSuffix);
+        }
+
         public string Name { get; set; }
 
         public XmlQualifiedName QualifiedName

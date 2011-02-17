@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Schema;
 
 namespace Sage.SData.Client.Metadata
 {
@@ -35,8 +34,5 @@ namespace Sage.SData.Client.Metadata
         {
             return items.Concat(items.SelectMany(item => Descendents(item.Children)));
         }
-
-        protected internal abstract void Read(XmlSchemaObject obj);
-        protected internal abstract void Write(XmlSchemaObject obj);
     }
 }

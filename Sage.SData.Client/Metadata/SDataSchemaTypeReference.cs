@@ -1,32 +1,16 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Schema;
 
 namespace Sage.SData.Client.Metadata
 {
+    [DebuggerDisplay("{QualifiedName}")]
     public class SDataSchemaTypeReference : SDataSchemaObject
     {
-        private readonly XmlQualifiedName _name;
+        private XmlQualifiedName _name;
         private XmlTypeCode? _code;
         private SDataSchemaType _schemaType;
-
-        public SDataSchemaTypeReference()
-        {
-        }
-
-        internal SDataSchemaTypeReference(XmlQualifiedName name)
-        {
-            XmlTypeCode code;
-
-            if (name.Namespace == XmlSchema.Namespace && TryParseCode(name.Name, out code))
-            {
-                _code = code;
-            }
-            else
-            {
-                _name = name;
-            }
-        }
 
         public XmlQualifiedName QualifiedName
         {
@@ -38,6 +22,24 @@ namespace Sage.SData.Client.Metadata
                                  ? new XmlQualifiedName(FormatCode(Code.Value), XmlSchema.Namespace)
                                  : _name;
             }
+            set
+            {
+                if (value != _name)
+                {
+                    XmlTypeCode code;
+
+                    if (value.Namespace == XmlSchema.Namespace && TryParseCode(value.Name, out code))
+                    {
+                        Code = code;
+                    }
+                    else
+                    {
+                        _name = value;
+                        _code = null;
+                        _schemaType = null;
+                    }
+                }
+            }
         }
 
         public XmlTypeCode? Code
@@ -47,6 +49,7 @@ namespace Sage.SData.Client.Metadata
             {
                 if (_code != value)
                 {
+                    _name = null;
                     _code = value;
                     _schemaType = null;
                 }
@@ -60,18 +63,11 @@ namespace Sage.SData.Client.Metadata
             {
                 if (_schemaType != value)
                 {
+                    _name = null;
                     _code = null;
                     _schemaType = value;
                 }
             }
-        }
-
-        protected internal override void Read(XmlSchemaObject obj)
-        {
-        }
-
-        protected internal override void Write(XmlSchemaObject obj)
-        {
         }
 
         private static bool TryParseCode(string value, out XmlTypeCode code)
@@ -96,6 +92,21 @@ namespace Sage.SData.Client.Metadata
         {
             var str = code.ToString();
             return char.ToLower(str[0]) + str.Substring(1);
+        }
+
+        public static implicit operator SDataSchemaTypeReference(XmlQualifiedName name)
+        {
+            return new SDataSchemaTypeReference {QualifiedName = name};
+        }
+
+        public static implicit operator SDataSchemaTypeReference(XmlTypeCode code)
+        {
+            return new SDataSchemaTypeReference {Code = code};
+        }
+
+        public static implicit operator SDataSchemaTypeReference(SDataSchemaType type)
+        {
+            return new SDataSchemaTypeReference {SchemaType = type};
         }
     }
 }

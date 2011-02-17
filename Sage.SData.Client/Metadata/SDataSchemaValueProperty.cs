@@ -6,6 +6,15 @@ namespace Sage.SData.Client.Metadata
 {
     public class SDataSchemaValueProperty : SDataSchemaProperty
     {
+        public SDataSchemaValueProperty()
+        {
+        }
+
+        public SDataSchemaValueProperty(string name)
+            : base(name)
+        {
+        }
+
         /// <summary>
         /// Can the feed be sorted by this property?
         /// </summary>

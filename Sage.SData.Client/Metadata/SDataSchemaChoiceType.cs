@@ -8,6 +8,15 @@ namespace Sage.SData.Client.Metadata
     {
         private IList<SDataSchemaChoiceItem> _types;
 
+        public SDataSchemaChoiceType()
+        {
+        }
+
+        public SDataSchemaChoiceType(string baseName)
+            : base(baseName, "choice")
+        {
+        }
+
         public IList<SDataSchemaChoiceItem> Types
         {
             get { return _types ?? (_types = new List<SDataSchemaChoiceItem>()); }
@@ -18,11 +27,17 @@ namespace Sage.SData.Client.Metadata
         protected internal override void Read(XmlSchemaObject obj)
         {
             var type = (XmlSchemaComplexType) obj;
+
+            if (type.Particle == null)
+            {
+                throw new InvalidOperationException(string.Format("Missing particle on choice type '{0}'", type.Name));
+            }
+
             var choice = type.Particle as XmlSchemaChoice;
 
             if (choice == null)
             {
-                throw new NotSupportedException();
+                throw new InvalidOperationException(string.Format("Unexpected particle type '{0}' on choice type '{1}'", type.Particle.GetType(), type.Name));
             }
 
             MaxOccurs = !string.IsNullOrEmpty(choice.MaxOccursString) ? choice.MaxOccurs : (decimal?) null;
@@ -33,7 +48,7 @@ namespace Sage.SData.Client.Metadata
 
                 if (element == null)
                 {
-                    throw new NotSupportedException();
+                    throw new InvalidOperationException(string.Format("Unexpected item type '{0}' on choice type '{1}'", item.GetType(), type.Name));
                 }
 
                 var choiceType = new SDataSchemaChoiceItem();

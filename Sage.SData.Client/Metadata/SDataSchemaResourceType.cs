@@ -1,10 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Schema;
 
 namespace Sage.SData.Client.Metadata
 {
     public class SDataSchemaResourceType : SDataSchemaTopLevelType
     {
+        public SDataSchemaResourceType()
+        {
+        }
+
+        public SDataSchemaResourceType(string elementName)
+            : base(elementName)
+        {
+            ListName = elementName + "--list";
+            ListItemName = elementName;
+            CanGet = true;
+            AnyAttribute = new XmlSchemaAnyAttribute();
+            ListAnyAttribute = new XmlSchemaAnyAttribute();
+        }
+
         /// <summary>
         /// Name of the resource kind in plural form. For example, accounts.
         /// </summary>

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Xml.Schema;
 
 namespace Sage.SData.Client.Metadata
 {
+    [DebuggerDisplay("{ElementName}")]
     public class SDataSchemaChoiceItem : SDataSchemaItem
     {
         private SDataSchemaTypeReference _type;
@@ -31,7 +33,7 @@ namespace Sage.SData.Client.Metadata
         {
             var element = (XmlSchemaElement) obj;
             ElementName = element.Name;
-            Type = new SDataSchemaTypeReference(element.SchemaTypeName);
+            Type = element.SchemaTypeName;
             base.Read(obj);
         }
 
@@ -39,8 +41,23 @@ namespace Sage.SData.Client.Metadata
         {
             var element = (XmlSchemaElement) obj;
             element.Name = ElementName;
-            element.SchemaTypeName = Type.QualifiedName;
+
+            if (Type != null)
+            {
+                element.SchemaTypeName = Type.QualifiedName;
+            }
+
             base.Write(obj);
+        }
+
+        public static implicit operator SDataSchemaChoiceItem(SDataSchemaType type)
+        {
+            var resource = type as SDataSchemaResourceType;
+            return new SDataSchemaChoiceItem
+                   {
+                       ElementName = resource != null ? resource.ElementName : null,
+                       Type = type
+                   };
         }
     }
 }

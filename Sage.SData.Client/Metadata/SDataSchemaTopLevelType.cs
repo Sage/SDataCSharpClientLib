@@ -1,11 +1,23 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Schema;
 
 namespace Sage.SData.Client.Metadata
 {
+    [DebuggerDisplay("{ElementName}")]
     public abstract class SDataSchemaTopLevelType : SDataSchemaComplexType
     {
+        public SDataSchemaTopLevelType()
+        {
+        }
+
+        public SDataSchemaTopLevelType(string elementName)
+            : base(elementName)
+        {
+            ElementName = elementName;
+        }
+
         public string ElementName { get; set; }
 
         /// <summary>

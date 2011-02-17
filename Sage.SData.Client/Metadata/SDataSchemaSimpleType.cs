@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml.Schema;
 
 namespace Sage.SData.Client.Metadata
@@ -7,6 +6,15 @@ namespace Sage.SData.Client.Metadata
     public class SDataSchemaSimpleType : SDataSchemaValueType
     {
         private IList<XmlSchemaFacet> _facets;
+
+        public SDataSchemaSimpleType()
+        {
+        }
+
+        public SDataSchemaSimpleType(string baseName)
+            : base(baseName, "type")
+        {
+        }
 
         public IList<XmlSchemaFacet> Facets
         {
@@ -16,12 +24,7 @@ namespace Sage.SData.Client.Metadata
         protected internal override void Read(XmlSchemaObject obj)
         {
             var simpleType = (XmlSchemaSimpleType) obj;
-            var restriction = simpleType.Content as XmlSchemaSimpleTypeRestriction;
-
-            if (restriction == null)
-            {
-                throw new NotSupportedException();
-            }
+            var restriction = (XmlSchemaSimpleTypeRestriction) simpleType.Content;
 
             foreach (XmlSchemaFacet facet in restriction.Facets)
             {
