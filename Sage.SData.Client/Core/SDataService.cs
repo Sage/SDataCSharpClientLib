@@ -66,18 +66,19 @@ namespace Sage.SData.Client.Core
             {
                 if (_uri.Host != value)
                 {
-                    var pos = value.IndexOf(':');
-                    int port;
+                    if (value != null)
+                    {
+                        var pos = value.IndexOf(':');
+                        int port;
 
-                    if (pos >= 0 && int.TryParse(value.Substring(pos + 1), out port))
-                    {
-                        _uri.Host = value.Substring(0, pos);
-                        _uri.Port = port;
+                        if (pos >= 0 && int.TryParse(value.Substring(pos + 1), out port))
+                        {
+                            value = value.Substring(0, pos);
+                            _uri.Port = port;
+                        }
                     }
-                    else
-                    {
-                        _uri.Host = value;
-                    }
+
+                    _uri.Host = value;
                 }
             }
         }

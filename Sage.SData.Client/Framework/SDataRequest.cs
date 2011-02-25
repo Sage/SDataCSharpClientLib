@@ -278,7 +278,7 @@ namespace Sage.SData.Client.Framework
                             foreach (var file in op.Files)
                             {
                                 var type = !string.IsNullOrEmpty(file.ContentType) ? file.ContentType : "application/octet-stream";
-                                var disposition = new ContentDisposition(DispositionTypeNames.Attachment) { FileName = file.FileName };
+                                var disposition = new ContentDisposition(DispositionTypeNames.Attachment) {FileName = file.FileName};
                                 part = new MimePart(file.Stream)
                                        {
                                            ContentType = type,

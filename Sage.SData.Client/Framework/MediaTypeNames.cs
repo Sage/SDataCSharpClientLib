@@ -337,12 +337,13 @@ namespace Sage.SData.Client.Framework
                 return false;
             }
 
-            var found = NameToMediaType.TryGetValue(new ContentType(name), out mediaType);
-
-            if (!found)
+            if (!NameToMediaType.TryGetValue(key, out mediaType))
+            {
                 mediaType = DefaultMediaType;
+                return false;
+            }
 
-            return found;
+            return true;
         }
 
         /// <summary>
