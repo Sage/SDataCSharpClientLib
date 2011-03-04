@@ -1,4 +1,7 @@
-﻿using System.Xml.XPath;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
+using System.Xml.XPath;
 
 namespace Sage.SData.Client.Extensions
 {
@@ -31,6 +34,13 @@ namespace Sage.SData.Client.Extensions
             }
 
             return result;
+        }
+
+        public static IEnumerable<KeyValuePair<string, string>> GetAllNamespaces(this XPathNavigator source)
+        {
+            return source.GetNamespacesInScope(XmlNamespaceScope.Local)
+                .Concat(source.Select("descendant::*").Cast<XPathNavigator>()
+                            .SelectMany(descendant => descendant.GetNamespacesInScope(XmlNamespaceScope.Local)));
         }
     }
 }

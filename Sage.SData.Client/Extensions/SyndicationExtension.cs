@@ -7,6 +7,7 @@ Date		Author		Description
 ****************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 using System.Xml;
 using System.Xml.Schema;
@@ -349,16 +350,22 @@ namespace Sage.SData.Client.Extensions
             //------------------------------------------------------------
             //	Determine if extension exists
             //------------------------------------------------------------
-            Dictionary<string, string> namespaces   = (Dictionary<string, string>)source.GetNamespacesInScope(XmlNamespaceScope.ExcludeXml);
-            
-            if (namespaces.ContainsValue(this.XmlNamespace))
+            //BEGIN PATCH
+            //Dictionary<string, string> namespaces   = (Dictionary<string, string>)source.GetNamespacesInScope(XmlNamespaceScope.ExcludeXml);
+            //if (namespaces.ContainsValue(this.XmlNamespace))
+            //{
+            //    extensionExists = true;
+            //}
+            //else if (namespaces.ContainsKey(this.XmlPrefix))
+            //{
+            //    extensionExists = true;
+            //}
+            var namespaces = source.GetAllNamespaces();
+            if (namespaces.Any(item => item.Value == this.XmlNamespace) || namespaces.Any(item => item.Key == this.XmlPrefix))
             {
                 extensionExists = true;
             }
-            else if (namespaces.ContainsKey(this.XmlPrefix))
-            {
-                extensionExists = true;
-            }
+            //END PATCH
 
             return extensionExists;
         }

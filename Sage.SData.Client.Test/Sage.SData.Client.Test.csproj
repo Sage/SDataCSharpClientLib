@@ -56,6 +56,7 @@
     <Compile Include="Extensions\SDataSimpleCollectionTests.cs" />
     <Compile Include="Extensions\SDataPayloadTests.cs" />
     <Compile Include="Extensions\SDataSyncExtensionContextTests.cs" />
+    <Compile Include="Extensions\SyndicationExtensionTests.cs" />
     <Compile Include="Extensions\Utility.cs" />
     <Compile Include="Framework\DiagnosisTests.cs" />
     <Compile Include="Framework\MediaTypeNamesTests.cs" />
