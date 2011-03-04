@@ -10,7 +10,7 @@ namespace Sage.SData.Client.Metadata
         private readonly IEnumerable<TItem> _objects;
         private readonly Func<TItem, TKey> _selectKey;
 
-        public KeyedEnumerable(IEnumerable<TItem> objects, Func<TItem, TKey> selectKey)
+        internal KeyedEnumerable(IEnumerable<TItem> objects, Func<TItem, TKey> selectKey)
         {
             _objects = objects;
             _selectKey = selectKey;
