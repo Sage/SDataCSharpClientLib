@@ -23,6 +23,8 @@ namespace Sage.SData.Client.Framework
     public class SDataRequest
     {
         private readonly IList<RequestOperation> _operations;
+        private bool _proxySet;
+        private IWebProxy _proxy;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SDataRequest"/> class.
@@ -87,7 +89,15 @@ namespace Sage.SData.Client.Framework
         /// <summary>
         /// Gets or sets the proxy used by requests.
         /// </summary>
-        public IWebProxy Proxy { get; set; }
+        public IWebProxy Proxy
+        {
+            get { return _proxy; }
+            set
+            {
+                _proxySet = true;
+                _proxy = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the accept media types accepted by requests.
@@ -210,8 +220,12 @@ namespace Sage.SData.Client.Framework
             var request = WebRequest.Create(uri);
             request.Method = op.Method.ToString().ToUpper();
             request.Timeout = Timeout;
-            request.Proxy = Proxy;
             request.PreAuthenticate = true;
+
+            if (_proxySet)
+            {
+                request.Proxy = _proxy;
+            }
 
             var httpRequest = request as HttpWebRequest;
             if (httpRequest != null)
