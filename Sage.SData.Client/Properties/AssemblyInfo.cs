@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sage Software, Inc.")]
 [assembly: AssemblyProduct("Sage.SData.Client")]
-[assembly: AssemblyCopyright("©1997-2008 Sage Software, Inc. All Rights Reserved")]
+[assembly: AssemblyCopyright("©1997-2011 Sage Software, Inc. All Rights Reserved")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
