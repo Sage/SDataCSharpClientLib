@@ -307,16 +307,30 @@ namespace Sage.SData.Client.Test.Extensions
         }
 
         [Test]
-        public void Written_Reference_Uses_Property_Name()
+        public void Collection_Items_Can_Be_In_Different_Namespace()
         {
             var payload = new SDataPayload
                           {
-                              ResourceName = "salesOrderLine",
-                              Namespace = "",
-                              Values = {{"order", new SDataPayload {ResourceName = "salesOrder"}}}
+                              ResourceName = "tradingAccount",
+                              Namespace = "http://gcrm.com",
+                              Values =
+                                  {
+                                      {
+                                          "emails", new SDataPayloadCollection("email")
+                                                    {
+                                                        new SDataPayload
+                                                        {
+                                                            Namespace = "http://common.com"
+                                                        }
+                                                    }
+                                          }
+                                  }
                           };
             var nav = WritePayload(payload);
-            var node = nav.SelectSingleNode("*/salesOrderLine/order");
+            var mgr = new XmlNamespaceManager(nav.NameTable);
+            mgr.AddNamespace("g", "http://gcrm.com");
+            mgr.AddNamespace("c", "http://common.com");
+            var node = nav.SelectSingleNode("*/g:tradingAccount/g:emails/c:email", mgr);
             Assert.That(node, Is.Not.Null);
         }
 
