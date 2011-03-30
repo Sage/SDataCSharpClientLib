@@ -140,9 +140,9 @@ namespace Sage.SData.Client.Metadata
                 Imports.Add(import);
             }
 
-            XmlSchemaElement lastElement = null;
-            SDataSchemaComplexType lastComplexType = null;
-            XmlSchemaComplexType lastComplexList = null;
+            var elements = xmlSchema.Items.OfType<XmlSchemaElement>().ToDictionary(element => element.SchemaTypeName);
+            var complexTypes = new Dictionary<XmlQualifiedName, SDataSchemaComplexType>();
+            var complexLists = new Dictionary<XmlQualifiedName, XmlSchemaComplexType>();
 
             foreach (var item in xmlSchema.Items)
             {
@@ -150,9 +150,6 @@ namespace Sage.SData.Client.Metadata
 
                 if (item is XmlSchemaElement)
                 {
-                    lastElement = (XmlSchemaElement) item;
-                    lastComplexType = null;
-                    lastComplexList = null;
                     continue;
                 }
 
@@ -164,16 +161,17 @@ namespace Sage.SData.Client.Metadata
                     {
                         var qualifiedName = new XmlQualifiedName(xmlComplexType.Name, TargetNamespace);
                         SDataSchemaComplexType complexType;
+                        XmlSchemaElement element;
 
-                        if (lastElement != null && lastElement.SchemaTypeName == qualifiedName)
+                        if (elements.TryGetValue(qualifiedName, out element))
                         {
-                            var roleAttr = lastElement.UnhandledAttributes != null
-                                               ? lastElement.UnhandledAttributes.FirstOrDefault(attr => attr.NamespaceURI == SmeNamespaceUri && attr.LocalName == "role")
+                            var roleAttr = element.UnhandledAttributes != null
+                                               ? element.UnhandledAttributes.FirstOrDefault(attr => attr.NamespaceURI == SmeNamespaceUri && attr.LocalName == "role")
                                                : null;
 
                             if (roleAttr == null)
                             {
-                                throw new InvalidOperationException(string.Format("Role attribute on top level element '{0}' not found", lastElement.Name));
+                                throw new InvalidOperationException(string.Format("Role attribute on top level element '{0}' not found", element.Name));
                             }
 
                             switch (roleAttr.Value)
@@ -188,10 +186,11 @@ namespace Sage.SData.Client.Metadata
                                     complexType = new SDataSchemaNamedQueryType();
                                     break;
                                 default:
-                                    throw new InvalidOperationException(string.Format("Unexpected role attribute value '{0}' on top level element '{1}'", roleAttr.Value, lastElement.Name));
+                                    throw new InvalidOperationException(string.Format("Unexpected role attribute value '{0}' on top level element '{1}'", roleAttr.Value, element.Name));
                             }
 
-                            complexType.Read(lastElement);
+                            complexType.Read(element);
+                            elements.Remove(qualifiedName);
                         }
                         else
                         {
@@ -199,70 +198,52 @@ namespace Sage.SData.Client.Metadata
                         }
 
                         type = complexType;
-                        lastElement = null;
+                        XmlSchemaComplexType complexList;
 
-                        if (lastComplexList != null)
+                        if (complexLists.TryGetValue(qualifiedName, out complexList))
                         {
-                            var sequence = (XmlSchemaSequence) lastComplexList.Particle;
+                            var sequence = (XmlSchemaSequence) complexList.Particle;
+                            var itemElement = (XmlSchemaElement) sequence.Items[0];
 
-                            if (sequence.Items.Count != 1)
-                            {
-                                throw new InvalidOperationException(string.Format("Particle on list complex type '{0}' does not contain exactly one element", lastComplexList.Name));
-                            }
-
-                            var element = sequence.Items[0] as XmlSchemaElement;
-
-                            if (element == null)
-                            {
-                                throw new InvalidOperationException(string.Format("Unexpected sequence item type '{0}' on list complex type '{1}'", sequence.Items[0].GetType(), lastComplexList.Name));
-                            }
-
-                            if (element.SchemaTypeName != qualifiedName)
-                            {
-                                throw new InvalidOperationException(string.Format("List element type '{0}' does not match complex type '{1}'", element.SchemaTypeName, qualifiedName));
-                            }
-
-                            complexType.ListName = lastComplexList.Name;
-                            complexType.ListItemName = element.Name;
-                            complexType.ListAnyAttribute = lastComplexList.AnyAttribute;
-                            lastComplexList = null;
+                            complexType.ListName = complexList.Name;
+                            complexType.ListItemName = itemElement.Name;
+                            complexType.ListAnyAttribute = complexList.AnyAttribute;
+                            complexLists.Remove(qualifiedName);
                         }
                         else
                         {
-                            lastComplexType = complexType;
+                            complexTypes.Add(qualifiedName, complexType);
                         }
                     }
                     else if (xmlComplexType.Particle is XmlSchemaSequence)
                     {
-                        if (lastComplexType != null)
+                        var sequence = (XmlSchemaSequence) xmlComplexType.Particle;
+
+                        if (sequence.Items.Count != 1)
                         {
-                            var sequence = (XmlSchemaSequence) xmlComplexType.Particle;
+                            throw new InvalidOperationException(string.Format("Particle on list complex type '{0}' does not contain exactly one element", xmlComplexType.Name));
+                        }
 
-                            if (sequence.Items.Count != 1)
-                            {
-                                throw new InvalidOperationException(string.Format("Particle on list complex type '{0}' does not contain exactly one element", xmlComplexType.Name));
-                            }
+                        var element = sequence.Items[0] as XmlSchemaElement;
 
-                            var element = sequence.Items[0] as XmlSchemaElement;
+                        if (element == null)
+                        {
+                            throw new InvalidOperationException(string.Format("Unexpected sequence item type '{0}' on list complex type '{1}'", sequence.Items[0].GetType(), xmlComplexType.Name));
+                        }
 
-                            if (element == null)
-                            {
-                                throw new InvalidOperationException(string.Format("Unexpected sequence item type '{0}' on list complex type '{1}'", sequence.Items[0].GetType(), xmlComplexType.Name));
-                            }
+                        var qualifiedName = element.SchemaTypeName;
+                        SDataSchemaComplexType complexType;
 
-                            if (element.SchemaTypeName != lastComplexType.QualifiedName)
-                            {
-                                throw new InvalidOperationException(string.Format("List element type '{0}' does not match complex type '{1}'", element.SchemaTypeName, lastComplexType.QualifiedName));
-                            }
-
-                            lastComplexType.ListName = xmlComplexType.Name;
-                            lastComplexType.ListItemName = element.Name;
-                            lastComplexType.ListAnyAttribute = xmlComplexType.AnyAttribute;
-                            lastComplexType = null;
+                        if (complexTypes.TryGetValue(qualifiedName, out complexType))
+                        {
+                            complexType.ListName = xmlComplexType.Name;
+                            complexType.ListItemName = element.Name;
+                            complexType.ListAnyAttribute = xmlComplexType.AnyAttribute;
+                            complexTypes.Remove(qualifiedName);
                         }
                         else
                         {
-                            lastComplexList = xmlComplexType;
+                            complexLists.Add(qualifiedName, xmlComplexType);
                         }
 
                         continue;

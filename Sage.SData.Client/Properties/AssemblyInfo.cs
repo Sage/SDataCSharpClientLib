@@ -32,8 +32,8 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.3.0.1450")]
-[assembly: AssemblyFileVersion("1.3.0.1450")]
+[assembly: AssemblyVersion("1.3.0.1451")]
+[assembly: AssemblyFileVersion("1.3.0.1451")]
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: AssemblyInformationalVersion("1.3")]
 [assembly: InternalsVisibleTo("Sage.SData.Client.Test")]
