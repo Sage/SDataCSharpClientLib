@@ -60,6 +60,22 @@ namespace Sage.SData.Client.Metadata
             Name = element.Name;
             MinOccurs = element.MinOccursString != null ? element.MinOccurs : (decimal?) null;
             Type = element.SchemaTypeName;
+
+            if (element.SchemaTypeName.IsEmpty)
+            {
+                var simpleType = element.SchemaType as XmlSchemaSimpleType;
+
+                if (simpleType != null)
+                {
+                    var restriction = simpleType.Content as XmlSchemaSimpleTypeRestriction;
+
+                    if (restriction != null)
+                    {
+                        Type = restriction.BaseTypeName;
+                    }
+                }
+            }
+
             IsNillable = element.IsNillable;
             base.Read(obj);
         }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
+using System.Xml.Schema;
 
 namespace Sage.SData.Client.Metadata
 {
@@ -99,6 +101,42 @@ namespace Sage.SData.Client.Metadata
         /// </summary>
         [Obsolete]
         public string CopiedFrom { get; set; }
+
+        protected internal override void Read(XmlSchemaObject obj)
+        {
+            var element = (XmlSchemaElement) obj;
+
+            if (element.SchemaTypeName.IsEmpty)
+            {
+                var simpleType = element.SchemaType as XmlSchemaSimpleType;
+
+                if (simpleType != null)
+                {
+                    var restriction = simpleType.Content as XmlSchemaSimpleTypeRestriction;
+
+                    if (restriction != null)
+                    {
+                        foreach (var facet in restriction.Facets.OfType<XmlSchemaNumericFacet>())
+                        {
+                            if (facet is XmlSchemaMaxLengthFacet)
+                            {
+                                MaxLength = XmlConvert.ToInt32(facet.Value);
+                            }
+                            else if (facet is XmlSchemaTotalDigitsFacet)
+                            {
+                                TotalDigits = XmlConvert.ToInt32(facet.Value);
+                            }
+                            else if (facet is XmlSchemaFractionDigitsFacet)
+                            {
+                                FractionDigits = XmlConvert.ToInt32(facet.Value);
+                            }
+                        }
+                    }
+                }
+            }
+
+            base.Read(obj);
+        }
 
         protected override bool ReadSmeAttribute(XmlAttribute attribute)
         {
