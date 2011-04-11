@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
 using System.Xml.Schema;
@@ -48,6 +49,28 @@ namespace Sage.SData.Client.Metadata
         /// For example, an ID set by the provider or a calculated property.
         /// </summary>
         public bool IsReadOnly { get; set; }
+
+        /// <summary>
+        /// Can the feed be sorted by this property?
+        /// </summary>
+        public bool CanSort { get; set; }
+
+        /// <summary>
+        /// Can the feed be filtered by the property?
+        /// </summary>
+        public bool CanFilter { get; set; }
+
+        /// <summary>
+        /// Can feed entries be grouped by values of this property?
+        /// </summary>
+        public bool CanGroup { get; set; }
+
+        /// <summary>
+        /// Indicates that the property is dependent upon a related resource and gives
+        /// the XPath expression for the corresponding property in the related resource.
+        /// </summary>
+        [Obsolete]
+        public string CopiedFrom { get; set; }
 
         public override IEnumerable<SDataSchemaObject> Children
         {

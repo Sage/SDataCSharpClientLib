@@ -18,21 +18,6 @@ namespace Sage.SData.Client.Metadata
         }
 
         /// <summary>
-        /// Can the feed be sorted by this property?
-        /// </summary>
-        public bool CanSort { get; set; }
-
-        /// <summary>
-        /// Can the feed be filtered by the property?
-        /// </summary>
-        public bool CanFilter { get; set; }
-
-        /// <summary>
-        /// Can feed entries be grouped by values of this property?
-        /// </summary>
-        public bool CanGroup { get; set; }
-
-        /// <summary>
         /// Does the property contain localized text?
         /// </summary>
         public bool IsLocalized { get; set; }
@@ -94,13 +79,6 @@ namespace Sage.SData.Client.Metadata
         /// </summary>
         [Obsolete]
         public bool IsDescriptor { get; set; }
-
-        /// <summary>
-        /// Indicates that the property is dependent upon a related resource and gives
-        /// the XPath expression for the corresponding property in the related resource.
-        /// </summary>
-        [Obsolete]
-        public string CopiedFrom { get; set; }
 
         protected internal override void Read(XmlSchemaObject obj)
         {

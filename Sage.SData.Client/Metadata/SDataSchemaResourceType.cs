@@ -101,6 +101,11 @@ namespace Sage.SData.Client.Metadata
         /// </summary>
         public bool CanPageIndex { get; set; }
 
+        /// <summary>
+        /// List of protocol filter variables supported in where parameters and resource selectors.
+        /// </summary>
+        public string ProtocolFilters { get; set; }
+
         protected override bool ReadSmeAttribute(XmlAttribute attribute)
         {
             switch (attribute.LocalName)
