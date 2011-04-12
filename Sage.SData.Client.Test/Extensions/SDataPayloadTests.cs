@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Xml;
-using System.Xml.XPath;
 using NUnit.Framework;
 using Sage.SData.Client.Extensions;
 
@@ -24,7 +22,7 @@ namespace Sage.SData.Client.Test.Extensions
                                    sdata:lookup=""http://www.example.com/sdata/myApp/myContract/-/contacts""/>
                           <orderLines sdata:uri=""http://www.example.com/sdata/myApp/myContract/-/salesOrderLines?where=salesOrderID%20eq%2043660""/>
                         </salesOrder>";
-            var payload = LoadPayload(xml);
+            var payload = Utility.LoadPayload(xml);
 
             Assert.That(payload.ResourceName, Is.EqualTo("salesOrder"));
             Assert.That(payload.Namespace, Is.EqualTo("http://schemas.sage.com/myContract"));
@@ -62,7 +60,7 @@ namespace Sage.SData.Client.Test.Extensions
                             <lastName>Smith</lastName>
                           </contact>
                         </salesOrder>";
-            var payload = LoadPayload(xml);
+            var payload = Utility.LoadPayload(xml);
 
             Assert.That(payload.ResourceName, Is.EqualTo("salesOrder"));
             Assert.That(payload.Values.Count, Is.EqualTo(1));
@@ -86,7 +84,7 @@ namespace Sage.SData.Client.Test.Extensions
             var xml = @"<salesOrder>
                           <orderLines />
                         </salesOrder>";
-            var payload = LoadPayload(xml);
+            var payload = Utility.LoadPayload(xml);
 
             Assert.That(payload.ResourceName, Is.EqualTo("salesOrder"));
             Assert.That(payload.Values.Count, Is.EqualTo(1));
@@ -104,7 +102,7 @@ namespace Sage.SData.Client.Test.Extensions
             var xml = @"<x:salesOrder xmlns:x=""http://schemas.sage.com/dynamic/2007"">
                           <orderLines />
                         </x:salesOrder>";
-            var payload = LoadPayload(xml);
+            var payload = Utility.LoadPayload(xml);
 
             Assert.That(payload.ResourceName, Is.EqualTo("salesOrder"));
             Assert.That(payload.Values.Count, Is.EqualTo(1));
@@ -124,7 +122,7 @@ namespace Sage.SData.Client.Test.Extensions
                             <salesOrderLine sdata:key=""43660-1"" />
                           </orderLines>
                         </salesOrder>";
-            var payload = LoadPayload(xml);
+            var payload = Utility.LoadPayload(xml);
 
             Assert.That(payload.ResourceName, Is.EqualTo("salesOrder"));
             Assert.That(payload.Values.Count, Is.EqualTo(1));
@@ -150,7 +148,7 @@ namespace Sage.SData.Client.Test.Extensions
                             <salesOrderLine sdata:key=""43660-2"" />
                           </orderLines>
                         </salesOrder>";
-            var payload = LoadPayload(xml);
+            var payload = Utility.LoadPayload(xml);
 
             Assert.That(payload.ResourceName, Is.EqualTo("salesOrder"));
             Assert.That(payload.Values.Count, Is.EqualTo(1));
@@ -184,7 +182,7 @@ namespace Sage.SData.Client.Test.Extensions
                             <tick>11</tick>
                           </digestEntry>
                         </digest>";
-            var payload = LoadPayload(xml);
+            var payload = Utility.LoadPayload(xml);
 
             Assert.That(payload.ResourceName, Is.EqualTo("digest"));
             Assert.That(payload.Namespace, Is.EqualTo("http://schemas.sage.com/sdata/sync/2008/1"));
@@ -221,7 +219,7 @@ namespace Sage.SData.Client.Test.Extensions
                             <salesOrderLine sdata:key=""43660-2"" />
                           </orderLines>
                         </salesOrder>";
-            var payload = LoadPayload(xml);
+            var payload = Utility.LoadPayload(xml);
             var orderLines = payload.Values["orderLines"] as SDataPayloadCollection;
             Assert.That(orderLines, Is.Not.Null);
             Assert.That(orderLines.ResourceName, Is.EqualTo("salesOrderLine"));
@@ -244,7 +242,7 @@ namespace Sage.SData.Client.Test.Extensions
                                           }
                                   }
                           };
-            var nav = WritePayload(payload);
+            var nav = Utility.WritePayload(payload);
             var node = nav.SelectSingleNode("*/salesOrder/orderLines/salesOrderLine");
             Assert.That(node, Is.Not.Null);
         }
@@ -277,7 +275,7 @@ namespace Sage.SData.Client.Test.Extensions
                                       {"TimeSpan", DateTime.Now.TimeOfDay}
                                   }
                           };
-            var nav = WritePayload(payload);
+            var nav = Utility.WritePayload(payload);
             nav = nav.SelectSingleNode("*/salesOrder");
 
             var assertDoesNotThrow = new Action<string, Action<string>>(
@@ -326,7 +324,7 @@ namespace Sage.SData.Client.Test.Extensions
                                           }
                                   }
                           };
-            var nav = WritePayload(payload);
+            var nav = Utility.WritePayload(payload);
             var mgr = new XmlNamespaceManager(nav.NameTable);
             mgr.AddNamespace("g", "http://gcrm.com");
             mgr.AddNamespace("c", "http://common.com");
@@ -342,42 +340,28 @@ namespace Sage.SData.Client.Test.Extensions
                             <unitPrice>100</unitPrice>
                           </response>
                         </productComputeSimplePrice>";
-            var payload = LoadPayload(xml);
+            var payload = Utility.LoadPayload(xml);
 
             object value;
             Assert.That(payload.Values.TryGetValue("response", out value), Is.True);
             Assert.That(value, Is.InstanceOf<SDataPayload>());
         }
 
-        private static SDataPayload LoadPayload(string xml)
+        [Test]
+        public void Uri_Property_Should_Be_Escaped_When_Written()
         {
-            var payload = new SDataPayload();
-
-            using (var strReader = new StringReader(xml))
-            using (var xmlReader = XmlReader.Create(strReader))
-            {
-                var doc = new XPathDocument(xmlReader);
-                var source = doc.CreateNavigator();
-                var manager = new XmlNamespaceManager(source.NameTable);
-                source.MoveToFirstChild();
-                payload.Load(source, manager);
-            }
-
-            return payload;
-        }
-
-        private static XPathNavigator WritePayload(SDataPayload payload)
-        {
-            using (var stream = new MemoryStream())
-            {
-                using (var writer = XmlWriter.Create(stream))
-                {
-                    payload.WriteTo(writer, Client.Framework.Common.Atom.Namespace);
-                }
-
-                stream.Seek(0, SeekOrigin.Begin);
-                return new XPathDocument(stream).CreateNavigator();
-            }
+            var payload = new SDataPayload
+                          {
+                              ResourceName = "person",
+                              Namespace = "http://test.com",
+                              Uri = new Uri("http://localhost/person('`%^ []{}<>')")
+                          };
+            var nav = Utility.WritePayload(payload);
+            var mgr = new XmlNamespaceManager(nav.NameTable);
+            mgr.AddNamespace("sdata", Client.Framework.Common.SData.Namespace);
+            mgr.AddNamespace("test", "http://test.com");
+            var node = nav.SelectSingleNode("sdata:payload/test:person/@sdata:uri", mgr);
+            Assert.That(node.Value, Is.EqualTo("http://localhost/person('%60%25%5E%20%5B%5D%7B%7D%3C%3E')"));
         }
     }
 }

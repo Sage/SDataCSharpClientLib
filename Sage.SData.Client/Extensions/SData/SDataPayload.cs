@@ -224,7 +224,7 @@ namespace Sage.SData.Client.Extensions
             writer.WriteStartElement(name, ns);
 
             if (Key != null) writer.WriteAttributeString("key", xmlNamespace, Key);
-            if (Uri != null) writer.WriteAttributeString("uri", xmlNamespace, Uri.ToString().Replace(" ", "%20"));
+            if (Uri != null) writer.WriteAttributeString("uri", xmlNamespace, Uri.AbsoluteUri);
             if (Uuid != null) writer.WriteAttributeString("uuid", xmlNamespace, Uuid.ToString());
             if (Descriptor != null) writer.WriteAttributeString("descriptor", xmlNamespace, Descriptor);
             if (Lookup != null) writer.WriteAttributeString("lookup", xmlNamespace, Lookup);

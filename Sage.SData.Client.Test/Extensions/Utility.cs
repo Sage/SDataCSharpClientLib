@@ -5,7 +5,7 @@ using Sage.SData.Client.Extensions;
 
 namespace Sage.SData.Client.Test.Extensions
 {
-    public class SDataPayloadUtility
+    public static class Utility
     {
         public static SDataPayload LoadPayload(string xml)
         {
@@ -30,7 +30,7 @@ namespace Sage.SData.Client.Test.Extensions
             {
                 using (var writer = XmlWriter.Create(stream))
                 {
-                    payload.WriteTo(writer, Client.Framework.Common.Atom.Namespace);
+                    payload.WriteTo(writer, Client.Framework.Common.SData.Namespace);
                 }
 
                 stream.Seek(0, SeekOrigin.Begin);
