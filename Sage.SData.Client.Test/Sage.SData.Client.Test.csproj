@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\BatchProcessTests.cs" />
+    <Compile Include="Extensions\SDataExtensionContextTests.cs" />
     <Compile Include="Extensions\SDataSimpleCollectionTests.cs" />
     <Compile Include="Extensions\SDataPayloadTests.cs" />
     <Compile Include="Extensions\SDataSyncExtensionContextTests.cs" />

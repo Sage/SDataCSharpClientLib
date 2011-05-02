@@ -92,8 +92,19 @@ namespace Sage.SData.Client.Extensions
                     }
                 }
 
-                var diagnosesNavigator = source.Select("sdata:diagnoses", manager);
+                var diagnosesNavigator = source.Select("sdata:diagnoses/sdata:diagnosis", manager);
                 foreach (XPathNavigator item in diagnosesNavigator)
+                {
+                    var diagnosis = new Diagnosis();
+                    if (diagnosis.Load(item, manager))
+                    {
+                        Diagnoses.Add(diagnosis);
+                        wasLoaded = true;
+                    }
+                }
+
+                var diagnosisNavigator = source.Select("sdata:diagnosis", manager);
+                foreach (XPathNavigator item in diagnosisNavigator)
                 {
                     var diagnosis = new Diagnosis();
                     if (diagnosis.Load(item, manager))
@@ -152,12 +163,10 @@ namespace Sage.SData.Client.Extensions
 
             if (Diagnoses.Count > 0)
             {
-                writer.WriteStartElement("diagnoses", xmlNamespace);
                 foreach (var diagnosis in Diagnoses)
                 {
                     diagnosis.WriteTo(writer, xmlNamespace);
                 }
-                writer.WriteEndElement();
             }
 
             if (Schema != null)
