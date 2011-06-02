@@ -110,6 +110,11 @@ namespace Sage.SData.Client.Framework
         public CookieContainer Cookies { get; set; }
 
         /// <summary>
+        /// Gets of sets the credentials associated with this request.
+        /// </summary>
+        public ICredentials Credentials { get; set; }
+
+        /// <summary>
         /// Lists the operations associated with this request.
         /// </summary>
         public IList<RequestOperation> Operations
@@ -251,14 +256,26 @@ namespace Sage.SData.Client.Framework
                 }
             }
 
-            if (!string.IsNullOrEmpty(UserName) || !string.IsNullOrEmpty(Password))
+            if (Credentials != null)
             {
+                request.Credentials = Credentials;
+            }
+            else if (!string.IsNullOrEmpty(UserName) || !string.IsNullOrEmpty(Password))
+            {
+                var uriPrefix = new Uri(uri);
                 var cred = new NetworkCredential(UserName, Password);
                 request.Credentials = new CredentialCache
                                       {
-                                          {new Uri(uri), "Digest", cred},
-                                          {new Uri(uri), "Basic", cred}
+                                          {uriPrefix, "Basic", cred},
+                                          {uriPrefix, "Digest", cred},
+                                          {uriPrefix, "NTLM", cred},
+                                          {uriPrefix, "Kerberos", cred},
+                                          {uriPrefix, "Negotiate", cred}
                                       };
+            }
+            else
+            {
+                request.Credentials = CredentialCache.DefaultCredentials;
             }
 
             if (!string.IsNullOrEmpty(op.ETag))
