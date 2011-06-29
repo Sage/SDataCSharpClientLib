@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using Sage.SData.Client.Atom;
-using Sage.SData.Client.Common;
 
 namespace Sage.SData.Client.Framework
 {
@@ -41,7 +40,7 @@ namespace Sage.SData.Client.Framework
         /// </summary>
         /// <param name="method">One of the <see cref="HttpMethod"/> values</param>
         /// <param name="resource">The input resource involved in the operation.</param>
-        public RequestOperation(HttpMethod method, ISyndicationResource resource)
+        public RequestOperation(HttpMethod method, object resource)
         {
             if (resource == null)
             {
@@ -78,7 +77,12 @@ namespace Sage.SData.Client.Framework
         /// <summary>
         /// Gets or sets the input resource for the request.
         /// </summary>
-        public ISyndicationResource Resource { get; set; }
+        public object Resource { get; set; }
+
+        /// <summary>
+        /// Gets or sets the input content type for the request.
+        /// </summary>
+        public MediaType? ContentType { get; set; }
 
         /// <summary>
         /// Gets or sets the ETag value for the request.

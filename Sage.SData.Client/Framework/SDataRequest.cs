@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Mime;
+using System.Xml;
+using System.Xml.Serialization;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
 using Sage.SData.Client.Extensions;
@@ -290,12 +292,43 @@ namespace Sage.SData.Client.Framework
             {
                 using (var stream = request.GetRequestStream())
                 {
-                    var contentType = op.Resource is AtomFeed
-                                          ? MediaTypeNames.AtomFeedMediaType
-                                          : MediaTypeNames.AtomEntryMediaType;
-
                     var requestStream = op.Files.Count > 0 ? new MemoryStream() : stream;
-                    op.Resource.Save(requestStream);
+                    MediaType mediaType;
+
+                    if (op.Resource is ISyndicationResource)
+                    {
+                        mediaType = op.Resource is AtomFeed ? MediaType.Atom : MediaType.AtomEntry;
+                        ((ISyndicationResource) op.Resource).Save(requestStream);
+                    }
+                    else if (op.Resource is IXmlSerializable)
+                    {
+                        mediaType = MediaType.Xml;
+
+                        using (var xmlWriter = XmlWriter.Create(requestStream))
+                        {
+                            ((IXmlSerializable) op.Resource).WriteXml(xmlWriter);
+                        }
+                    }
+                    else if (op.Resource is string)
+                    {
+                        mediaType = MediaType.Text;
+
+                        using (var writer = new StreamWriter(requestStream))
+                        {
+                            writer.Write((string) op.Resource);
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+
+                    if (op.ContentType != null)
+                    {
+                        mediaType = op.ContentType.Value;
+                    }
+
+                    var contentType = MediaTypeNames.GetMediaType(mediaType);
 
                     if (op.Files.Count > 0)
                     {
