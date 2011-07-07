@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using System.Xml.Schema;
 
 namespace Sage.SData.Client.Metadata
@@ -34,18 +33,10 @@ namespace Sage.SData.Client.Metadata
         }
 
         public XmlSchemaAnyAttribute AnyAttribute { get; set; }
-        public string ListName { get; set; }
-        public string ListItemName { get; set; }
-        public XmlSchemaAnyAttribute ListAnyAttribute { get; set; }
 
         public override IEnumerable<SDataSchemaObject> Children
         {
             get { return (BaseType != null ? new[] {BaseType} : base.Children).Concat(Properties.Cast<SDataSchemaObject>()); }
-        }
-
-        public XmlQualifiedName ListQualifiedName
-        {
-            get { return new XmlQualifiedName(ListName, Schema != null ? Schema.TargetNamespace : null); }
         }
 
         public KeyedObjectCollection<SDataSchemaProperty> Properties

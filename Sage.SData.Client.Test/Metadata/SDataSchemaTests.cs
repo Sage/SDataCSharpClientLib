@@ -98,5 +98,59 @@ namespace Sage.SData.Client.Test.Metadata
             Assert.That(resource.Name, Is.EqualTo("tradingAccount--type"));
             Assert.That(resource.ListName, Is.EqualTo("tradingAccount--list"));
         }
+
+        [Test]
+        public void Choice_Schema_Types_Support_List_Types_Test()
+        {
+            const string xsd = @"
+<xs:schema xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+  <xs:complexType name=""test--choice"">
+    <xs:choice />
+  </xs:complexType>
+  <xs:complexType name=""test--list"">
+    <xs:sequence>
+      <xs:element name=""test"" type=""test--choice"" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>";
+            SDataSchema schema;
+
+            using (var reader = new StringReader(xsd))
+            {
+                schema = SDataSchema.Read(reader);
+            }
+
+            var type = schema.Types["test--choice"];
+            Assume.That(type, Is.InstanceOf<SDataSchemaChoiceType>());
+            Assert.That(type.ListName, Is.EqualTo("test--list"));
+            Assert.That(type.ListItemName, Is.EqualTo("test"));
+        }
+
+        [Test]
+        public void Enum_Schema_Types_Support_List_Types_Test()
+        {
+            const string xsd = @"
+<xs:schema xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+  <xs:simpleType name=""test--enum"">
+    <xs:restriction base=""xs:string"" />
+  </xs:simpleType>
+  <xs:complexType name=""test--list"">
+    <xs:sequence>
+      <xs:element name=""test"" type=""test--enum"" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>";
+            SDataSchema schema;
+
+            using (var reader = new StringReader(xsd))
+            {
+                schema = SDataSchema.Read(reader);
+            }
+
+            var type = schema.Types["test--enum"];
+            Assume.That(type, Is.InstanceOf<SDataSchemaEnumType>());
+            Assert.That(type.ListName, Is.EqualTo("test--list"));
+            Assert.That(type.ListItemName, Is.EqualTo("test"));
+        }
     }
 }

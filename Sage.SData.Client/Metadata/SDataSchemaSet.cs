@@ -6,7 +6,7 @@ using Sage.SData.Client.Common;
 
 namespace Sage.SData.Client.Metadata
 {
-    public class SDataSchemaSet
+    public class SDataSchemaSet : SDataSchemaObject
     {
         private readonly List<SDataSchema> _schemas;
 
@@ -19,7 +19,18 @@ namespace Sage.SData.Client.Metadata
         {
             Guard.ArgumentNotNull(schemas, "schemas");
             _schemas = new List<SDataSchema>(schemas);
+
+            foreach (var schema in schemas)
+            {
+                schema.Parent = this;
+            }
+
             Compile();
+        }
+
+        public override IEnumerable<SDataSchemaObject> Children
+        {
+            get { return Schemas.Cast<SDataSchemaObject>(); }
         }
 
         public ICollection<SDataSchema> Schemas

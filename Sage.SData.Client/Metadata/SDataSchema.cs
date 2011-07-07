@@ -141,17 +141,13 @@ namespace Sage.SData.Client.Metadata
             }
 
             var elements = xmlSchema.Items.OfType<XmlSchemaElement>().ToDictionary(element => element.SchemaTypeName);
-            var complexTypes = new Dictionary<XmlQualifiedName, SDataSchemaComplexType>();
-            var complexLists = new Dictionary<XmlQualifiedName, XmlSchemaComplexType>();
+            var types = new Dictionary<XmlQualifiedName, SDataSchemaType>();
+            var lists = new Dictionary<XmlQualifiedName, XmlSchemaComplexType>();
 
-            foreach (var item in xmlSchema.Items)
+            foreach (var item in xmlSchema.Items.OfType<XmlSchemaType>())
             {
                 SDataSchemaType type;
-
-                if (item is XmlSchemaElement)
-                {
-                    continue;
-                }
+                var qualifiedName = new XmlQualifiedName(item.Name, TargetNamespace);
 
                 if (item is XmlSchemaComplexType)
                 {
@@ -159,8 +155,6 @@ namespace Sage.SData.Client.Metadata
 
                     if (xmlComplexType.Particle == null || xmlComplexType.Particle is XmlSchemaAll)
                     {
-                        var qualifiedName = new XmlQualifiedName(xmlComplexType.Name, TargetNamespace);
-                        SDataSchemaComplexType complexType;
                         XmlSchemaElement element;
 
                         if (elements.TryGetValue(qualifiedName, out element))
@@ -177,42 +171,24 @@ namespace Sage.SData.Client.Metadata
                             switch (roleAttr.Value)
                             {
                                 case "resourceKind":
-                                    complexType = new SDataSchemaResourceType();
+                                    type = new SDataSchemaResourceType();
                                     break;
                                 case "serviceOperation":
-                                    complexType = new SDataSchemaServiceOperationType();
+                                    type = new SDataSchemaServiceOperationType();
                                     break;
                                 case "query":
-                                    complexType = new SDataSchemaNamedQueryType();
+                                    type = new SDataSchemaNamedQueryType();
                                     break;
                                 default:
                                     throw new InvalidOperationException(string.Format("Unexpected role attribute value '{0}' on top level element '{1}'", roleAttr.Value, element.Name));
                             }
 
-                            complexType.Read(element);
+                            type.Read(element);
                             elements.Remove(qualifiedName);
                         }
                         else
                         {
-                            complexType = new SDataSchemaComplexType();
-                        }
-
-                        type = complexType;
-                        XmlSchemaComplexType complexList;
-
-                        if (complexLists.TryGetValue(qualifiedName, out complexList))
-                        {
-                            var sequence = (XmlSchemaSequence) complexList.Particle;
-                            var itemElement = (XmlSchemaElement) sequence.Items[0];
-
-                            complexType.ListName = complexList.Name;
-                            complexType.ListItemName = itemElement.Name;
-                            complexType.ListAnyAttribute = complexList.AnyAttribute;
-                            complexLists.Remove(qualifiedName);
-                        }
-                        else
-                        {
-                            complexTypes.Add(qualifiedName, complexType);
+                            type = new SDataSchemaComplexType();
                         }
                     }
                     else if (xmlComplexType.Particle is XmlSchemaSequence)
@@ -231,19 +207,18 @@ namespace Sage.SData.Client.Metadata
                             throw new InvalidOperationException(string.Format("Unexpected sequence item type '{0}' on list complex type '{1}'", sequence.Items[0].GetType(), xmlComplexType.Name));
                         }
 
-                        var qualifiedName = element.SchemaTypeName;
-                        SDataSchemaComplexType complexType;
+                        SDataSchemaType complexType;
 
-                        if (complexTypes.TryGetValue(qualifiedName, out complexType))
+                        if (types.TryGetValue(element.SchemaTypeName, out complexType))
                         {
                             complexType.ListName = xmlComplexType.Name;
                             complexType.ListItemName = element.Name;
                             complexType.ListAnyAttribute = xmlComplexType.AnyAttribute;
-                            complexTypes.Remove(qualifiedName);
+                            types.Remove(element.SchemaTypeName);
                         }
                         else
                         {
-                            complexLists.Add(qualifiedName, xmlComplexType);
+                            lists.Add(element.SchemaTypeName, xmlComplexType);
                         }
 
                         continue;
@@ -260,6 +235,12 @@ namespace Sage.SData.Client.Metadata
                 else if (item is XmlSchemaSimpleType)
                 {
                     var simpleType = (XmlSchemaSimpleType) item;
+
+                    if (simpleType.Content == null)
+                    {
+                        throw new InvalidOperationException(string.Format("Missing content on simple type '{0}'", simpleType.Name));
+                    }
+
                     var restriction = simpleType.Content as XmlSchemaSimpleTypeRestriction;
 
                     if (restriction == null)
@@ -279,6 +260,22 @@ namespace Sage.SData.Client.Metadata
                 else
                 {
                     throw new InvalidOperationException(string.Format("Unexpected item type '{0}'", item.GetType()));
+                }
+
+                XmlSchemaComplexType complexList;
+                if (lists.TryGetValue(qualifiedName, out complexList))
+                {
+                    var sequence = (XmlSchemaSequence) complexList.Particle;
+                    var itemElement = (XmlSchemaElement) sequence.Items[0];
+
+                    type.ListName = complexList.Name;
+                    type.ListItemName = itemElement.Name;
+                    type.ListAnyAttribute = complexList.AnyAttribute;
+                    lists.Remove(qualifiedName);
+                }
+                else
+                {
+                    types.Add(qualifiedName, type);
                 }
 
                 type.Read(item);

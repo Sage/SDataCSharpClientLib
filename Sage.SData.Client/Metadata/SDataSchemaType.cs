@@ -17,10 +17,18 @@ namespace Sage.SData.Client.Metadata
         }
 
         public string Name { get; set; }
+        public string ListName { get; set; }
+        public string ListItemName { get; set; }
+        public XmlSchemaAnyAttribute ListAnyAttribute { get; set; }
 
         public XmlQualifiedName QualifiedName
         {
             get { return new XmlQualifiedName(Name, Schema != null ? Schema.TargetNamespace : null); }
+        }
+
+        public XmlQualifiedName ListQualifiedName
+        {
+            get { return new XmlQualifiedName(ListName, Schema != null ? Schema.TargetNamespace : null); }
         }
 
         protected internal override void Read(XmlSchemaObject obj)
