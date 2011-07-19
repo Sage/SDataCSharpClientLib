@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -397,6 +398,59 @@ namespace Sage.SData.Client.Core
                 throw new SDataClientException(ex.Message, ex);
             }
         }
+
+        public void ReadAsync(string url, object userState)
+        {
+            Guard.ArgumentNotNull(url, "url");
+
+            var operation = new RequestOperation(HttpMethod.Get);
+            var request = new SDataRequest(url, operation)
+                          {
+                              UserName = UserName,
+                              Password = Password,
+                              Timeout = Timeout,
+                              Cookies = Cookies,
+                              UserAgent = UserAgent
+                          };
+            request.BeginGetResponse(
+                asyncResult =>
+                {
+                    try
+                    {
+                        var response = request.EndGetResponse(asyncResult);
+
+                        if (ReadCompleted != null)
+                        {
+                            var content = response.Content;
+
+                            if (content is string && response.ContentType == MediaType.Xml)
+                            {
+                                try
+                                {
+                                    content = ReadSchema(response);
+                                }
+                                catch (XmlException)
+                                {
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                }
+                            }
+
+                            ReadCompleted(this, new ReadCompletedEventArgs(content, null, false, userState));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ReadCompleted != null)
+                        {
+                            ReadCompleted(this, new ReadCompletedEventArgs(null, ex, false, userState));
+                        }
+                    }
+                }, null);
+        }
+
+        public event EventHandler<ReadCompletedEventArgs> ReadCompleted;
 
         /// <summary>
         /// Reads resource information from the data source based on the URL.

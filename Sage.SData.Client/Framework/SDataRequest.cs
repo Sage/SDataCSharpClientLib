@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Mime;
+using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using Sage.SData.Client.Atom;
@@ -166,6 +167,46 @@ namespace Sage.SData.Client.Framework
 
                 uri = location = response.Headers[HttpResponseHeader.Location];
             }
+        }
+
+        public IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
+        {
+            var uri = Uri;
+            RequestOperation operation;
+
+            if (_operations.Count == 1)
+            {
+                operation = _operations[0];
+            }
+            else
+            {
+                operation = CreateBatchOperation();
+                uri = new SDataUri(uri).AppendPath("$batch").ToString();
+            }
+
+            var request = CreateRequest(uri, operation);
+            return new AsyncResultWrapper<WebResponse>(request.BeginGetResponse, request.EndGetResponse, callback, state);
+        }
+
+        public SDataResponse EndGetResponse(IAsyncResult asyncResult)
+        {
+            var result = asyncResult as AsyncResultWrapper<WebResponse>;
+            if (result == null)
+            {
+                throw new ArgumentException();
+            }
+
+            WebResponse response;
+            try
+            {
+                response = result.GetResult();
+            }
+            catch (WebException ex)
+            {
+                throw new SDataException(ex);
+            }
+
+            return new SDataResponse(response, null);
         }
 
         private RequestOperation CreateBatchOperation()
@@ -362,5 +403,50 @@ namespace Sage.SData.Client.Framework
 
             return request;
         }
+
+        #region Nested type: AsyncResultWrapper
+
+        private class AsyncResultWrapper<T> : IAsyncResult
+        {
+            private readonly IAsyncResult _inner;
+            private readonly Func<IAsyncResult, T> _end;
+
+            public AsyncResultWrapper(Func<AsyncCallback, object, IAsyncResult> begin, Func<IAsyncResult, T> end, AsyncCallback callback, object state)
+            {
+                _inner = begin(callback != null ? asyncResult => callback(this) : (AsyncCallback) null, state);
+                _end = end;
+            }
+
+            public T GetResult()
+            {
+                return _end(_inner);
+            }
+
+            #region IAsyncResult Members
+
+            public bool IsCompleted
+            {
+                get { return _inner.IsCompleted; }
+            }
+
+            public WaitHandle AsyncWaitHandle
+            {
+                get { return _inner.AsyncWaitHandle; }
+            }
+
+            public object AsyncState
+            {
+                get { return _inner.AsyncState; }
+            }
+
+            public bool CompletedSynchronously
+            {
+                get { return _inner.CompletedSynchronously; }
+            }
+
+            #endregion
+        }
+
+        #endregion
     }
 }

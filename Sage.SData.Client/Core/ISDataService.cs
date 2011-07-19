@@ -166,6 +166,10 @@ namespace Sage.SData.Client.Core
         /// <returns>string response from server</returns>
         object Read(string url);
 
+        void ReadAsync(string url, object userState);
+
+        event EventHandler<ReadCompletedEventArgs> ReadCompleted;
+
         /// <summary>
         /// Reads resource information from the data source based on the URL.
         /// </summary>
