@@ -61,6 +61,7 @@ namespace Sage.SData.Client.Framework
             Uri = uri;
             UserAgent = "Sage";
             Timeout = 120000;
+            TimeoutRetryAttempts = 1;
             _operations = new List<RequestOperation>(operations);
         }
 
@@ -88,6 +89,11 @@ namespace Sage.SData.Client.Framework
         /// Gets or sets the timeout in milliseconds used during requests.
         /// </summary>
         public int Timeout { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of timeout retry attempts that should be made before giving up.
+        /// </summary>
+        public int TimeoutRetryAttempts { get; set; }
 
         /// <summary>
         /// Gets or sets the proxy used by requests.
@@ -144,6 +150,7 @@ namespace Sage.SData.Client.Framework
             }
 
             string location = null;
+            var attempts = TimeoutRetryAttempts;
 
             while (true)
             {
@@ -156,6 +163,11 @@ namespace Sage.SData.Client.Framework
                 }
                 catch (WebException ex)
                 {
+                    if (ex.Status == WebExceptionStatus.Timeout && attempts > 0)
+                    {
+                        attempts--;
+                        continue;
+                    }
                     throw new SDataException(ex);
                 }
 
