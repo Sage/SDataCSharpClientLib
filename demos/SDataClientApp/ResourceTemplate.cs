@@ -42,8 +42,16 @@ namespace SDataClientApp
             {
                 var entry = _sdataTemplateResourceRequest.Read();
 
-                // show it in the grid
-                templatePayloadGrid.SelectedObject = entry.GetSDataPayload();
+                if (entry == null)
+                {
+                    templatePayloadGrid.SelectedObject = null;
+                    MessageBox.Show("$template not supported");
+                }
+                else
+                {
+                    // show it in the grid
+                    templatePayloadGrid.SelectedObject = entry.GetSDataPayload();
+                }
             }
             catch (Exception ex)
             {

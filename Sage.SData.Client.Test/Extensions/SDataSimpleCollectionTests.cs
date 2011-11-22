@@ -43,20 +43,20 @@ namespace Sage.SData.Client.Test.Extensions
         [Test]
         public void correctly_identifies_simple_collection()
         {
-            var payload = SDataPayloadUtility.LoadPayload(TestCase1);
+            var payload = Utility.LoadPayload(TestCase1);
 
-            var validatorType = (SDataPayloadCollection)payload.Values["validatorType"];
-            var listValidator = validatorType[0];
+            var validatorType = (SDataPayload)payload.Values["validatorType"];
+            var listValidator = (SDataPayload)validatorType.Values["listValidator"];
             Assert.That(listValidator.Values["items"], Is.InstanceOf<SDataSimpleCollection>());
         }
 
         [Test]
         public void correct_number_of_items_in_simple_collection()
         {
-            var payload = SDataPayloadUtility.LoadPayload(TestCase1);
+            var payload = Utility.LoadPayload(TestCase1);
 
-            var validatorType = (SDataPayloadCollection)payload.Values["validatorType"];
-            var listValidator = validatorType[0];
+            var validatorType = (SDataPayload)payload.Values["validatorType"];
+            var listValidator = (SDataPayload)validatorType.Values["listValidator"];
             Assume.That(listValidator.Values["items"], Is.InstanceOf<SDataSimpleCollection>());
 
             var items = (SDataSimpleCollection)listValidator.Values["items"];
@@ -66,10 +66,10 @@ namespace Sage.SData.Client.Test.Extensions
         [Test]
         public void correct_values_in_simple_collection()
         {
-            var payload = SDataPayloadUtility.LoadPayload(TestCase1);
+            var payload = Utility.LoadPayload(TestCase1);
 
-            var validatorType = (SDataPayloadCollection)payload.Values["validatorType"];
-            var listValidator = validatorType[0];
+            var validatorType = (SDataPayload)payload.Values["validatorType"];
+            var listValidator = (SDataPayload)validatorType.Values["listValidator"];
             Assume.That(listValidator.Values["items"], Is.InstanceOf<SDataSimpleCollection>());
 
             var items = (SDataSimpleCollection)listValidator.Values["items"];
@@ -121,21 +121,21 @@ namespace Sage.SData.Client.Test.Extensions
 
             Assert.Throws(typeof (InvalidOperationException),
                           delegate { 
-                              var res = SDataPayloadUtility.WritePayload(payload);
+                              var res = Utility.WritePayload(payload);
                           });
         }
 
         [Test]
         public void does_not_throw_exception_when_ItemElementName_is_set()
         {
-            var res = SDataPayloadUtility.WritePayload(SerializationTestCase1);
+            var res = Utility.WritePayload(SerializationTestCase1);
             Assert.That(res, Is.InstanceOf<XPathNavigator>());
         }
 
         [Test]
         public void correctly_serializes_array_element_name()
         {
-            var res = SDataPayloadUtility.WritePayload(SerializationTestCase1);
+            var res = Utility.WritePayload(SerializationTestCase1);
             var items = res.SelectSingleNode("//items");
             Assert.That(items, Is.Not.Null);
         }
@@ -143,7 +143,7 @@ namespace Sage.SData.Client.Test.Extensions
         [Test]
         public void correct_number_of_items_serialized_in_array()
         {
-            var res = SDataPayloadUtility.WritePayload(SerializationTestCase1);
+            var res = Utility.WritePayload(SerializationTestCase1);
             var items = res.Select("//items/item");
             Assert.That(items.Count, Is.EqualTo(4));
         }
@@ -151,7 +151,7 @@ namespace Sage.SData.Client.Test.Extensions
         [Test]
         public void correct_values_serialized_in_array()
         {
-            var res = SDataPayloadUtility.WritePayload(SerializationTestCase1);
+            var res = Utility.WritePayload(SerializationTestCase1);
             var itemIter = res.Select("//items/item");
             var count = itemIter.Cast<XPathNavigator>().Select(x => x.Value).Intersect(ItemValues).Count();
             Assert.That(count, Is.EqualTo(4));
@@ -183,7 +183,7 @@ namespace Sage.SData.Client.Test.Extensions
         [Test]
         public void correctly_serializes_empty_array()
         {
-            var res = SDataPayloadUtility.WritePayload(SerializationTestCase2);
+            var res = Utility.WritePayload(SerializationTestCase2);
             var items = res.SelectSingleNode("//items");
             
             Assert.That(items, Is.Not.Null);

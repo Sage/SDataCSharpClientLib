@@ -45,19 +45,19 @@ namespace Sage.SData.Client.Extensions
         #endregion
         
         //============================================================
-		//	CONSTRUCTORS
+        //	CONSTRUCTORS
         //============================================================
         #region SyndicationExtensionLoadedEventArgs()
         /// <summary>
         /// Initializes a new instance of the <see cref="SyndicationExtensionLoadedEventArgs"/> class.
         /// </summary>
         public SyndicationExtensionLoadedEventArgs()
-		{
-			//------------------------------------------------------------
-			//	
-			//------------------------------------------------------------
-		}
-		#endregion
+        {
+            //------------------------------------------------------------
+            //	
+            //------------------------------------------------------------
+        }
+        #endregion
 
         #region SyndicationExtensionLoadedEventArgs(IXPathNavigable navigator)
         /// <summary>

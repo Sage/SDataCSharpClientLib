@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Sage.SData.Client.Atom;
+using Sage.SData.Client.Common;
 
 namespace Sage.SData.Client.Extensions
 {
@@ -65,6 +66,7 @@ namespace Sage.SData.Client.Extensions
 
         private static SimpleListSyndicationExtensionContext GetContext(IExtensibleSyndicationObject entry, bool createIfMissing)
         {
+            Guard.ArgumentNotNull(entry, "entry");
             var extension = entry.Extensions.OfType<SimpleListSyndicationExtension>().FirstOrDefault();
 
             if (extension == null)

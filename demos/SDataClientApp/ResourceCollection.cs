@@ -184,7 +184,7 @@ namespace SDataClientApp
                 foreach (var atomentry in _feed.Entries)
                 {
                     var dr = table.NewRow();
-                    dr[0] = atomentry.Authors[0].Name;
+                    dr[0] = atomentry.Authors.Select(author => author.Name).FirstOrDefault();
                     dr[1] = atomentry.Id.Uri.AbsoluteUri;
                     dr[2] = atomentry.Title.Content;
 
@@ -196,7 +196,10 @@ namespace SDataClientApp
                 atomEntryGrid.Refresh();
                 atomEntryGrid.AutoResizeColumns();
 
-                atomEntryGrid_CellContentClick(null, null);
+                if (atomEntryGrid.SelectedRows.Count != 0)
+                {
+                    atomEntryGrid_CellContentClick(null, null);
+                }
             }
             catch (Exception ex)
             {
@@ -213,7 +216,7 @@ namespace SDataClientApp
 
             var dr = table.NewRow();
             var atomentry = _reader.Current;
-            dr[0] = atomentry.Authors[0].Name;
+            dr[0] = atomentry.Authors.Select(author => author.Name).FirstOrDefault();
             dr[1] = atomentry.Id.Uri.AbsoluteUri;
             dr[2] = atomentry.Title.Content;
 

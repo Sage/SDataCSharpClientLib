@@ -104,7 +104,7 @@ namespace Sage.SData.Client.Extensions
             {
                 writer.WriteStartElement(name, ns);
 
-                if (Uri != null) writer.WriteAttributeString("uri", xmlNamespace, Uri.ToString().Replace(" ", "%20"));
+                if (Uri != null) writer.WriteAttributeString("uri", xmlNamespace, Uri.AbsoluteUri);
                 if (DeleteMissing != null) writer.WriteAttributeString("deleteMissing", xmlNamespace, XmlConvert.ToString(DeleteMissing.Value));
             }
 

@@ -38,5 +38,16 @@ namespace Sage.SData.Client.Test.Framework
             var result = MediaTypeNames.GetMediaType(contentType);
             Assert.AreEqual(MediaType.AtomEntry, result);
         }
+
+        /// <summary>
+        /// The legacy XML content type "text/xml" should resolve to the XML media type.
+        /// </summary>
+        [Test]
+        public void Legacy_Xml_Content_Type_Test()
+        {
+            const string contentType = "text/xml";
+            var result = MediaTypeNames.GetMediaType(contentType);
+            Assert.AreEqual(MediaType.Xml, result);
+        }
     }
 }

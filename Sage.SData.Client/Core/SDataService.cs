@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -27,7 +28,7 @@ namespace Sage.SData.Client.Core
         private readonly SDataUri _uri;
 
         /// <summary>
-        /// Flag set when Service is initialzed
+        /// Flag set when Service is initialized
         /// </summary>
         [Obsolete("Explicit initialization is no longer required.")]
         public bool Initialized
@@ -66,18 +67,19 @@ namespace Sage.SData.Client.Core
             {
                 if (_uri.Host != value)
                 {
-                    var pos = value.IndexOf(':');
-                    int port;
+                    if (value != null)
+                    {
+                        var pos = value.IndexOf(':');
+                        int port;
 
-                    if (pos >= 0 && int.TryParse(value.Substring(pos + 1), out port))
-                    {
-                        _uri.Host = value.Substring(0, pos);
-                        _uri.Port = port;
+                        if (pos >= 0 && int.TryParse(value.Substring(pos + 1), out port))
+                        {
+                            value = value.Substring(0, pos);
+                            _uri.Port = port;
+                        }
                     }
-                    else
-                    {
-                        _uri.Host = value;
-                    }
+
+                    _uri.Host = value;
                 }
             }
         }
@@ -373,27 +375,19 @@ namespace Sage.SData.Client.Core
             try
             {
                 var operation = new RequestOperation(HttpMethod.Get);
-                var response = ExecuteRequest(url, operation, MediaType.Xml);
-                var text = response.Content as string;
+                var response = ExecuteRequest(url, operation);
 
-                if (text != null && response.ContentType == MediaType.Xml)
+                if (response.Content is string && response.ContentType == MediaType.Xml)
                 {
-                    var targetElementName = !string.IsNullOrEmpty(response.Location)
-                                                ? new Uri(response.Location).Fragment
-                                                : null;
-
-                    using (var reader = new StringReader(text))
+                    try
                     {
-                        try
-                        {
-                            return SDataSchema.Read(reader, targetElementName);
-                        }
-                        catch (XmlException)
-                        {
-                        }
-                        catch (InvalidOperationException)
-                        {
-                        }
+                        return ReadSchema(response);
+                    }
+                    catch (XmlException)
+                    {
+                    }
+                    catch (InvalidOperationException)
+                    {
                     }
                 }
 
@@ -404,6 +398,59 @@ namespace Sage.SData.Client.Core
                 throw new SDataClientException(ex.Message, ex);
             }
         }
+
+        public void ReadAsync(string url, object userState)
+        {
+            Guard.ArgumentNotNull(url, "url");
+
+            var operation = new RequestOperation(HttpMethod.Get);
+            var request = new SDataRequest(url, operation)
+                          {
+                              UserName = UserName,
+                              Password = Password,
+                              Timeout = Timeout,
+                              Cookies = Cookies,
+                              UserAgent = UserAgent
+                          };
+            request.BeginGetResponse(
+                asyncResult =>
+                {
+                    try
+                    {
+                        var response = request.EndGetResponse(asyncResult);
+
+                        if (ReadCompleted != null)
+                        {
+                            var content = response.Content;
+
+                            if (content is string && response.ContentType == MediaType.Xml)
+                            {
+                                try
+                                {
+                                    content = ReadSchema(response);
+                                }
+                                catch (XmlException)
+                                {
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                }
+                            }
+
+                            ReadCompleted(this, new ReadCompletedEventArgs(content, null, false, userState));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ReadCompleted != null)
+                        {
+                            ReadCompleted(this, new ReadCompletedEventArgs(null, ex, false, userState));
+                        }
+                    }
+                }, null);
+        }
+
+        public event EventHandler<ReadCompletedEventArgs> ReadCompleted;
 
         /// <summary>
         /// Reads resource information from the data source based on the URL.
@@ -498,7 +545,7 @@ namespace Sage.SData.Client.Core
         /// </summary>
         /// <param name="request">url for the syndication resource to get information for.</param>
         /// <returns>SDataSchema</returns>
-        public virtual SDataSchema ReadSchema(SDataResourceSchemaRequest request)
+        public virtual SDataSchemaObject ReadSchema(SDataResourceSchemaRequest request)
         {
             Guard.ArgumentNotNull(request, "request");
 
@@ -507,18 +554,36 @@ namespace Sage.SData.Client.Core
                 var requestUrl = request.ToString();
                 var operation = new RequestOperation(HttpMethod.Get);
                 var response = ExecuteRequest(requestUrl, operation, MediaType.Xml);
-                var targetElementName = !string.IsNullOrEmpty(response.Location)
-                                            ? new Uri(response.Location).Fragment.TrimStart('#')
-                                            : null;
-
-                using (var reader = new StringReader((string) response.Content))
-                {
-                    return SDataSchema.Read(reader, targetElementName);
-                }
+                return ReadSchema(response);
             }
             catch (Exception ex)
             {
                 throw new SDataClientException(ex.Message, ex);
+            }
+        }
+
+        private static SDataSchemaObject ReadSchema(ISDataResponse response)
+        {
+            using (var reader = new StringReader((string) response.Content))
+            {
+                var schema = SDataSchema.Read(reader);
+
+                if (!string.IsNullOrEmpty(response.Location))
+                {
+                    var targetElementName = new Uri(response.Location).Fragment.TrimStart('#');
+
+                    if (!string.IsNullOrEmpty(targetElementName))
+                    {
+                        var resource = schema.ResourceTypes[targetElementName];
+
+                        if (resource != null)
+                        {
+                            return resource;
+                        }
+                    }
+                }
+
+                return schema;
             }
         }
 
@@ -621,7 +686,7 @@ namespace Sage.SData.Client.Core
         {
         }
 
-        protected internal virtual ISDataResponse ExecuteRequest(string url, RequestOperation operation, params MediaType[] accept)
+        protected virtual ISDataResponse ExecuteRequest(string url, RequestOperation operation, params MediaType[] accept)
         {
             var request = new SDataRequest(url, operation)
                           {

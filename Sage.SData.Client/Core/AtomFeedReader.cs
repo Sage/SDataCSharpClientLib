@@ -135,7 +135,7 @@ namespace Sage.SData.Client.Core
 
             if (index + _itemsAvailable > entries.Length)
             {
-                throw new ArgumentException("Target array is not large enought", "entries");
+                throw new ArgumentException("Target array is not large enough", "entries");
             }
 
             foreach (var entry in this)
@@ -161,8 +161,8 @@ namespace Sage.SData.Client.Core
 
         public IEnumerator<AtomEntry> GetEnumerator()
         {
-            return _listPages.Select((page, i) => GetPage(i))
-                .SelectMany(page => page)
+            return Enumerable.Range(0, _listPages.Count)
+                .SelectMany(i => GetPage(i))
                 .GetEnumerator();
         }
 

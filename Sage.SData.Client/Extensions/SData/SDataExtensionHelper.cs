@@ -1,7 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Sage.SData.Client.Atom;
+using Sage.SData.Client.Common;
 using Sage.SData.Client.Framework;
+using Sage.SData.Client.Metadata;
 
 namespace Sage.SData.Client.Extensions
 {
@@ -48,7 +50,7 @@ namespace Sage.SData.Client.Extensions
         /// </summary>
         /// <param name="feed"></param>
         /// <returns></returns>
-        public static string GetSDataSchema(this AtomFeed feed)
+        public static SDataSchema GetSDataSchema(this AtomFeed feed)
         {
             var context = GetContext(feed, true);
             return context != null ? context.Schema : null;
@@ -59,7 +61,7 @@ namespace Sage.SData.Client.Extensions
         /// </summary>
         /// <param name="entry"></param>
         /// <returns></returns>
-        public static string GetSDataSchema(this AtomEntry entry)
+        public static SDataSchema GetSDataSchema(this AtomEntry entry)
         {
             var context = GetContext(entry, true);
             return context != null ? context.Schema : null;
@@ -78,6 +80,7 @@ namespace Sage.SData.Client.Extensions
 
         private static SDataExtensionContext GetContext(IExtensibleSyndicationObject entry, bool createIfMissing)
         {
+            Guard.ArgumentNotNull(entry, "entry");
             var extension = entry.Extensions.OfType<SDataExtension>().FirstOrDefault();
 
             if (extension == null)

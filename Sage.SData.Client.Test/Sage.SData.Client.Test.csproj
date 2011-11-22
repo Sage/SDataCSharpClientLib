@@ -53,9 +53,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\BatchProcessTests.cs" />
+    <Compile Include="Extensions\SDataExtensionContextTests.cs" />
     <Compile Include="Extensions\SDataSimpleCollectionTests.cs" />
     <Compile Include="Extensions\SDataPayloadTests.cs" />
     <Compile Include="Extensions\SDataSyncExtensionContextTests.cs" />
+    <Compile Include="Extensions\SyndicationExtensionTests.cs" />
     <Compile Include="Extensions\Utility.cs" />
     <Compile Include="Framework\DiagnosisTests.cs" />
     <Compile Include="Framework\MediaTypeNamesTests.cs" />
@@ -63,7 +65,7 @@
     <Compile Include="Framework\UriFormatterTests.cs" />
     <Compile Include="Framework\UriPathParserTests.cs" />
     <Compile Include="Framework\W3CDateTimeTests.cs" />
-    <Compile Include="Metadata\SMEIntegerPropertyAttributeTests.cs" />
+    <Compile Include="Metadata\SDataSchemaTests.cs" />
     <Compile Include="Mime\MimeMessageTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestData.cs" />

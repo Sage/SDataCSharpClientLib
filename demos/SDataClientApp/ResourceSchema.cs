@@ -36,7 +36,7 @@ namespace SDataClientApp
         {
             try
             {
-                _schema = _sdataResourceSchemaRequest.Read();
+                _schema = (SDataSchema) _sdataResourceSchemaRequest.Read();
                 if (_schema != null)
                 {
                     MessageBox.Show(Resources.statusSchemaReadComplete);

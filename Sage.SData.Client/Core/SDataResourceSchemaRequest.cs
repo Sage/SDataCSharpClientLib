@@ -29,7 +29,7 @@ namespace Sage.SData.Client.Core
         }
 
         /// <summary>
-        /// Construtor
+        /// Constructor
         /// </summary>
         /// <param name="service">ISDataService for this request</param>
         public SDataResourceSchemaRequest(ISDataService service)
@@ -49,7 +49,7 @@ namespace Sage.SData.Client.Core
         ///         />
         ///     </code>
         /// </example>
-        public SDataSchema Read()
+        public SDataSchemaObject Read()
         {
             return Service.ReadSchema(this);
         }

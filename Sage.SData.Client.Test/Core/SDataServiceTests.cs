@@ -94,7 +94,7 @@ namespace Sage.SData.Client.Test.Core
                 _mock = mock;
             }
 
-            protected internal override ISDataResponse ExecuteRequest(string url, RequestOperation operation, MediaType[] accept)
+            protected override ISDataResponse ExecuteRequest(string url, RequestOperation operation, MediaType[] accept)
             {
                 return _mock.Object;
             }

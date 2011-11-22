@@ -31,6 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\Sage.SData.Client.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -92,6 +93,7 @@
     <Compile Include="Core\IntermediateDataSetsRequest.cs" />
     <Compile Include="Core\IntermediateResourceCollectionsRequest.cs" />
     <Compile Include="Core\IntermediateServicesRequest.cs" />
+    <Compile Include="Core\ReadCompletedEventArgs.cs" />
     <Compile Include="Core\SDataApplicationRequest.cs" />
     <Compile Include="Core\SDataBaseRequest.cs" />
     <Compile Include="Core\SDataBatchRequest.cs" />
@@ -156,42 +158,36 @@
     <Compile Include="Framework\UriPathSegment.cs" />
     <Compile Include="Framework\UriQueryParser.cs" />
     <Compile Include="Framework\W3CDateTime.cs" />
-    <Compile Include="Metadata\MetadataManager.cs" />
-    <Compile Include="Metadata\SDataResource.cs" />
+    <Compile Include="Metadata\BatchingMode.cs" />
+    <Compile Include="Metadata\CollectionDebugView.cs" />
+    <Compile Include="Metadata\ComplianceLevel.cs" />
+    <Compile Include="Metadata\EnumEx.cs" />
+    <Compile Include="Metadata\InvocationMode.cs" />
+    <Compile Include="Metadata\KeyedCollection.cs" />
+    <Compile Include="Metadata\KeyedEnumerable.cs" />
+    <Compile Include="Metadata\KeyedObjectCollection.cs" />
+    <Compile Include="Metadata\RelationshipType.cs" />
     <Compile Include="Metadata\SDataSchema.cs" />
-    <Compile Include="Metadata\SMEArrayProperty.cs" />
-    <Compile Include="Metadata\SMEBase64BinaryProperty.cs" />
-    <Compile Include="Metadata\SMEBoolProperty.cs" />
-    <Compile Include="Metadata\SMEByteArrayProperty.cs" />
-    <Compile Include="Metadata\SMEByteProperty.cs" />
-    <Compile Include="Metadata\SMECurrencyProperty.cs" />
-    <Compile Include="Metadata\SMEDateProperty.cs" />
-    <Compile Include="Metadata\SMEDateTimeProperty.cs" />
-    <Compile Include="Metadata\SMEDecimalProperty.cs" />
-    <Compile Include="Metadata\SMEDoubleProperty.cs" />
-    <Compile Include="Metadata\SMEEnumProperty.cs" />
-    <Compile Include="Metadata\SMEFloatProperty.cs" />
-    <Compile Include="Metadata\SMEGuidProperty.cs" />
-    <Compile Include="Metadata\SMEHexBinaryProperty.cs" />
-    <Compile Include="Metadata\SMEIntegerProperty.cs" />
-    <Compile Include="Metadata\SMELongProperty.cs" />
-    <Compile Include="Metadata\SMEMultiLineStringProperty.cs" />
-    <Compile Include="Metadata\SMENormalizedStringProperty.cs" />
-    <Compile Include="Metadata\SMEObjectProperty.cs" />
-    <Compile Include="Metadata\SMEProperty.cs" />
-    <Compile Include="Metadata\SMERelationshipProperty.cs" />
-    <Compile Include="Metadata\SMEResource.cs" />
-    <Compile Include="Metadata\SMEShortProperty.cs" />
-    <Compile Include="Metadata\SMEStringProperty.cs" />
-    <Compile Include="Metadata\SMETimeProperty.cs" />
-    <Compile Include="Metadata\SMETokenProperty.cs" />
-    <Compile Include="Metadata\SMEUnsignedByteProperty.cs" />
-    <Compile Include="Metadata\SMEUnsignedIntegerProperty.cs" />
-    <Compile Include="Metadata\SMEUnsignedLongProperty.cs" />
-    <Compile Include="Metadata\SMEUnsignedShortProperty.cs" />
-    <Compile Include="Metadata\SMEUriProperty.cs" />
-    <Compile Include="Metadata\TypeInfoHelper.cs" />
-    <Compile Include="Metadata\XSDataTypes.cs" />
+    <Compile Include="Metadata\SDataSchemaDocumentation.cs" />
+    <Compile Include="Metadata\SDataSchemaValueProperty.cs" />
+    <Compile Include="Metadata\SDataSchemaValueType.cs" />
+    <Compile Include="Metadata\SDataSchemaChoiceItem.cs" />
+    <Compile Include="Metadata\SDataSchemaChoiceType.cs" />
+    <Compile Include="Metadata\SDataSchemaComplexType.cs" />
+    <Compile Include="Metadata\SDataSchemaEnumItem.cs" />
+    <Compile Include="Metadata\SDataSchemaEnumType.cs" />
+    <Compile Include="Metadata\SDataSchemaItem.cs" />
+    <Compile Include="Metadata\SDataSchemaNamedQueryType.cs" />
+    <Compile Include="Metadata\SDataSchemaObject.cs" />
+    <Compile Include="Metadata\SDataSchemaProperty.cs" />
+    <Compile Include="Metadata\SDataSchemaRelationshipProperty.cs" />
+    <Compile Include="Metadata\SDataSchemaResourceType.cs" />
+    <Compile Include="Metadata\SDataSchemaServiceOperationType.cs" />
+    <Compile Include="Metadata\SDataSchemaSet.cs" />
+    <Compile Include="Metadata\SDataSchemaSimpleType.cs" />
+    <Compile Include="Metadata\SDataSchemaTopLevelType.cs" />
+    <Compile Include="Metadata\SDataSchemaType.cs" />
+    <Compile Include="Metadata\SDataSchemaTypeReference.cs" />
     <Compile Include="Mime\MimeHelper.cs" />
     <Compile Include="Mime\MimeMessage.cs" />
     <Compile Include="Mime\MimePart.cs" />

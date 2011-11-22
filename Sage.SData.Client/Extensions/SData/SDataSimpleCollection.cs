@@ -14,7 +14,9 @@ namespace Sage.SData.Client.Extensions
             ItemElementName = itemElementName;
         }
 
-        public SDataSimpleCollection(){}
+        public SDataSimpleCollection()
+        {
+        }
 
         /// <summary>
         /// Specifies the local element name of the item when serialized to the XML Array.
@@ -22,7 +24,7 @@ namespace Sage.SData.Client.Extensions
         /// <remarks>This is inferred from the first element's <see cref="XPathNavigator.LocalName">local name</see></remarks>
         public string ItemElementName { get; set; }
 
-        public bool Load(XPathNavigator source, XmlNamespaceManager manager)
+        public bool Load(XPathNavigator source)
         {
             //------------------------------------------------------------
             //	Validate parameter
@@ -30,23 +32,13 @@ namespace Sage.SData.Client.Extensions
             Guard.ArgumentNotNull(source, "source");
 
             var items = source.SelectChildren(XPathNodeType.Element).Cast<XPathNavigator>();
-            return InternalLoad(items, manager);
+            return InternalLoad(items);
         }
 
-        public bool Load(IEnumerable<XPathNavigator> items, XmlNamespaceManager manager)
-        {
-            //------------------------------------------------------------
-            //	Validate parameter
-            //------------------------------------------------------------
-            Guard.ArgumentNotNull(items, "items");
-
-            return InternalLoad(items, manager);
-        }
-
-        private bool InternalLoad(IEnumerable<XPathNavigator> items, XmlNamespaceManager manager)
+        private bool InternalLoad(IEnumerable<XPathNavigator> items)
         {
             var firstItem = items.FirstOrDefault();
-            if (firstItem == null) 
+            if (firstItem == null)
                 return true;
 
             ItemElementName = firstItem.LocalName;
@@ -71,12 +63,12 @@ namespace Sage.SData.Client.Extensions
             return true;
         }
 
-        public void WriteTo(string name, string ns, XmlWriter writer, string xmlNamespace)
+        public void WriteTo(string name, string ns, XmlWriter writer)
         {
             if (String.IsNullOrEmpty(ItemElementName))
                 throw new InvalidOperationException("ItemElementName must be set");
 
-            writer.WriteStartElement(name);
+            writer.WriteStartElement(name, ns);
 
             foreach (var item in this)
             {
@@ -90,13 +82,13 @@ namespace Sage.SData.Client.Extensions
         {
             if (value == null)
             {
-                writer.WriteStartElement(name);
+                writer.WriteStartElement(name, ns);
                 writer.WriteAttributeString("nil", Framework.Common.XSI.Namespace, XmlConvert.ToString(true));
                 writer.WriteEndElement();
             }
             else
             {
-                writer.WriteElementString(name, SDataPayload.ValueToString(value));
+                writer.WriteElementString(name, ns, SDataPayload.ValueToString(value));
             }
         }
     }

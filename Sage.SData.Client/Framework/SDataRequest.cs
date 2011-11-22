@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Mime;
+using System.Threading;
+using System.Xml;
+using System.Xml.Serialization;
 using Sage.SData.Client.Atom;
 using Sage.SData.Client.Common;
 using Sage.SData.Client.Extensions;
@@ -23,6 +26,8 @@ namespace Sage.SData.Client.Framework
     public class SDataRequest
     {
         private readonly IList<RequestOperation> _operations;
+        private bool _proxySet;
+        private IWebProxy _proxy;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SDataRequest"/> class.
@@ -56,6 +61,7 @@ namespace Sage.SData.Client.Framework
             Uri = uri;
             UserAgent = "Sage";
             Timeout = 120000;
+            TimeoutRetryAttempts = 1;
             _operations = new List<RequestOperation>(operations);
         }
 
@@ -85,9 +91,22 @@ namespace Sage.SData.Client.Framework
         public int Timeout { get; set; }
 
         /// <summary>
+        /// Gets or sets the number of timeout retry attempts that should be made before giving up.
+        /// </summary>
+        public int TimeoutRetryAttempts { get; set; }
+
+        /// <summary>
         /// Gets or sets the proxy used by requests.
         /// </summary>
-        public IWebProxy Proxy { get; set; }
+        public IWebProxy Proxy
+        {
+            get { return _proxy; }
+            set
+            {
+                _proxySet = true;
+                _proxy = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the accept media types accepted by requests.
@@ -98,6 +117,11 @@ namespace Sage.SData.Client.Framework
         /// Gets or sets the cookies associated with this request.
         /// </summary>
         public CookieContainer Cookies { get; set; }
+
+        /// <summary>
+        /// Gets of sets the credentials associated with this request.
+        /// </summary>
+        public ICredentials Credentials { get; set; }
 
         /// <summary>
         /// Lists the operations associated with this request.
@@ -126,6 +150,7 @@ namespace Sage.SData.Client.Framework
             }
 
             string location = null;
+            var attempts = TimeoutRetryAttempts;
 
             while (true)
             {
@@ -138,6 +163,11 @@ namespace Sage.SData.Client.Framework
                 }
                 catch (WebException ex)
                 {
+                    if (ex.Status == WebExceptionStatus.Timeout && attempts > 0)
+                    {
+                        attempts--;
+                        continue;
+                    }
                     throw new SDataException(ex);
                 }
 
@@ -149,6 +179,46 @@ namespace Sage.SData.Client.Framework
 
                 uri = location = response.Headers[HttpResponseHeader.Location];
             }
+        }
+
+        public IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
+        {
+            var uri = Uri;
+            RequestOperation operation;
+
+            if (_operations.Count == 1)
+            {
+                operation = _operations[0];
+            }
+            else
+            {
+                operation = CreateBatchOperation();
+                uri = new SDataUri(uri).AppendPath("$batch").ToString();
+            }
+
+            var request = CreateRequest(uri, operation);
+            return new AsyncResultWrapper<WebResponse>(request.BeginGetResponse, request.EndGetResponse, callback, state);
+        }
+
+        public SDataResponse EndGetResponse(IAsyncResult asyncResult)
+        {
+            var result = asyncResult as AsyncResultWrapper<WebResponse>;
+            if (result == null)
+            {
+                throw new ArgumentException();
+            }
+
+            WebResponse response;
+            try
+            {
+                response = result.GetResult();
+            }
+            catch (WebException ex)
+            {
+                throw new SDataException(ex);
+            }
+
+            return new SDataResponse(response, null);
         }
 
         private RequestOperation CreateBatchOperation()
@@ -210,8 +280,12 @@ namespace Sage.SData.Client.Framework
             var request = WebRequest.Create(uri);
             request.Method = op.Method.ToString().ToUpper();
             request.Timeout = Timeout;
-            request.Proxy = Proxy;
-            request.PreAuthenticate = false;
+            request.PreAuthenticate = true;
+
+            if (_proxySet)
+            {
+                request.Proxy = _proxy;
+            }
 
             var httpRequest = request as HttpWebRequest;
             if (httpRequest != null)
@@ -237,14 +311,26 @@ namespace Sage.SData.Client.Framework
                 }
             }
 
-            if (!string.IsNullOrEmpty(UserName) || !string.IsNullOrEmpty(Password))
+            if (Credentials != null)
             {
+                request.Credentials = Credentials;
+            }
+            else if (!string.IsNullOrEmpty(UserName) || !string.IsNullOrEmpty(Password))
+            {
+                var uriPrefix = new Uri(uri);
                 var cred = new NetworkCredential(UserName, Password);
                 request.Credentials = new CredentialCache
                                       {
-                                          {new Uri(uri), "Digest", cred},
-                                          {new Uri(uri), "Basic", cred}
+                                          {uriPrefix, "Basic", cred},
+                                          {uriPrefix, "Digest", cred},
+                                          {uriPrefix, "NTLM", cred},
+                                          {uriPrefix, "Kerberos", cred},
+                                          {uriPrefix, "Negotiate", cred}
                                       };
+            }
+            else
+            {
+                request.Credentials = CredentialCache.DefaultCredentials;
             }
 
             if (!string.IsNullOrEmpty(op.ETag))
@@ -259,12 +345,43 @@ namespace Sage.SData.Client.Framework
             {
                 using (var stream = request.GetRequestStream())
                 {
-                    var contentType = op.Resource is AtomFeed
-                                          ? MediaTypeNames.AtomFeedMediaType
-                                          : MediaTypeNames.AtomEntryMediaType;
-
                     var requestStream = op.Files.Count > 0 ? new MemoryStream() : stream;
-                    op.Resource.Save(requestStream);
+                    MediaType mediaType;
+
+                    if (op.Resource is ISyndicationResource)
+                    {
+                        mediaType = op.Resource is AtomFeed ? MediaType.Atom : MediaType.AtomEntry;
+                        ((ISyndicationResource) op.Resource).Save(requestStream);
+                    }
+                    else if (op.Resource is IXmlSerializable)
+                    {
+                        mediaType = MediaType.Xml;
+
+                        using (var xmlWriter = XmlWriter.Create(requestStream))
+                        {
+                            ((IXmlSerializable) op.Resource).WriteXml(xmlWriter);
+                        }
+                    }
+                    else if (op.Resource is string)
+                    {
+                        mediaType = MediaType.Text;
+
+                        using (var writer = new StreamWriter(requestStream))
+                        {
+                            writer.Write((string) op.Resource);
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+
+                    if (op.ContentType != null)
+                    {
+                        mediaType = op.ContentType.Value;
+                    }
+
+                    var contentType = MediaTypeNames.GetMediaType(mediaType);
 
                     if (op.Files.Count > 0)
                     {
@@ -278,7 +395,7 @@ namespace Sage.SData.Client.Framework
                             foreach (var file in op.Files)
                             {
                                 var type = !string.IsNullOrEmpty(file.ContentType) ? file.ContentType : "application/octet-stream";
-                                var disposition = new ContentDisposition(DispositionTypeNames.Attachment) { FileName = file.FileName };
+                                var disposition = new ContentDisposition(DispositionTypeNames.Attachment) {FileName = file.FileName};
                                 part = new MimePart(file.Stream)
                                        {
                                            ContentType = type,
@@ -298,5 +415,50 @@ namespace Sage.SData.Client.Framework
 
             return request;
         }
+
+        #region Nested type: AsyncResultWrapper
+
+        private class AsyncResultWrapper<T> : IAsyncResult
+        {
+            private readonly IAsyncResult _inner;
+            private readonly Func<IAsyncResult, T> _end;
+
+            public AsyncResultWrapper(Func<AsyncCallback, object, IAsyncResult> begin, Func<IAsyncResult, T> end, AsyncCallback callback, object state)
+            {
+                _inner = begin(callback != null ? asyncResult => callback(this) : (AsyncCallback) null, state);
+                _end = end;
+            }
+
+            public T GetResult()
+            {
+                return _end(_inner);
+            }
+
+            #region IAsyncResult Members
+
+            public bool IsCompleted
+            {
+                get { return _inner.IsCompleted; }
+            }
+
+            public WaitHandle AsyncWaitHandle
+            {
+                get { return _inner.AsyncWaitHandle; }
+            }
+
+            public object AsyncState
+            {
+                get { return _inner.AsyncState; }
+            }
+
+            public bool CompletedSynchronously
+            {
+                get { return _inner.CompletedSynchronously; }
+            }
+
+            #endregion
+        }
+
+        #endregion
     }
 }

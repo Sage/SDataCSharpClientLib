@@ -8,6 +8,7 @@ Date		Author		Description
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -217,7 +218,7 @@ namespace Sage.SData.Client.Extensions
         /// </remarks>
         /// <exception cref="ArgumentNullException">The <paramref name="types"/> is a null reference (Nothing in Visual Basic).</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="namespaces"/> is a null reference (Nothing in Visual Basic).</exception>
-        public static Collection<ISyndicationExtension> GetExtensions(Collection<Type> types, Dictionary<string, string> namespaces)
+        public static Collection<ISyndicationExtension> GetExtensions(Collection<Type> types, IEnumerable<KeyValuePair<string, string>> namespaces)
         {
             //------------------------------------------------------------
             //	Local members
@@ -237,7 +238,10 @@ namespace Sage.SData.Client.Extensions
 
             foreach (ISyndicationExtension extension in nativeExtensions)
             {
-                if (namespaces.ContainsValue(extension.XmlNamespace) || namespaces.ContainsKey(extension.XmlPrefix))
+                //BEGIN PATCH
+                //if (namespaces.ContainsValue(extension.XmlNamespace) || namespaces.ContainsKey(extension.XmlPrefix))
+                if (namespaces.Any(item => item.Value == extension.XmlNamespace) || namespaces.Any(item => item.Key == extension.XmlPrefix))
+                //END PATCH
                 {
                     if (!supportedExtensions.Contains(extension))
                     {
@@ -380,7 +384,10 @@ namespace Sage.SData.Client.Extensions
             //------------------------------------------------------------
             if (this.Settings.AutoDetectExtensions)
             {
-                extensions  = SyndicationExtensionAdapter.GetExtensions(this.Settings.SupportedExtensions, (Dictionary<string, string>)this.Navigator.GetNamespacesInScope(XmlNamespaceScope.ExcludeXml));
+                //BEGIN PATCH
+                //extensions  = SyndicationExtensionAdapter.GetExtensions(this.Settings.SupportedExtensions, (Dictionary<string, string>)this.Navigator.GetNamespacesInScope(XmlNamespaceScope.ExcludeXml));
+                extensions = SyndicationExtensionAdapter.GetExtensions(this.Settings.SupportedExtensions, this.Navigator.GetAllNamespaces());
+                //END PATCH
             }
             else
             {

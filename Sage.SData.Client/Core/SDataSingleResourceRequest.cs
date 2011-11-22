@@ -1,5 +1,6 @@
 ﻿using System;
 using Sage.SData.Client.Atom;
+using Sage.SData.Client.Extensions;
 using Sage.SData.Client.Framework;
 
 namespace Sage.SData.Client.Core
@@ -51,7 +52,7 @@ namespace Sage.SData.Client.Core
         /// <summary>
         /// initializes the single resource request and loads the atom entry
         /// </summary>
-        /// <remarks>this should be used with the atom entry retured from the 
+        /// <remarks>this should be used with the atom entry returned from the 
         /// SDataTemplateResourceRequest</remarks>
         /// <param name="service"></param>
         /// <param name="entry"></param>
@@ -148,6 +149,15 @@ namespace Sage.SData.Client.Core
                 uri.CollectionPredicate = ResourceSelector.StartsWith("(") && ResourceSelector.EndsWith(")")
                                               ? ResourceSelector.Substring(1, ResourceSelector.Length - 2)
                                               : ResourceSelector;
+            }
+            else if (Entry != null)
+            {
+                var payload = Entry.GetSDataPayload();
+
+                if (payload != null)
+                {
+                    uri.CollectionPredicate = string.Format("'{0}'", payload.Key);
+                }
             }
         }
     }

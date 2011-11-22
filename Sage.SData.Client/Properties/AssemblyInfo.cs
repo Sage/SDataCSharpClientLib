@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sage Software, Inc.")]
 [assembly: AssemblyProduct("Sage.SData.Client")]
-[assembly: AssemblyCopyright("©1997-2008 Sage Software, Inc. All Rights Reserved")]
+[assembly: AssemblyCopyright("©1997-2011 Sage Software, Inc. All Rights Reserved")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,8 +32,8 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.2.2.1335")]
-[assembly: AssemblyFileVersion("1.2.2.1335")]
+[assembly: AssemblyVersion("1.3.1.1459")]
+[assembly: AssemblyFileVersion("1.3.1.1459")]
 [assembly: NeutralResourcesLanguage("en-US")]
-[assembly: AssemblyInformationalVersion("1.2")]
+[assembly: AssemblyInformationalVersion("1.3")]
 [assembly: InternalsVisibleTo("Sage.SData.Client.Test")]
