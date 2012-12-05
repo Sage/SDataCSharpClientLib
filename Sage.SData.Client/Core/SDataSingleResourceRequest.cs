@@ -154,7 +154,7 @@ namespace Sage.SData.Client.Core
             {
                 var payload = Entry.GetSDataPayload();
 
-                if (payload != null)
+                if (payload != null && !String.IsNullOrEmpty(payload.Key))
                 {
                     uri.CollectionPredicate = string.Format("'{0}'", payload.Key);
                 }
